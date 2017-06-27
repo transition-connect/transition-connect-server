@@ -17,7 +17,7 @@ global.requireModel = function (name) {
 };
 
 let dbConfig = requireLib().databaseConfig;
-let chai = require('chai')
+let chai = require('chai');
 let chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 
