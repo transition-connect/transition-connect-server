@@ -1,0 +1,13 @@
+logs/*
+!.gitkeep
+node_modules/
+tmp
+.DS_Store
+.log
+.sonar
+test_out
+coverage
+npm-debug.log
+.sass-cache
+.idea
+testResult
