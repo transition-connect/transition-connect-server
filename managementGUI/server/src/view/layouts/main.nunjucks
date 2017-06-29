@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Management GUI transition connect">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Management GUI</title>
+
+    <link rel="stylesheet" href="/styles/app.css">
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+
+{% block content %}
+{% endblock %}
+
+
+<!--TEMPLATES-->
+
+<!--TEMPLATES END-->
+
+<!--SCRIPTS-->
+{% block scripts %}
+{% endblock %}
+<!--SCRIPTS END-->
+
+</body>
+</html>

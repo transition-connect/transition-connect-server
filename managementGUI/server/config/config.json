@@ -1,0 +1,116 @@
+{
+  "express": {
+    "view engine" : "nunjucks",
+    "views": "path:./src/view"
+  },
+  "view engines" : {
+    "nunjucks" : {
+      "module": "consolidate",
+      "renderer": "nunjucks",
+      "extensions": "path:./src/views/extensions"
+    }
+  },
+  "databaseConfig": {
+    "host": "bolt://localhost:7687"
+  },
+  "middleware": {
+    "compress": {
+      "enabled": true
+    },
+    "static": {
+      "priority": 20,
+      "module": {
+        "arguments": ["path:./static"]
+      }
+    },
+    "json": {
+      "priority": 30,
+      "module": {
+        "name": "body-parser",
+        "method": "json",
+        "arguments": [
+          {
+            "type": "application/json"
+          }
+        ]
+      }
+    },
+    "urlEncoded": {
+      "priority": 40,
+      "module": {
+        "name": "body-parser",
+        "method": "urlencoded",
+        "arguments": [
+          {
+            "extended": true
+          }
+        ]
+      }
+    },
+    "cookieParser": {
+      "priority": 60,
+      "module": {
+        "name": "cookie-parser"
+      }
+    },
+    /*"session": {
+      "priority": 70,
+      "module": {
+        "name": "elyoos-server-lib/lib/redisSession",
+        "arguments": [
+          {
+            "key": "sessionTransitionConnect",
+            "secret": "hrI483Ie9201Frw4",
+            "cookie": {
+              "path": "/",
+              "httpOnly": true,
+              "maxAge": 43200000
+            },
+            "rolling": true,
+            "proxy": null,
+            "resave": true,
+            "saveUninitialized": true
+          },
+          {
+            "host": "localhost",
+            "port": 6379
+          }
+        ]
+      }
+    },*/
+    "appsec": {
+      "enabled": true,
+      "priority": 90,
+      "module": {
+        "name": "lusca",
+        "arguments": [
+          {
+            "csrf": false,
+            "xframe": "SAMEORIGIN",
+            "xssProtection": true,
+            "nosniff": true
+          }
+        ]
+      }
+    },
+    "router": {
+      "priority": 100,
+      "module": {
+        "name": "express-enrouten",
+        "arguments": [
+          {
+            "directory": "path:./src/controller"
+          }
+        ]
+      }
+    },
+    "errorHandling": {
+      "enabled": true,
+      "priority": 1000,
+      "module": {
+        "name": "path:./src/lib/error/errors",
+        "method": "handlingError"
+      }
+    }
+  }
+}

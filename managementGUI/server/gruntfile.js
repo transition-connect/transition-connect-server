@@ -13,6 +13,16 @@ module.exports = function (grunt) {
                 PORT: '8081'
             }
         },
+        sass: {
+            options: {
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    'static/styles/app.css': 'static/styles/app.scss'
+                }
+            }
+        },
         clean: ['testResult/*.*'],
         mochaTest: {
             test: {
@@ -32,10 +42,10 @@ module.exports = function (grunt) {
                 options: {
                     separator: '\n',
                     sonar: {
-                        projectKey: 'javascript-sonar-runner-myzel-server',
-                        projectName: 'Myzel Server',
+                        projectKey: 'javascript-sonar-runner-transition-connect-server-gui',
+                        projectName: 'Transition Connect Management GUI Server',
                         projectVersion: '0.1',
-                        sources: 'controllers, models, server.js',
+                        sources: 'src, server.js',
                         sourceEncoding: 'UTF-8',
                         language: 'js',
                         jdbc: {
@@ -67,6 +77,7 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('start', ['sass']);
     grunt.registerTask('test', ['env:dev', 'clean', 'mochaTest:test']);
     grunt.registerTask('coverage', ['env:dev', 'clean', 'mocha_istanbul:coverage']);
     grunt.registerTask('analysis', ['sonarRunner:analysis']);
