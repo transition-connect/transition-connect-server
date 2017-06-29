@@ -8,11 +8,11 @@
 # install dependencies
 npm install
 
-# build for production with minification
-npm run build
+# start watchify before starting gui for developement
+npm run watchify-public
 
-# lint all *.js and *.vue files
-npm run lint
+# build for production with minification
+npm run build-public
 
 # run unit tests
 npm test

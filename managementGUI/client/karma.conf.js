@@ -6,7 +6,7 @@ module.exports = function (config) {
     files: ['test/public/unit/**/*.js'],
     reporters: ['spec'],
     preprocessors: {
-      'test/unit/**/*.js': ['browserify']
+      'test/public/unit/**/*.js': ['browserify']
     },
     browserify: {
       debug: true,
