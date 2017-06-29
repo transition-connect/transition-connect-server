@@ -8,7 +8,7 @@
     "watchify-public": "watchify -v -p browserify-hmr -e src/public/main.js -o ../server/static/lib/dist/publicDev.js",
     "dev": "npm-run-all --parallel watchify serve",
     "test": "karma start karma.conf.js",
-    "build-public": "cross-env NODE_ENV=production browserify --exclude vue -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js"
+    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js"
   },
   "browserify": {
     "transform": [
@@ -17,10 +17,12 @@
     ]
   },
   "browser": {
-    "vue": "vue/dist/vue.common.js"
+    "vue": "vue/dist/vue.common.js",
+    "vee-validate": "vee-validate/dist/vee-validate.js"
   },
   "dependencies": {
-    "vue": "2.3.4"
+    "vue": "2.3.4",
+    "vee-validate": "2.0.0-rc.6"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

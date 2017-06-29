@@ -7,6 +7,7 @@
     <title>Management GUI</title>
 
     <link rel="stylesheet" href="/styles/app.css">
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
     {% block css %}
     {% endblock %}
 </head>
@@ -14,11 +15,6 @@
 
 {% block content %}
 {% endblock %}
-
-
-<!--TEMPLATES-->
-
-<!--TEMPLATES END-->
 
 <!--SCRIPTS-->
 {% block scripts %}

@@ -1,7 +1,9 @@
 {% extends 'layouts/main.nunjucks' %}
 
 {% block css %}
-    <link rel="stylesheet" href="/styles/public.css">
+    {% if isProduction %}
+        <link rel="stylesheet" href="/styles/public.css">
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -9,6 +11,10 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="lib/vue/vue.2.3.4.min.js"></script>
-    <script src="lib/dist/public.min.js"></script>
+    {% if isProduction %}
+        <script src="lib/vue/vue.2.3.4.min.js"></script>
+        <script src="lib/dist/public.min.js"></script>
+    {% else %}
+        <script src="lib/dist/publicDev.js"></script>
+    {% endif %}
 {% endblock %}
