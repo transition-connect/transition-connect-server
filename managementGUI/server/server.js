@@ -13,6 +13,7 @@ let promise = require('bluebird');
 promise.Promise.config({warnings: false, longStackTraces: true, cancellation: true});
 
 let kraken = require('kraken-js');
+let emailService = require('./src/model/eMailService/eMail');
 let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
 let options = require('server-lib').spec(app);
@@ -36,6 +37,7 @@ app.listen(port, function (err) {
 
 app.on('start', function () {
     dbConfig.connected.then(function () {
+        emailService.start();
         logger.info('Server started');
     });
 });

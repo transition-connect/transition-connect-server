@@ -1,9 +1,9 @@
 'use strict';
 
 let db = require('./databaseConfig');
+let email = require('./eMail/eMailQueue');
 
 module.exports = function (app) {
-
 
     let env = process.env.NODE_ENV || 'development';
 
@@ -21,9 +21,11 @@ module.exports = function (app) {
     return {
         onconfig: function (config, next) {
 
-            let dbConfig = config.get('databaseConfig');
+            let dbConfig = config.get('databaseConfig'),
+                emailConfig = config.get('emailConfig');
 
             db.config(dbConfig);
+            email.config(emailConfig);
             next(null, config);
         }
     };

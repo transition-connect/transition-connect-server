@@ -1,17 +1,7 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
-let time = require('server-lib').time;
-let generatePassword = require('generate-password');
-
-let saveNewPassword = function (adminId) {
-    let tempPassword = generatePassword.generate({length: 6, numbers: true});
-    return db.cypher().match(`(admin:Admin {adminId: {adminId}})`)
-        .set('admin', {passwordCreated: time.getNowUtcTimestamp(), password: tempPassword})
-        .end({adminId: adminId}).send().then(function () {
-            return tempPassword;
-        });
-};
+let sendLoginPassword = require('./../eMailService/sendLoginPassword');
 
 let sendPassword = function (email) {
     let queryEmail = `(?i)${email}`;
@@ -20,9 +10,7 @@ let sendPassword = function (email) {
         .return(`admin`).end({email: queryEmail})
         .send().then(function (resp) {
             if (resp.length === 1) {
-                return saveNewPassword(resp[0].admin.adminId).then(function (password) {
-
-                });
+                return sendLoginPassword.sendLoginPassword(resp[0].admin.adminId);
             } else if (resp.length > 1) {
 
             } else {
@@ -30,7 +18,6 @@ let sendPassword = function (email) {
             }
         });
 };
-
 
 module.exports = {
     sendPassword: sendPassword

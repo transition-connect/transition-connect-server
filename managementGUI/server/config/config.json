@@ -13,6 +13,12 @@
   "databaseConfig": {
     "host": "bolt://localhost:7687"
   },
+  "emailConfig": {
+    "host": "localhost",
+    "port": 6379,
+    "prefix": "q",
+    "delay": 10
+  },
   "middleware": {
     "compress": {
       "enabled": true

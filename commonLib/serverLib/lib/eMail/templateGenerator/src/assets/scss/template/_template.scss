@@ -1,0 +1,63 @@
+// These are the styles to make some of the templates look extra nice.
+// Feel free to remove these styles for production!
+
+// Body Styles 
+body,
+html, 
+.body {
+  width: 100%;
+  background: #f3f3f3 !important;
+}
+
+.body {
+  width: 100%;
+  .body-tr {
+    width: 100%;
+    .center {
+      width: 100%;
+      .inner-body {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
+.header-tc {
+  margin-top: 12px;
+  h1 {
+    font-weight: 400;
+    text-align: center;
+    font-size: 24px;
+  }
+}
+
+.body-drip {
+  border-top: 8px solid #663399;
+}
+
+// Full Width Headers
+.header {
+  background: #8a8a8a;
+}
+
+.header .columns {
+  padding-bottom: 0;
+}
+
+.header p {
+  color: #fff;
+  padding-top: 15px;
+}
+
+.header .wrapper-inner {
+  padding: 20px;
+}
+
+.header .container {
+  background: transparent;
+}
+
+.wrapper.secondary {
+  background: #f3f3f3;
+}
