@@ -1,6 +1,6 @@
 'use strict';
 
-let db = requireDb();
+let db = require('server-lib').neo4j;
 
 let getOverview = function (params) {
     return db.cypher().match(`(organization:Organization)`)

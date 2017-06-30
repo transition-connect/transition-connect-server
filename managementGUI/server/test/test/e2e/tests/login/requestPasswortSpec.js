@@ -1,8 +1,8 @@
 'use strict';
 
-let db = requireTestUtil().db;
-let dbDsl = requireTestUtil().dbDSL;
-let requestHandler = requireTestUtil().requestHandler;
+let db = require('server-test-util').db;
+let dbDsl = require('server-test-util').dbDSL;
+let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
 
 describe('Integration Tests for sending an email with a login password', function () {

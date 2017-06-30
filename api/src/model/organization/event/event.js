@@ -1,7 +1,7 @@
 'use strict';
 
-let db = requireDb();
-let uuid = requireLib().uuid;
+let db = require('server-lib').neo4j;
+let uuid = require('server-lib').uuid;
 
 let deleteEvent = function (eventId) {
     return db.cypher().match(`(event:Event {eventId: {eventId}})<-[rel:HAS]-(:Organization)`)

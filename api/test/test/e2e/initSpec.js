@@ -1,15 +1,14 @@
 'use strict';
 
 let app = require('../../../server');
-let dbConfig = requireLib().databaseConfig;
+let dbConfig = require('server-lib').databaseConfig;
 
-global.requireTestUtil = function () {
-    return require(`../util`);
-};
+let elyoosTestUtil = require('server-test-util');
 
-requireTestUtil().init(requireLib(), app);
+elyoosTestUtil.init(require('server-lib'), app);
 
-requireTestUtil().stubLimitRate();
+elyoosTestUtil.stubEmailQueue();
+elyoosTestUtil.stubLimitRate();
 
 let chai = require('chai');
 let chaiSubset = require('chai-subset');

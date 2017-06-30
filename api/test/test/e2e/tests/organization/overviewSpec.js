@@ -1,7 +1,7 @@
 'use strict';
 
-let dbDsl = requireTestUtil().dbDSL;
-let requestHandler = requireTestUtil().requestHandler;
+let dbDsl = require('server-test-util').dbDSL;
+let requestHandler = require('server-test-util').requestHandler;
 
 describe('Integration Tests to get an overview of the organizations', function () {
 

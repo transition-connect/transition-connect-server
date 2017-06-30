@@ -108,7 +108,7 @@
       "enabled": true,
       "priority": 1000,
       "module": {
-        "name": "path:./src/lib/error/errors",
+        "name": "server-lib/lib/error/errors",
         "method": "handlingError"
       }
     }

@@ -4,14 +4,6 @@ if (!process.env.BASE_DIR) {
     process.env.BASE_DIR = __dirname;
 }
 
-global.requireDb = function () {
-    return require(`${__dirname}/src/lib`).neo4j;
-};
-
-global.requireLib = function () {
-    return require(`${__dirname}/src/lib`);
-};
-
 global.requireModel = function (name) {
     return require(`${__dirname}/src/model/${name}`);
 };
@@ -21,10 +13,10 @@ let promise = require('bluebird');
 promise.Promise.config({warnings: false, longStackTraces: true, cancellation: true});
 
 let kraken = require('kraken-js');
-let dbConfig = require('./src/lib').databaseConfig;
+let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
-let options = require('./src/lib').spec(app);
-let logger = require('./src/lib').logging.getLogger(__filename);
+let options = require('server-lib').spec(app);
+let logger = require('server-lib').logging.getLogger(__filename);
 let port = process.env.PORT || 8080;
 
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {

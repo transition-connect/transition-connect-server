@@ -1,10 +1,10 @@
 'use strict';
 
-let logger = requireLib().logging.getLogger(__filename);
+let logger = require('server-lib').logging.getLogger(__filename);
 let organizationEvent = requireModel('organization/event/event');
-let controllerErrors = requireLib().controllerErrors;
-let validation = requireLib().jsonValidation;
-let rateLimit = requireLib().limiteRate;
+let controllerErrors = require('server-lib').controllerErrors;
+let validation = require('server-lib').jsonValidation;
+let rateLimit = require('server-lib').limiteRate;
 
 
 let schemaCrateEvents = {

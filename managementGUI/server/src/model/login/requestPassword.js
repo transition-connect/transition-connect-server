@@ -1,7 +1,7 @@
 'use strict';
 
-let db = requireDb();
-let time = requireLib().time;
+let db = require('server-lib').neo4j;
+let time = require('server-lib').time;
 let generatePassword = require('generate-password');
 
 let saveNewPassword = function (adminId) {
@@ -21,7 +21,7 @@ let sendPassword = function (email) {
         .send().then(function (resp) {
             if (resp.length === 1) {
                 return saveNewPassword(resp[0].admin.adminId).then(function (password) {
-                    var test = 1;
+
                 });
             } else if (resp.length > 1) {
 
