@@ -10,7 +10,16 @@
     "host": "localhost",
     "port": 6379,
     "prefix": "q",
-    "delay": 10
+    "delay": 10,
+    "smtp": {
+      "host": "localhost",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "info@localhost.localdomain",
+        "pass": "susi"
+      }
+    }
   },
   "middleware": {
     "compress": {

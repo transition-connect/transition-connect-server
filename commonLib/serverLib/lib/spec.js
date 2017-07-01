@@ -1,7 +1,8 @@
 'use strict';
 
 let db = require('./databaseConfig');
-let email = require('./eMail/eMailQueue');
+let eMailQueue = require('./eMail/eMailQueue');
+let eMail = require('./eMail/eMail');
 
 module.exports = function (app) {
 
@@ -25,7 +26,8 @@ module.exports = function (app) {
                 emailConfig = config.get('emailConfig');
 
             db.config(dbConfig);
-            email.config(emailConfig);
+            eMailQueue.config(emailConfig);
+            eMail.config(emailConfig.smtp);
             next(null, config);
         }
     };

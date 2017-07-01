@@ -8,11 +8,13 @@
             <p class="text-danger" v-show="errors.has('email')">Korrekte E-Mail Adresse wird benötigt</p>
         </div>
         <button v-on:click.prevent="sendPasswordRequest" class="btn btn-primary"
-                :disabled="errors.has('email') || email === ''">Weiter</button>
+                :disabled="errors.has('email') || email === ''">Weiter
+        </button>
     </form>
 </template>
 
 <script>
+    import {HTTP} from './../../../utils/http-common';
 
     export default {
         name: 'request-password',
@@ -24,7 +26,12 @@
         },
         methods: {
             sendPasswordRequest: function () {
-                alert('Test');
+                HTTP.post(`/login/requestPassword`, {email: this.email}
+                ).then(response => {
+                    console.log(response);
+                }).catch(e => {
+                    console.log(e);
+                })
             }
         }
     }
