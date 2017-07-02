@@ -11,7 +11,7 @@
     }
   },
   "databaseConfig": {
-    "host": "bolt://localhost:7687"
+    "host": "bolt://localhost:7689"
   },
   "emailConfig": {
     "host": "localhost",
