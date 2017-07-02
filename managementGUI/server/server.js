@@ -8,6 +8,7 @@ global.requireModel = function (name) {
     return require(`${__dirname}/src/model/${name}`);
 };
 
+require('server-lib').jsonValidation;
 let promise = require('bluebird');
 
 promise.Promise.config({warnings: false, longStackTraces: true, cancellation: true});

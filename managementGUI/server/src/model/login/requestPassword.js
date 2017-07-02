@@ -1,9 +1,11 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
+let exceptions = require('server-lib').exceptions;
 let sendLoginPassword = require('./../eMailService/sendLoginPassword');
+let logger = require('server-lib').logging.getLogger(__filename);
 
-let sendPassword = function (email) {
+let sendPassword = function (email, req) {
     let queryEmail = `(?i)${email}`;
     return db.cypher().match(`(admin:Admin)`)
         .where(`admin.email =~ {email}`)
@@ -11,11 +13,8 @@ let sendPassword = function (email) {
         .send().then(function (resp) {
             if (resp.length === 1) {
                 return sendLoginPassword.sendLoginPassword(resp[0].admin.adminId);
-            } else if (resp.length > 1) {
-
-            } else {
-
             }
+            return exceptions.getInvalidOperation(`Admin with email ${email} does not exist`, logger, req);
         });
 };
 

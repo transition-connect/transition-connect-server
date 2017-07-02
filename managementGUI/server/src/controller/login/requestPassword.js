@@ -17,10 +17,10 @@ let schemaRequestPassword = {
 };
 
 let apiLimiter = rateLimit.getRate({
-    windowMs: 10 * 60 * 1000, // 10 minutes
-    delayAfter: 20,
+    windowMs: 20 * 60 * 1000, // 20 minutes
+    delayAfter: 5,
     delayMs: 3 * 1000,
-    max: 50
+    max: 15
 });
 
 module.exports = function (router) {
@@ -30,7 +30,7 @@ module.exports = function (router) {
         return controllerErrors('Error occurs when sending a password request', req, res, logger, function () {
             return validation.validateRequest(req, schemaRequestPassword, logger).then(function (request) {
                 logger.info(`Request password for ${request.email}`, req);
-                return requestPassword.sendPassword(request.email);
+                return requestPassword.sendPassword(request.email, req);
             }).then(function () {
                 res.status(200).end();
             });
