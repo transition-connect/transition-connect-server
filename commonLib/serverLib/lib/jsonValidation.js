@@ -4,6 +4,7 @@ let tv4 = require('tv4');
 let exceptions = require('./error/exceptions');
 let formats = require('tv4-formats');
 let _ = require('lodash');
+let bluebirdPromise = require('bluebird');
 
 tv4.addFormat(formats);
 
@@ -18,11 +19,11 @@ let validate = function (req, data, requestSchema, logger) {
     let errors = tv4.validateMultiple(data, requestSchema),
         invalidJsonException;
     if (errors.valid) {
-        return Promise.resolve(data);
+        return bluebirdPromise.resolve(data);
     }
     invalidJsonException = new exceptions.InvalidJsonRequest('Wrong input data');
     logger.warn(invalidJsonException.message, req, {error: errors}, req);
-    return Promise.reject(invalidJsonException);
+    return bluebirdPromise.reject(invalidJsonException);
 };
 
 let convertValues = function (data, requestSchema) {
