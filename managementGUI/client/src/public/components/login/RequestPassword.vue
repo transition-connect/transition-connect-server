@@ -28,7 +28,7 @@
             sendPasswordRequest: function () {
                 HTTP.post(`/login/requestPassword`, {email: this.email}
                 ).then(response => {
-                    console.log(response);
+                    this.$emit('passwordSent')
                 }).catch(e => {
                     console.log(e);
                 })
