@@ -68,10 +68,10 @@
         "name": "cookie-parser"
       }
     },
-    /*"session": {
+    "session": {
       "priority": 70,
       "module": {
-        "name": "elyoos-server-lib/lib/redisSession",
+        "name": "path:./src/lib/redisSession",
         "arguments": [
           {
             "key": "sessionTransitionConnect",
@@ -79,7 +79,7 @@
             "cookie": {
               "path": "/",
               "httpOnly": true,
-              "maxAge": 43200000
+              "maxAge": 3600000 // 1 hour
             },
             "rolling": true,
             "proxy": null,
@@ -92,7 +92,7 @@
           }
         ]
       }
-    },*/
+    },
     "appsec": {
       "enabled": true,
       "priority": 90,

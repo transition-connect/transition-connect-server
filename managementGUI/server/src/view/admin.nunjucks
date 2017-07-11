@@ -16,6 +16,6 @@
         <script src="lib/vue/vee-validate.min.js"></script>
         <script src="lib/dist/public.min.js"></script>
     {% else %}
-        <script src="lib/dist/publicDev.js"></script>
+        <script src="lib/dist/adminDev.js"></script>
     {% endif %}
 {% endblock %}

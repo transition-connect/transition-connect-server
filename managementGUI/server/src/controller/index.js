@@ -2,8 +2,12 @@
 
 module.exports = function (router) {
 
-    router.get('/', function (req, res) {
+    router.get('/*', function (req, res) {
 
-        res.render('index', {isProduction: process.env.NODE_ENV === 'production'});
+        if (req.isAuthenticated()) {
+            res.redirect('/admin');
+        } else {
+            res.render('index', {isProduction: process.env.NODE_ENV === 'production'});
+        }
     });
 };

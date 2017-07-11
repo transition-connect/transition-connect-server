@@ -18,6 +18,7 @@
 
     export default {
         name: 'verify-password',
+        props: ['mailAddress'],
         components: {},
         data: function () {
             return {
@@ -26,9 +27,10 @@
         },
         methods: {
             sendPasswordVerification: function () {
-                HTTP.post(`/login/verifyPassword`, {password: this.password}
-                ).then(response => {
-                    this.$emit('passwordVerified')
+                console.log(this.mailAddress);
+                HTTP.post(`/login`, {password: this.password, username: this.mailAddress}
+                ).then(() => {
+                    window.location.href = "/admin";
                 }).catch(e => {
                     console.log(e);
                 })

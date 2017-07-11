@@ -51,7 +51,7 @@ exports.isAuthenticated = function () {
         if (req.isAuthenticated()) {
             next();
         } else {
-            next(new Error(401));
+            res.redirect('/');
         }
     };
 };

@@ -5,7 +5,7 @@
             <request-password v-on:passwordSent="showValidatePassword"></request-password>
         </div>
         <div v-else>
-            <verify-password v-on:abort="abort"></verify-password>
+            <verify-password v-on:abort="abort" :mail-address="email"></verify-password>
         </div>
     </div>
 </template>
@@ -21,11 +21,12 @@
             VerifyPassword
         },
         data: function () {
-            return {showStepVerification: false};
+            return {showStepVerification: false, email: ''};
         },
         methods: {
-            showValidatePassword: function () {
+            showValidatePassword: function (email) {
                 this.showStepVerification = true;
+                this.email = email;
             },
             abort: function () {
                 this.showStepVerification = false;
