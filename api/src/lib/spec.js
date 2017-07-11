@@ -1,8 +1,8 @@
 'use strict';
 
-let db = require('./databaseConfig');
-let eMailQueue = require('./eMail/eMailQueue');
-let eMail = require('./eMail/eMail');
+let db = require('server-lib').databaseConfig;
+let eMailQueue = require('server-lib').eMailQueue;
+let eMail = require('server-lib').eMail;
 
 module.exports = function (app) {
 

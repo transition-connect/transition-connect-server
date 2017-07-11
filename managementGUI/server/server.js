@@ -17,7 +17,7 @@ let kraken = require('kraken-js');
 let emailService = require('./src/model/eMailService/eMail');
 let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
-let options = require('server-lib').spec(app);
+let options = require('./src/lib/spec')(app);
 let logger = require('server-lib').logging.getLogger(__filename);
 let port = process.env.PORT || 8080;
 

@@ -15,7 +15,7 @@ promise.Promise.config({warnings: false, longStackTraces: true, cancellation: tr
 let kraken = require('kraken-js');
 let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
-let options = require('server-lib').spec(app);
+let options = require('./src/lib/spec')(app);
 let logger = require('server-lib').logging.getLogger(__filename);
 let port = process.env.PORT || 8080;
 

@@ -11,7 +11,6 @@ let domain = require('./domain');
 let jsonValidation = require('./jsonValidation');
 let limiteRate = require('./limiteRate');
 let logging = require('./logging');
-let spec = require('./spec');
 let time = require('./time');
 let uuid = require('./uuid');
 
@@ -28,7 +27,6 @@ module.exports.databaseConfig = databaseConfig;
 module.exports.jsonValidation = jsonValidation;
 module.exports.limiteRate = limiteRate;
 module.exports.logging = logging;
-module.exports.spec = spec;
 module.exports.time = time;
 module.exports.uuid = uuid;
 module.exports.domain = domain;
