@@ -6,9 +6,12 @@
   "private": true,
   "scripts": {
     "watchify-public": "watchify -v -p browserify-hmr -e src/public/main.js -o ../server/static/lib/dist/publicDev.js",
+    "watchify-admin": "watchify -v -p [browserify-hmr -p 8888 -u localhost:8888] -e src/admin/main.js -o ../server/static/lib/dist/adminDev.js",
+    "watchify": "concurrently \"npm run watchify-public\" \"npm run watchify-admin\"",
     "dev": "npm-run-all --parallel watchify serve",
     "test": "karma start karma.conf.js",
-    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vuex  --exclude axios -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js"
+    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vuex  --exclude axios -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
+    "build-admin": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vuex  --exclude axios -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
   },
   "browserify": {
     "transform": [
@@ -51,6 +54,7 @@
     "proxyquireify": "^3.0.1",
     "uglify-js": "^2.5.0",
     "vueify": "^9.0.0",
-    "watchify": "^3.4.0"
+    "watchify": "^3.4.0",
+    "concurrently": "^3.5.0"
   }
 }

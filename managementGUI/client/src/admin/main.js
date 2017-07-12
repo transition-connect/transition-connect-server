@@ -5,6 +5,6 @@ import App from './App.vue';
 Vue.use(VeeValidate);
 
 new Vue({
-    el: '#public-app',
+    el: '#admin-app',
     render: (h) => h(App)
 });

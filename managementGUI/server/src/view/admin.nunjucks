@@ -2,19 +2,19 @@
 
 {% block css %}
     {% if isProduction %}
-        <link rel="stylesheet" href="/styles/public.css">
+        <link rel="stylesheet" href="/styles/admin.css">
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div id="public-app"></div>
+    <div id="admin-app"></div>
 {% endblock %}
 
 {% block scripts %}
     {% if isProduction %}
         <script src="lib/vue/vue.2.3.4.min.js"></script>
         <script src="lib/vue/vee-validate.min.js"></script>
-        <script src="lib/dist/public.min.js"></script>
+        <script src="lib/dist/admin.min.js"></script>
     {% else %}
         <script src="lib/dist/adminDev.js"></script>
     {% endif %}
