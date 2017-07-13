@@ -8,8 +8,8 @@
     "watchify-public": "watchify -v -p browserify-hmr -e src/public/main.js -o ../server/static/lib/dist/publicDev.js",
     "watchify-admin": "watchify -v -p [browserify-hmr -p 8888 -u localhost:8888] -e src/admin/main.js -o ../server/static/lib/dist/adminDev.js",
     "watchify": "concurrently \"npm run watchify-public\" \"npm run watchify-admin\"",
-    "dev": "npm-run-all --parallel watchify serve",
     "test": "karma start karma.conf.js",
+    "generate-icons": "vsvg -s ./static/svg/icons -t ./src/icons",
     "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vuex  --exclude axios -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
     "build-admin": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vuex  --exclude axios -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
   },
@@ -23,13 +23,15 @@
     "vue": "vue/dist/vue.common.js",
     "vee-validate": "vee-validate/dist/vee-validate.js",
     "vuex": "vuex/dist/vuex.js",
-    "axios": "axios/dist/axios.js"
+    "axios": "axios/dist/axios.js",
+    "vue-svgicon": "vue-svgicon/dist/index.js"
   },
   "dependencies": {
     "vue": "2.3.4",
     "vee-validate": "2.0.0-rc.7",
     "vuex": "2.3.1",
-    "axios": "0.16.2"
+    "axios": "0.16.2",
+    "vue-svgicon": "^1.1.10"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

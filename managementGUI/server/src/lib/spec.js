@@ -32,6 +32,16 @@ module.exports = function (app) {
         passport.deserializeUser(admin.deserialize);
     });
 
+    app.on('middleware:after:session', function () {
+        if ('testing' !== env) {
+            app.use(function (req, res, next) {
+                //Needed because rolling is some how not working
+                req.session.touch();
+                next();
+            });
+        }
+    });
+
     return {
         onconfig: function (config, next) {
 

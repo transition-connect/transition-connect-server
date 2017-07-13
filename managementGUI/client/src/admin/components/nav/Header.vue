@@ -34,13 +34,13 @@
             width: 100%;
             max-width: $application-width;
             #tc-logo {
+                float: left;
                 font-size: 30px;
                 font-weight: 500;
                 line-height: 80px;
             }
             #nav-settings {
                 float: right;
-                line-height: 80px;
             }
         }
     }
