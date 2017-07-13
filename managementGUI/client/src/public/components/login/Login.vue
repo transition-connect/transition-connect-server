@@ -35,7 +35,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
     #login-container {
         font-family: 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;

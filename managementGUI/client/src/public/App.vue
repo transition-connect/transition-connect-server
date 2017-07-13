@@ -14,3 +14,12 @@
         }
     }
 </script>
+
+<style lang="scss">
+    #app {
+        background-color: #fafafa;
+        min-height: 100%;
+
+        font-family: Roboto,Helvetica Neue,sans-serif;
+    }
+</style>

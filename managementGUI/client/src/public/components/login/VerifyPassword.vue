@@ -42,7 +42,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
     #verify-password-container {
         max-width: 400px;
         margin: 0 auto;

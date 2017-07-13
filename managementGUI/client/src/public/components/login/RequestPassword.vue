@@ -37,7 +37,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
     #request-password-container {
         max-width: 400px;
         margin: 0 auto;

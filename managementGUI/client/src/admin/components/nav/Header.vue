@@ -1,24 +1,47 @@
 <template>
-    <div>
-        <h1 class="transition-connect-title">Testsasdf</h1>
-
+    <div id="tc-header">
+        <div id="tc-header-container">
+            <div id="tc-logo">TC</div>
+            <nav-settings id="nav-settings"></nav-settings>
+        </div>
     </div>
 </template>
 
 <script>
+    import NavSettings from './Settings.vue'
 
     export default {
-        name: 'header-nav'
+        name: 'header-nav',
+        components: {
+            NavSettings
+        }
     }
 </script>
 
-<style scoped>
+<style lang="scss">
+    @import "../../../style/variable";
 
-    h1, h2 {
-        font-weight: normal;
-    }
+    #tc-header {
+        width: 100%;
+        position: fixed;
+        background-color: #ffffff;
+        height: 80px;
+        border-bottom: 1px solid $divider;
 
-    .transition-connect-title {
-        margin-bottom: 64px;
+        #tc-header-container {
+            height: 80px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: $application-width;
+            #tc-logo {
+                font-size: 30px;
+                font-weight: 500;
+                line-height: 80px;
+            }
+            #nav-settings {
+                float: right;
+                line-height: 80px;
+            }
+        }
     }
 </style>
