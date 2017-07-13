@@ -39,7 +39,7 @@ describe('Integration Tests for sending an email with a login password', functio
         dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
-            return requestHandler.post('/login/requestPassword', {email: 'user1@irgendwo.ch'});
+            return requestHandler.post('/public/api/login/requestPassword', {email: 'user1@irgendwo.ch'});
         }).then(function (res) {
             res.status.should.equal(200);
 
@@ -69,7 +69,7 @@ describe('Integration Tests for sending an email with a login password', functio
         dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
-            return requestHandler.post('/login/requestPassword', {email: 'useR1@irgendwo.Ch'});
+            return requestHandler.post('/public/api/login/requestPassword', {email: 'useR1@irgendwo.Ch'});
         }).then(function (res) {
             res.status.should.equal(200);
 
@@ -99,7 +99,7 @@ describe('Integration Tests for sending an email with a login password', functio
         dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
-            return requestHandler.post('/login/requestPassword', {email: 'user3@irgendwo.ch'});
+            return requestHandler.post('/public/api/login/requestPassword', {email: 'user3@irgendwo.ch'});
         }).then(function (res) {
             res.status.should.equal(400);
             expect(createJob.callCount).to.equals(0);

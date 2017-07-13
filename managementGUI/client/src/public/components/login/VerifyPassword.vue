@@ -28,7 +28,7 @@
         methods: {
             sendPasswordVerification: function () {
                 console.log(this.mailAddress);
-                HTTP.post(`/login`, {password: this.password, username: this.mailAddress}
+                HTTP.post(`/public/api/login`, {password: this.password, username: this.mailAddress}
                 ).then(() => {
                     window.location.href = "/admin";
                 }).catch(e => {

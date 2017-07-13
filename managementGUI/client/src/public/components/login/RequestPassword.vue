@@ -26,7 +26,7 @@
         },
         methods: {
             sendPasswordRequest: function () {
-                HTTP.post(`/login/requestPassword`, {email: this.email}
+                HTTP.post(`/public/api/login/requestPassword`, {email: this.email}
                 ).then(() => {
                     this.$emit('passwordSent', this.email)
                 }).catch(e => {
