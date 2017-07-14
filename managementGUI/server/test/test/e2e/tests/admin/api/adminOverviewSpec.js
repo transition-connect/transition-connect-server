@@ -43,13 +43,17 @@ describe('Integration Tests for getting an admin overview of platforms, organisa
             res.body.overview.length.should.equals(1);
 
             res.body.overview[0].name.should.equals('organization2Name');
+            res.body.overview[0].organizationId.should.equals('2');
             res.body.overview[0].projects.length.should.equals(3);
             res.body.overview[0].projects[0].name.should.equals('project2Name');
             res.body.overview[0].projects[0].created.should.equals(501);
+            res.body.overview[0].projects[0].projectId.should.equals('2');
             res.body.overview[0].projects[1].name.should.equals('project1Name');
             res.body.overview[0].projects[1].created.should.equals(500);
+            res.body.overview[0].projects[1].projectId.should.equals('1');
             res.body.overview[0].projects[2].name.should.equals('project3Name');
             res.body.overview[0].projects[2].created.should.equals(502);
+            res.body.overview[0].projects[2].projectId.should.equals('3');
         });
     });
 });

@@ -24,6 +24,7 @@
     #tc-header {
         width: 100%;
         position: fixed;
+        top: 0;
         background-color: #ffffff;
         height: 80px;
         border-bottom: 1px solid $divider;
