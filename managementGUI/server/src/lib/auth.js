@@ -20,7 +20,7 @@ exports.localStrategy = function () {
 
         let dbUser;
         //Retrieve the user from the database by login
-        admin.searchAdminWithEmail(adminEmail).then(function (user) {
+        return admin.searchAdminWithEmail(adminEmail).then(function (user) {
 
             //If we couldn't find a matching user, flash a message explaining what happened
             if (!user) {

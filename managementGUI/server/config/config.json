@@ -79,7 +79,7 @@
             "cookie": {
               "path": "/",
               "httpOnly": true,
-              "maxAge": 3600000 // 1 hour
+              "maxAge": 43200000 // 12 hours
             },
             "rolling": true,
             "proxy": null,

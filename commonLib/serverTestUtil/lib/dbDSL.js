@@ -2,6 +2,7 @@
 
 let admin = require('./dbDSL/admin');
 let organization = require('./dbDSL/organization');
+let project = require('./dbDSL/project');
 let organizationEvent = require('./dbDSL/event');
 let db = require('./db');
 let dbConnectionHandling = require('./dbDSL/dbConnectionHandling');
@@ -18,5 +19,6 @@ module.exports = {
     createAdmin: admin.createAdmin,
     createOrganization: organization.createOrganization,
     setOrganizationAdmin: organization.setAdmin,
+    createProject: project.createProject,
     createEvent: organizationEvent.createEvent
 };

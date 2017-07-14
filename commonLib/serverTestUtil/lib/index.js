@@ -5,6 +5,7 @@ let dbDSL = require('./dbDSL');
 let request = require('./request');
 let stubEmailQueue = require('./stubEmailQueue');
 let stubLimitRate = require('./stubLimitRate');
+let admin = require('./admin');
 let serverLib;
 
 module.exports.db = db;
@@ -12,6 +13,7 @@ module.exports.dbDSL = dbDSL;
 module.exports.requestHandler = request;
 module.exports.stubEmailQueue = stubEmailQueue;
 module.exports.stubLimitRate = stubLimitRate;
+module.exports.admin = admin;
 
 module.exports.init = function (newServerLib, app) {
     if (!serverLib) {
