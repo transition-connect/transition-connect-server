@@ -18,7 +18,9 @@ describe('Integration Tests for sending an email with a login password', functio
 
     beforeEach(function () {
         startTime = Math.floor(moment.utc().valueOf() / 1000);
-        return dbDsl.init();
+        return dbDsl.init().then(function () {
+            dbDsl.createNetworkingPlatform('1', {adminId: '2', name: 'Elyoos'});
+        });
     });
 
     afterEach(function () {
@@ -29,14 +31,11 @@ describe('Integration Tests for sending an email with a login password', functio
 
         let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
 
-        dbDsl.createOrganization('1', {});
-        dbDsl.createOrganization('2', {});
+        dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['1']});
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['2']});
 
         dbDsl.createAdmin('1', {email: 'user1@irgendwo.ch'});
         dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
-
-        dbDsl.setOrganizationAdmin('1', ['1']);
-        dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.post('/public/api/login/requestPassword', {email: 'user1@irgendwo.ch'});
@@ -59,14 +58,11 @@ describe('Integration Tests for sending an email with a login password', functio
 
         let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
 
-        dbDsl.createOrganization('1', {});
-        dbDsl.createOrganization('2', {});
+        dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['1']});
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['2']});
 
         dbDsl.createAdmin('1', {email: 'user1@irgendwo.ch'});
         dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
-
-        dbDsl.setOrganizationAdmin('1', ['1']);
-        dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.post('/public/api/login/requestPassword', {email: 'useR1@irgendwo.Ch'});
@@ -89,14 +85,11 @@ describe('Integration Tests for sending an email with a login password', functio
 
         let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
 
-        dbDsl.createOrganization('1', {});
-        dbDsl.createOrganization('2', {});
+        dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['1']});
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['2']});
 
         dbDsl.createAdmin('1', {email: 'user1@irgendwo.ch'});
         dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
-
-        dbDsl.setOrganizationAdmin('1', ['1']);
-        dbDsl.setOrganizationAdmin('2', ['2']);
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.post('/public/api/login/requestPassword', {email: 'user3@irgendwo.ch'});
