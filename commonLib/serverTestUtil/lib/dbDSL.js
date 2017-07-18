@@ -1,6 +1,7 @@
 'use strict';
 
 let admin = require('./dbDSL/admin');
+let networkingPlatform = require('./dbDSL/networkingPlatform');
 let organization = require('./dbDSL/organization');
 let project = require('./dbDSL/project');
 let organizationEvent = require('./dbDSL/event');
@@ -17,8 +18,8 @@ module.exports = {
     sendToDb: dbConnectionHandling.sendToDb,
 
     createAdmin: admin.createAdmin,
+    createNetworkingPlatform: networkingPlatform.createNetworkingPlatform,
     createOrganization: organization.createOrganization,
-    setOrganizationAdmin: organization.setAdmin,
     createProject: project.createProject,
     createEvent: organizationEvent.createEvent
 };

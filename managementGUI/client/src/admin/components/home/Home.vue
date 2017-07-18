@@ -19,7 +19,6 @@
         created: function () {
             HTTP.get(`/admin/api`).then((resp) => {
                 this.overviewData = resp.data;
-                console.log(this.overviewData);
             }).catch(e => {
                 console.log(e);
             })
