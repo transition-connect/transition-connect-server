@@ -1,8 +1,9 @@
 <template>
     <div id="tc-home">
         <div id="tc-home-container">
-            <organization-element v-for="organization in overviewData" :organization="organization"
-            :key="organization.organizationId"></organization-element>
+            <div id="tc-home-organization-overview">Deine Organisationen und Projekte</div>
+            <organization-element v-for="organization in overviewData.organization" :organization="organization"
+                                  :key="organization.organizationId"></organization-element>
         </div>
     </div>
 </template>
@@ -36,6 +37,11 @@
             margin: 0 auto;
             width: 100%;
             max-width: $application-width;
+            #tc-home-organization-overview {
+                font-weight: 300;
+                font-size: 34px;
+                margin-bottom: 32px;
+            }
         }
     }
 </style>
