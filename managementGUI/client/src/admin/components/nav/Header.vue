@@ -1,7 +1,7 @@
 <template>
     <div id="tc-header">
         <div id="tc-header-container">
-            <div id="tc-logo">TC</div>
+            <div id="tc-logo">Transition Connect</div>
             <nav-settings id="nav-settings"></nav-settings>
         </div>
     </div>
