@@ -9,10 +9,10 @@ let createAdmin = function (adminId, data) {
     data.passwordCreated = data.passwordCreated || Math.floor(moment.utc().valueOf() / 1000);
     dbConnectionHandling.getCommands().push(db.cypher()
         .create(`(:Admin {adminId: {adminId}, email: {email}, password: {password}, 
-                  passwordCreated: {passwordCreated}})`)
+                  passwordCreated: {passwordCreated}, language: {language}})`)
         .end({
             adminId: adminId, email: data.email, password: data.password,
-            passwordCreated: data.passwordCreated
+            passwordCreated: data.passwordCreated, language: data.language
         }).getCommand());
 };
 

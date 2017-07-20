@@ -19,7 +19,7 @@ let setStatusOrganization = function (organizationId, status) {
 let createOrganization = function (organizationId, data) {
     data.name = data.name || `organization${organizationId}Name`;
     dbConnectionHandling.getCommands().push(db.cypher()
-        .match(`(np:NetworkingPlatform {networkingPlatformId: {networkingPlatformId}})`)
+        .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
         .createUnique(`(np)-[:CREATED]->(org:Organization {organizationId: {organizationId}, name: {name}})
         -[:STATUS]->(:Status)`)
         .with(`org`)
@@ -27,7 +27,7 @@ let createOrganization = function (organizationId, data) {
         .where(`admin.adminId IN {adminIds}`)
         .createUnique(`(admin)-[:IS_ADMIN]->(org)`)
         .end({
-            organizationId: organizationId, networkingPlatformId: data.networkingPlatformId,
+            organizationId: organizationId, platformId: data.networkingPlatformId,
             name: data.name, adminIds: data.adminIds
         }).getCommand());
     if (data.status) {
