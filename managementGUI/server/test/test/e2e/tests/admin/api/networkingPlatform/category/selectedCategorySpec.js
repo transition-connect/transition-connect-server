@@ -12,9 +12,9 @@ describe('Integration Tests for getting selected categories by a networking plat
     beforeEach(function () {
         startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
-            dbDsl.createAdmin('1', {email: 'user@irgendwo.ch', language: 'DE'});
-            dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch', language: 'DE'});
-            dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch', language: 'DE'});
+            dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
+            dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
+            dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
 
             dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos'});
             dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2'});
@@ -37,27 +37,27 @@ describe('Integration Tests for getting selected categories by a networking plat
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
             return requestHandler.get('/admin/api/networkingPlatform/category/selected',
-                {platformId: '1'});
+                {platformId: '1', language: 'DE'});
         }).then(function (res) {
             res.status.should.equal(200);
 
             res.body.category.length.should.equals(2);
 
-            res.body.category[0].categoryId.should.equals('1');
-            res.body.category[0].name.should.equals('Deutsch1');
-            res.body.category[0].similar.length.should.equals(3);
-            res.body.category[0].similar[0].name.should.equals('Deutsch3');
-            res.body.category[0].similar[0].categoryId.should.equals('3');
-            res.body.category[0].similar[1].name.should.equals('Deutsch4');
-            res.body.category[0].similar[1].categoryId.should.equals('4');
-            res.body.category[0].similar[2].name.should.equals('Deutsch5');
-            res.body.category[0].similar[2].categoryId.should.equals('5');
+            res.body.category[1].categoryId.should.equals('1');
+            res.body.category[1].name.should.equals('Deutsch1');
+            res.body.category[1].similar.length.should.equals(3);
+            res.body.category[1].similar[0].name.should.equals('Deutsch3');
+            res.body.category[1].similar[0].categoryId.should.equals('3');
+            res.body.category[1].similar[1].name.should.equals('Deutsch4');
+            res.body.category[1].similar[1].categoryId.should.equals('4');
+            res.body.category[1].similar[2].name.should.equals('Deutsch5');
+            res.body.category[1].similar[2].categoryId.should.equals('5');
 
-            res.body.category[1].categoryId.should.equals('6');
-            res.body.category[1].name.should.equals('Deutsch6');
-            res.body.category[1].similar.length.should.equals(1);
-            res.body.category[1].similar[0].name.should.equals('Deutsch8');
-            res.body.category[1].similar[0].categoryId.should.equals('8');
+            res.body.category[0].categoryId.should.equals('6');
+            res.body.category[0].name.should.equals('Deutsch6');
+            res.body.category[0].similar.length.should.equals(1);
+            res.body.category[0].similar[0].name.should.equals('Deutsch8');
+            res.body.category[0].similar[0].categoryId.should.equals('8');
         });
     });
 });

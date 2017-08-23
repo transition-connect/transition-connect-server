@@ -10,9 +10,10 @@ let schemaGetSelectedCategories = {
     name: 'getSelectedCategories',
     type: 'object',
     additionalProperties: false,
-    required: ['platformId'],
+    required: ['platformId', 'language'],
     properties: {
-        platformId: {type: 'string', format: 'id', maxLength: 30}
+        platformId: {type: 'string', format: 'id', maxLength: 30},
+        language: {enum: ['DE', 'EN', 'FR', 'IT']}
     }
 };
 
@@ -22,7 +23,7 @@ module.exports = function (router) {
         return controllerErrors('Error when getting selected categories of networking platform', req, res, logger, function () {
             return validation.validateQueryRequest(req, schemaGetSelectedCategories, logger).then(function (request) {
                 logger.info("Networking Platform categories requested", req);
-                return category.getSelectedCategory(req.user.id, request.platformId);
+                return category.getSelectedCategory(req.user.id, request.platformId, request.language);
             }).then(function (data) {
                 res.status(200).json(data);
             });

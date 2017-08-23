@@ -35,18 +35,16 @@ let getCategories = function (dbCategories) {
     return categories;
 };
 
-let getSelectedCategory = function (adminId, platformId) {
-    return db.cypher().match(`(admin:Admin {adminId: {adminId}})`)
-        .with(`admin.language AS language`)
-        .match(`(np:NetworkingPlatform {platformId: {platformId}})-[:CATEGORY]->
+let getSelectedCategory = function (adminId, platformId, language) {
+    return db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})-[:CATEGORY]->
                 (mapper:SimilarCategoryMapper)-[categoryType:USED_CATEGORY|SIMILAR_CATEGORY]->(category:Category)
                 -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
-        .where(`TYPE(categoryLanguage) = language`)
+        .where(`TYPE(categoryLanguage) = {language}`)
         .with(`mapper, category, categoryTranslated, TYPE(categoryType) = 'USED_CATEGORY' AS usedCategory`)
         .orderBy(`usedCategory DESC, categoryTranslated.name`)
         .return(`mapper, COLLECT({categoryId: category.categoryId, name: categoryTranslated.name, 
                  usedCategory: usedCategory}) AS categories`)
-        .end({adminId: adminId, platformId: platformId})
+        .end({adminId: adminId, platformId: platformId, language: language})
         .send().then(function (resp) {
             return {category: getCategories(resp)};
         });
