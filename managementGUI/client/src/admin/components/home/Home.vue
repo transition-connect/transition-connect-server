@@ -1,9 +1,19 @@
 <template>
     <div id="tc-home">
         <div id="tc-home-container">
-            <div id="tc-home-organization-overview">Deine Organisationen und Projekte</div>
-            <organization-element v-for="organization in overviewData.organization" :organization="organization"
-                                  :key="organization.organizationId"></organization-element>
+            <div class="panel panel-default">
+                <div class="panel-heading">Todo's</div>
+                <div class="panel-body">
+                    <todo-element v-for="todo in overviewData.todo" :todo="todo"></todo-element>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Deine Organisationen/Projekte</div>
+                <div class="panel-body">
+                    <organization-element v-for="organization in overviewData.organization" :organization="organization"
+                                          :key="organization.organizationId"></organization-element>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -11,11 +21,12 @@
 <script>
     import {HTTP} from './../../../utils/http-common';
     import OrganizationElement from './OrganizationElement.vue';
+    import TodoElement from './todo/TodoElement.vue';
 
     export default {
-        components: {OrganizationElement},
+        components: {OrganizationElement, TodoElement},
         data: function () {
-            return {overviewData: null};
+            return {overviewData: {}};
         },
         created: function () {
             HTTP.get(`/admin/api`).then((resp) => {
@@ -37,11 +48,6 @@
             margin: 0 auto;
             width: 100%;
             max-width: $application-width;
-            #tc-home-organization-overview {
-                font-weight: 300;
-                font-size: 34px;
-                margin-bottom: 32px;
-            }
         }
     }
 </style>

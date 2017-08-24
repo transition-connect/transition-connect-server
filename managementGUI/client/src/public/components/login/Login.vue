@@ -1,6 +1,6 @@
 <template>
     <div id="login-container">
-        <h1 class="transition-connect-title">Transition Connect Management</h1>
+        <h1 class="transition-connect-title">TRANSITION-<span class="c-logo">C</span>ONNECT Konfiguration</h1>
         <div v-if="!showStepVerification">
             <request-password v-on:passwordSent="showValidatePassword"></request-password>
         </div>
@@ -51,5 +51,9 @@
 
     .transition-connect-title {
         margin-bottom: 64px;
+        color: #4D4D4D;
+        .c-logo {
+            color: #2A7FFF;
+        }
     }
 </style>

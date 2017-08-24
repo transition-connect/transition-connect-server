@@ -24,7 +24,12 @@ merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '2', name: 'Slow F
 match (org:Organization {organizationId: '2'}), (np:NetworkingPlatform {platformId: '1'})
 merge (np)-[:CREATED]->(org);
 
+match (admin:Admin {adminId: '1'})
+merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '3', name: 'adsfa asdfa asdfsdasdf asdfasdfa asdfasdf jölene asdf jöqlwe qwelknqwe nqwelj nqwelröj nqweölj nqweklrjöl'});
+match (org:Organization {organizationId: '3'}), (np:NetworkingPlatform {platformId: '1'})
+merge (np)-[:CREATED]->(org);
+
 match (admin:Admin {adminId: '2'})
-merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '3', name: 'Bio für Jede'});
-match (org:Organization {organizationId: '3'}), (np:NetworkingPlatform {platformId: '2'})
+merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '4', name: 'Bio für Jede'});
+match (org:Organization {organizationId: '4'}), (np:NetworkingPlatform {platformId: '2'})
 merge (np)-[:CREATED]->(org);

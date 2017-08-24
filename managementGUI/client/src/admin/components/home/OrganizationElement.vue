@@ -5,26 +5,23 @@
                 {{organization.name}}
             </div>
             <status-display :status-admin="organization.statusOrganizationAdmin"></status-display>
-            <div class="np-name">Organisation erstellt von
+            <div class="np-name">Erstellt auf der Plattform
                 <span class="np-name-bold">{{organization.nameNetworkingPlatform}}</span>
             </div>
-            <div class="org-commands">
-                <button type="button" class="btn btn-default"
-                        v-show="organization.statusAdmin === 'pending'">Aktivieren</button>
-            </div>
         </div>
-        <project-element v-for="project in organization.projects" :project="project"
-                         :key="project.projectId"></project-element>
+        <div class="org-commands">
+            <button type="button" class="btn btn-default">Detail</button>
+            <button type="button" class="btn btn-default">Konfigurieren</button>
+        </div>
     </div>
 </template>
 
 <script>
-    import ProjectElement from './ProjectElement.vue';
     import StatusDisplay from './StatusDisplay.vue';
 
     export default {
         props: ['organization'],
-        components: {ProjectElement, StatusDisplay}
+        components: {StatusDisplay}
     }
 </script>
 
@@ -32,14 +29,25 @@
     @import "../../../style/variable";
 
     .org-container {
+        display: table;
+        width: 100%;
+        margin-bottom: 18px;
         .org-header {
-            padding-bottom: 4px;
-            border-bottom: 1px solid $divider;
+            display: table-cell;
+            width: auto;
             .org-title {
+                cursor: pointer;
                 font-weight: 300;
-                font-size: 28px;
+                font-size: 22px;
+                margin-bottom: 3px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 500px;
             }
-            margin-bottom: 12px;
+            .org-title:hover {
+                text-decoration: underline;
+            }
             .np-name {
                 display: inline-block;
                 line-height: 20px;
@@ -49,9 +57,12 @@
                     font-weight: 500;
                 }
             }
-            .org-commands {
-                margin-top: 8px;
-            }
+        }
+        .org-commands {
+            display: table-cell;
+            width: 175px;
+            margin-top: 8px;
+            text-align: right;
         }
     }
 </style>

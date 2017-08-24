@@ -1,7 +1,7 @@
 <template>
     <div id="tc-header">
         <div id="tc-header-container">
-            <div id="tc-logo">Transition Connect</div>
+            <div id="tc-logo">TRANSITION-<span class="c-logo">C</span>ONNECT</div>
             <nav-settings id="nav-settings"></nav-settings>
         </div>
     </div>
@@ -36,9 +36,13 @@
             max-width: $application-width;
             #tc-logo {
                 float: left;
-                font-size: 30px;
+                font-size: 24px;
                 font-weight: 500;
                 line-height: 80px;
+                color: #4D4D4D;
+                .c-logo {
+                    color: #2A7FFF;
+                }
             }
             #nav-settings {
                 float: right;
