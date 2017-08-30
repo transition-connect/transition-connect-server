@@ -11,7 +11,6 @@
         </div>
         <div class="org-commands">
             <button type="button" class="btn btn-default">Detail</button>
-            <button type="button" class="btn btn-default">Konfigurieren</button>
         </div>
     </div>
 </template>

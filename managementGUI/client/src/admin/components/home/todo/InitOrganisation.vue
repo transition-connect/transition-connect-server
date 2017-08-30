@@ -4,7 +4,10 @@
             '<span class="org-name">{{actionData.organizationName}}</span>' wurde noch nicht konfiguriert
         </div>
         <div class="todo-commands">
-            <button type="button" class="btn btn-warning">Konfigurieren</button>
+            <button type="button" class="btn btn-warning"
+                    v-on:click="$router.push({name: 'orgConfig', params: {id: actionData.organizationId}})">
+                Konfigurieren
+            </button>
         </div>
     </div>
 </template>
