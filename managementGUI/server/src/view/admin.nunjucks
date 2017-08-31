@@ -13,6 +13,7 @@
 {% block scripts %}
     <script src="lib/jquery/jquery-3.2.1.min.js"></script>
     <script src="lib/bootstrap/bootstrap.min.js"></script>
+    <script src="lib/bootstrap/bootstrap-toggle.min.js"></script>
     {% if isProduction %}
         <script src="lib/vue/vue.2.3.4.min.js"></script>
         <script src="lib/vue/vee-validate.min.js"></script>

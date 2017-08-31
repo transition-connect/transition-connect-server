@@ -5,6 +5,10 @@ import svgicon from 'vue-svgicon';
 import App from './App.vue';
 import routes from './routes';
 
+if (!jQuery().bootstrapToggle) {
+    require('bootstrap-toggle');
+}
+
 Vue.use(VeeValidate);
 Vue.use(VueRouter);
 Vue.use(svgicon);

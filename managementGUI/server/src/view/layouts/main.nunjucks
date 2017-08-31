@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/styles/app.css" type='text/css'>
     <link rel="stylesheet" href="/styles/bootstrap.min.css" type='text/css'>
+    <link rel="stylesheet" href="/styles/bootstrap-toggle.min.css" type='text/css'>
     <link rel="stylesheet" href='/styles/roboto.css' type='text/css'>
     {% block css %}
     {% endblock %}
