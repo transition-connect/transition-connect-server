@@ -22,5 +22,7 @@ module.exports = {
     createNetworkingPlatform: networkingPlatform.createNetworkingPlatform,
     mapNetworkingPlatformToCategory: networkingPlatform.mapNetworkingPlatformToCategory,
     createOrganization: organization.createOrganization,
+    assignOrganizationToCategory: organization.assignOrganizationToCategory,
+    exportOrgToNp: organization.exportOrgToNp,
     createEvent: organizationEvent.createEvent
 };

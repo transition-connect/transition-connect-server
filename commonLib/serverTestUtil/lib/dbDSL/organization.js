@@ -18,6 +18,31 @@ let createOrganization = function (organizationId, data) {
         }).getCommand());
 };
 
+let assignOrganizationToCategory = function (categoryAssignerId, data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner {assignerId: {categoryAssignerId}})-[:ASSIGNED]->(np)`)
+        .with(`assigner`)
+        .match(`(category:Category)`)
+        .where(`category.categoryId IN {categories}`)
+        .createUnique(`(assigner)-[:ASSIGNED]->(category)`)
+        .end({
+            categoryAssignerId: categoryAssignerId, organizationId: data.organizationId,
+            categories: data.categories, npId: data.npId
+        }).getCommand());
+};
+
+let exportOrgToNp = function (data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:EXPORT]->(np)`)
+        .end({
+            organizationId: data.organizationId, npId: data.npId
+        }).getCommand());
+};
+
 module.exports = {
-    createOrganization: createOrganization
+    createOrganization: createOrganization,
+    assignOrganizationToCategory: assignOrganizationToCategory,
+    exportOrgToNp: exportOrgToNp
 };
