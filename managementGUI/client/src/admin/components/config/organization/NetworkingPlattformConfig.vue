@@ -1,11 +1,12 @@
 <template>
     <div class="np-config">
         <div class="np-config-header">
-            <div>
+            <div class="sync-toggle-container">
                 <toggle on="Ja" off="Nein" size="normal" onstyle="success" offstyle="danger" :state="np.isExported"
                         height="32px" width="80px" @changed="syncChanged"></toggle>
                 <span class="np-name">Synchronisieren mit {{np.name}}</span>
             </div>
+            <a target="_blank" :href="np.link">{{np.link}}</a>
             <div class="np-description">{{np.description}}</div>
         </div>
         <div class="category-container" v-show="np.isExported">
@@ -49,8 +50,11 @@
             padding-bottom: 8px;
             margin-bottom: 8px;
             border-bottom: 1px solid $divider;
+            .sync-toggle-container {
+                margin-bottom: 12px;
+            }
             .np-description {
-                margin-top: 8px;
+                margin-top: 2px;
                 font-size: 14px;
                 color: $secondary-text;
             }
