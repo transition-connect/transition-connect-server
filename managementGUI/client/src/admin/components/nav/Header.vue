@@ -28,6 +28,7 @@
         background-color: #ffffff;
         height: 80px;
         border-bottom: 1px solid $divider;
+        z-index: 1000;
 
         #tc-header-container {
             height: 80px;
