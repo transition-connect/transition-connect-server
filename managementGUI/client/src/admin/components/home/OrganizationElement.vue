@@ -10,7 +10,10 @@
             </div>
         </div>
         <div class="org-commands">
-            <button type="button" class="btn btn-default">Detail</button>
+            <button type="button" class="btn btn-default"
+                    v-on:click="$router.push({name: 'orgDetail', params: {id: organization.organizationId}})">
+                Detail
+            </button>
         </div>
     </div>
 </template>

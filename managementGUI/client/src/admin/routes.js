@@ -1,5 +1,6 @@
 import Home from './components/home/Home.vue';
-import Organization from './components/config/organization/Organization.vue';
+import OrganizationConfig from './components/organization/config/Organization.vue';
+import OrganizationDetail from './components/organization/detail/Organization.vue';
 
 export default [
     {
@@ -9,6 +10,11 @@ export default [
     {
         path: '/organization/config/:id',
         name: 'orgConfig',
-        component: Organization
+        component: OrganizationConfig
+    },
+    {
+        path: '/organization/detail/:id',
+        name: 'orgDetail',
+        component: OrganizationDetail
     }
 ];
