@@ -1,12 +1,13 @@
 <template>
-    <input type="checkbox" checked data-toggle="toggle">
+    <input type="checkbox" data-toggle="toggle">
 </template>
 
 <script>
 
     export default {
-        props: ['on', 'off', 'size', 'onstyle', 'offstyle', 'height', 'width'],
+        props: ['on', 'off', 'size', 'onstyle', 'offstyle', 'height', 'width', 'state'],
         mounted: function () {
+            let element = this;
             $(this.$el).bootstrapToggle({
                 on: this.on,
                 off: this.off,
@@ -15,6 +16,14 @@
                 offstyle: this.offstyle,
                 height: this.height,
                 width: this.width
+            });
+            if (this.state) {
+                $(this.$el).bootstrapToggle('on');
+            } else {
+                $(this.$el).bootstrapToggle('off');
+            }
+            $(this.$el).change(function () {
+                element.$emit('changed', $(this).prop('checked'));
             });
         },
         beforeDestroy: function () {
