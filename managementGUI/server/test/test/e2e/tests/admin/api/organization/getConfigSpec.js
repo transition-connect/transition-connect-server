@@ -16,9 +16,9 @@ describe('Integration Tests for getting configuration of an organization', funct
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
             dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2'});
-            dbDsl.createNetworkingPlatform('3', {adminId: '3', name: 'Elyoos3'});
+            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description'});
+            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2', description: 'description2'});
+            dbDsl.createNetworkingPlatform('3', {adminId: '3', name: 'Elyoos3', description: 'description3'});
 
             dbDsl.createCategory(14);
 
@@ -58,6 +58,7 @@ describe('Integration Tests for getting configuration of an organization', funct
             res.body.networkingPlatforms.length.should.equals(2);
 
             res.body.networkingPlatforms[0].name.should.equals('Elyoos3');
+            res.body.networkingPlatforms[0].description.should.equals('description3');
             res.body.networkingPlatforms[0].platformId.should.equals('3');
             res.body.networkingPlatforms[0].isExported.should.equals(true);
             res.body.networkingPlatforms[0].categories.length.should.equals(1);
@@ -66,6 +67,7 @@ describe('Integration Tests for getting configuration of an organization', funct
             res.body.networkingPlatforms[0].categories[0].isSelected.should.equals(false);
 
             res.body.networkingPlatforms[1].name.should.equals('Elyoos2');
+            res.body.networkingPlatforms[1].description.should.equals('description2');
             res.body.networkingPlatforms[1].platformId.should.equals('2');
             res.body.networkingPlatforms[1].isExported.should.equals(false);
             res.body.networkingPlatforms[1].categories.length.should.equals(2);

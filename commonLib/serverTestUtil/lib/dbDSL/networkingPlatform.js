@@ -8,10 +8,10 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
     data.adminId = data.adminId || `1`;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(admin:Admin {adminId: {adminId}})`)
-        .createUnique(`(:NetworkingPlatform {platformId: {platformId}, name: {name}})
+        .createUnique(`(:NetworkingPlatform {platformId: {platformId}, name: {name}, description: {description}})
                         <-[:IS_ADMIN]-(admin)`)
         .end({
-            platformId: networkingPlatformId, adminId: data.adminId, name: data.name
+            platformId: networkingPlatformId, adminId: data.adminId, name: data.name, description: data.description
         }).getCommand());
 };
 

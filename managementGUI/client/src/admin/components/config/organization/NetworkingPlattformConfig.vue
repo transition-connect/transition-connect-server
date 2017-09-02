@@ -1,11 +1,17 @@
 <template>
-    <div class="np-config-header">
-        <div>
-            <toggle on="Ja" off="Nein" size="normal" onstyle="success" offstyle="danger" :state="np.isExported"
-                    height="32px" width="80px" @changed="syncChanged"></toggle>
-            <span class="np-name">Synchronisieren mit {{np.name}}</span>
+    <div class="np-config">
+        <div class="np-config-header">
+            <div>
+                <toggle on="Ja" off="Nein" size="normal" onstyle="success" offstyle="danger" :state="np.isExported"
+                        height="32px" width="80px" @changed="syncChanged"></toggle>
+                <span class="np-name">Synchronisieren mit {{np.name}}</span>
+            </div>
+            <div class="np-description">{{np.description}}</div>
         </div>
         <div class="category-container">
+            <div class="category-title" :class="{disabled: !np.isExported}">
+                Welchen Kategorien soll dieses Projekt auf {{np.name}} zugeordnet werden?
+            </div>
             <div v-for="category in np.categories">
                 <div class="checkbox">
                     <label><input type="checkbox" v-model="category.isSelected" :disabled="!np.isExported">
@@ -37,14 +43,28 @@
 <style lang="scss">
     @import "../../../../style/variable";
 
-    .np-config-header {
+    .np-config {
+        margin-bottom: 32px;
+        .np-config-header {
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid $divider;
+            .np-description {
+                margin-top: 8px;
+                font-size: 14px;
+                color: $secondary-text;
+            }
+        }
         .np-name {
             font-size: 16px;
             font-weight: 500;
             margin-left: 4px;
         }
         .category-container {
-            margin-bottom: 32px;
+            .category-title {
+                font-size: 14px;
+                font-weight: 500;
+            }
             .disabled {
                 color: $disabled-text;
             }

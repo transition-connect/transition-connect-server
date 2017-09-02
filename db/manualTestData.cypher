@@ -9,11 +9,12 @@ create (:Admin {adminId: '5', email: 'test5@localhost.localdomain'});
 
 //Create networking platforms
 match (admin:Admin {adminId: '2'})
-merge (:NetworkingPlatform {platformId: '1', name: 'Elyoos'})<-[:IS_ADMIN]-(admin);
+merge (:NetworkingPlatform {platformId: '1', name: 'Elyoos', description: 'Elyoos ist eine Internetplattform, welche den Austausch von Informationen zur konstruktiven Gestaltung der Gesellschaft ermöglicht.'})<-[:IS_ADMIN]-(admin);
 match (admin:Admin {adminId: '3'})
-merge (:NetworkingPlatform {platformId: '2', name: 'Transition Zürich'})<-[:IS_ADMIN]-(admin);
+merge (:NetworkingPlatform {platformId: '2', name: 'Transition Zürich', description:'Zürich ist bunt und lebendig! Es gibt Gemeinschaftsgärten, Repair-Cafés, alternative Wirtschaftsmodelle, Informationsveranstaltungen zum Thema Nachhaltigkeit und und und…
+Transition Zürich will die Kraft dieser Organisationen und Initiativen bündeln'})<-[:IS_ADMIN]-(admin);
 match (admin:Admin {adminId: '4'})
-merge (:NetworkingPlatform {platformId: '3', name: 'Gemeinsam Jetzt'})<-[:IS_ADMIN]-(admin);
+merge (:NetworkingPlatform {platformId: '3', name: 'Gemeinsam Jetzt', description: 'gemeinsam.jetzt ist eine Plattform die mit verschiedenen Angeboten zivilgesellschaftliche Initiativen & Akteur*innen verschiedener Themenbereiche (Ernährung - Gesellschaft - Kultur - Ökologie - Politik - Wirtschaft) unterstützt. Das gemeinsame Ziel ist ein gesellschaftlicher Wandel, unter dem Leitrahmen eines minimalen Wertekonsens: Achtsamkeit - Menschenwürde - Partizipation - Solidarität - Zukunftsfähigkeit '})<-[:IS_ADMIN]-(admin);
 
 //Create categories Elyoos
 create (category:Category {categoryId: '1'})-[:DE]->(:CategoryTranslated {name: 'Gesundheit'})

@@ -46,7 +46,8 @@ let getConfig = function (adminId, organizationId, language, req) {
             .with(`np, assigner, category, categoryTranslated`)
             .orderBy(`categoryTranslated.name`)
             .match(`(org:Organization {organizationId: {organizationId}})`)
-            .return(`np.name AS name, np.platformId AS platformId, EXISTS((org)-[:EXPORT]->(np)) AS isExported,
+            .return(`np.name AS name, np.description AS description, np.platformId AS platformId, 
+                     EXISTS((org)-[:EXPORT]->(np)) AS isExported,
                      COLLECT({name: categoryTranslated.name, categoryId: category.categoryId, 
                      isSelected: EXISTS((assigner)-[:ASSIGNED]->(category))}) AS categories`)
             .orderBy(`isExported DESC`)
