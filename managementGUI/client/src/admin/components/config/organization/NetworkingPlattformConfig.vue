@@ -8,13 +8,13 @@
             </div>
             <div class="np-description">{{np.description}}</div>
         </div>
-        <div class="category-container">
-            <div class="category-title" :class="{disabled: !np.isExported}">
+        <div class="category-container" v-show="np.isExported">
+            <div class="category-title">
                 Welchen Kategorien soll dieses Projekt auf {{np.name}} zugeordnet werden?
             </div>
             <div v-for="category in np.categories">
                 <div class="checkbox">
-                    <label><input type="checkbox" v-model="category.isSelected" :disabled="!np.isExported">
+                    <label><input type="checkbox" v-model="category.isSelected">
                         <span :class="{disabled: !np.isExported}">{{category.name}}</span>
                     </label>
                 </div>
@@ -64,9 +64,6 @@
             .category-title {
                 font-size: 14px;
                 font-weight: 500;
-            }
-            .disabled {
-                color: $disabled-text;
             }
         }
     }
