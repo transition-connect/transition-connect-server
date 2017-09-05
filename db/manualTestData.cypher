@@ -79,12 +79,16 @@ merge (np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(category);
 
 //Create organizations
 match (admin:Admin {adminId: '1'})
-merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '1', name: 'sinndrin genossenschaft'});
+merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '1', name: 'sinndrin genossenschaft',
+description: 'Unsere Vision ist es sinnstiftende Projekte umzusetzen, die der Gesellschaft von Nutzen sind. Dabei sind wir offen für alle Projekte die unseren Grundsätzen folgen. Die stetige Weiterentwicklung der Genossenschaft und ihrer Mitarbeitenden ist uns wichtig, weshalb wir auch an der Bearbeitung neuer Themenbereiche interessiert sind.',
+slogan: 'Die sinndrin genossenschaft ist ein auf Nachhaltigkeit ausgerichtetes Team von Ingenieuren.', website: 'https://www.sinndrin.ch/', created: 1504580000, modified: 1504593377});
 match (org:Organization {organizationId: '1'}), (np:NetworkingPlatform {platformId: '1'})
 merge (np)-[:CREATED]->(org);
 
 match (admin:Admin {adminId: '1'})
-merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '2', name: 'Slow Food Youth'});
+merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '2', name: 'Slow Food Youth',
+description: 'Wir sind eine Gemeinschaft von jungen Produzenten, Köchen, Hobbygärtnern, Studenten, Landwirten, Feinschmeckern, Aktivisten und vielen mehr. Wir sind junge Menschen, denen es nicht egal ist, woher das Essen auf dem Teller kommt, und für die essen mehr als nur Energiezufuhr bedeutet. Mit viel Kreativität und unserem breiten Wissen setzen wir uns für eine bessere Lebensmittelzukunft ein.',
+slogan: 'Wir haben keinen', website: 'http://www.slowfoodyouth.ch/', created: 1504590000, modified: 1504594377});
 match (org:Organization {organizationId: '2'}), (np:NetworkingPlatform {platformId: '1'})
 merge (np)-[:CREATED]->(org);
 
