@@ -5,15 +5,27 @@
                 <svgicon icon="settings" width="28" height="28"></svgicon>
             </div>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="global-dropdown-setting-icon">
-                <li><a href="#">Logout</a></li>
+                <li><a v-on:click="logout()">Logout</a></li>
             </ul>
         </div>
     </div>
 </template>
 
 <script>
+    import {HTTP} from './../../../utils/http-common';
     import '../../../icons/settings'
-    export default {}
+
+    export default {
+        methods: {
+            logout: function () {
+                HTTP.post(`/admin/api/logout`).then(() => {
+                    window.location.href = "/";
+                }).catch(e => {
+                    console.log(e);
+                })
+            }
+        }
+    }
 </script>
 
 <style lang="scss">

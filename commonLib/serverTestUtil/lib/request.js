@@ -25,7 +25,7 @@ module.exports = {
             } else {
                 cookies = null;
             }
-            return request(app).post('/api/logout').send(user.user);
+            return request(app).post('/admin/api/logout').send(user.user);
         }
     },
     post: function (api, data) {
