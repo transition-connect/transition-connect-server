@@ -42,6 +42,9 @@ let log = function (module, level, message, metadata, request) {
     if (request && request.user && request.user.id) {
         metadata.userId = request.user.id;
     }
+    if (metadata && metadata.error) {
+        metadata.errorMessage = metadata.error.message;
+    }
     logger.log(level, '[' + module + '] ' + message, metadata);
 
 };

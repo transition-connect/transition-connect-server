@@ -38,18 +38,26 @@ let setStatus = function (nps, orgModifiedTimestamp) {
     }
 };
 
-let getOrganizationCommand = function (organizationId) {
-    return db.cypher().match(`(np)-[:CREATED]->(org:Organization {organizationId: {organizationId}})`)
+let getOrganizationCommand = function (organizationId, language) {
+    return db.cypher().match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization {organizationId: {organizationId}})`)
+        .optionalMatch(`(np)<-[:ASSIGNED]-(assigner:CategoryAssigner)<-[:ASSIGNED]-(org)`)
+        .with(`np, org, assigner`)
+        .optionalMatch(`(assigner)-[:ASSIGNED]->(:Category)
+                         -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
+        .where(`TYPE(categoryLanguage) = {language}`)
+        .with(`np, org, categoryTranslated`)
+        .orderBy(`categoryTranslated.name`)
         .return(`org.name AS name, org.slogan AS slogan, org.description AS description, org.website AS website,
-                 org.created AS created, org.modified AS modified, np.name AS createdNetworkingPlatformName`)
-        .end({organizationId: organizationId}).getCommand();
+                 org.created AS created, org.modified AS modified, np.name AS createdNetworkingPlatformName,
+                 COLLECT(categoryTranslated.name) AS categories`)
+        .end({organizationId: organizationId, language: language}).getCommand();
 };
 
 let getDetails = function (adminId, organizationId, language, req) {
 
     return checkAllowedToGetDetail(adminId, organizationId, req).then(function () {
         let commands = [];
-        commands.push(getOrganizationCommand(organizationId));
+        commands.push(getOrganizationCommand(organizationId, language));
 
         return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUESTED]
                                    -(org:Organization {organizationId: {organizationId}})`)

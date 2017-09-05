@@ -62,6 +62,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.description.should.equals('org2description');
             res.body.organization.website.should.equals('www.link2.org');
             res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.organization.categories.length.should.equals(2);
+            res.body.organization.categories[0].should.equals('Deutsch1');
+            res.body.organization.categories[1].should.equals('Deutsch6');
 
             res.body.exportedNetworkingPlatforms.length.should.equals(2);
 
@@ -100,6 +103,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.description.should.equals('org2description');
             res.body.organization.website.should.equals('www.link2.org');
             res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.organization.categories.length.should.equals(2);
+            res.body.organization.categories[0].should.equals('Deutsch1');
+            res.body.organization.categories[1].should.equals('Deutsch6');
 
             res.body.exportedNetworkingPlatforms.length.should.equals(1);
 
@@ -130,6 +136,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.description.should.equals('org2description');
             res.body.organization.website.should.equals('www.link2.org');
             res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.organization.categories.length.should.equals(2);
+            res.body.organization.categories[0].should.equals('Deutsch1');
+            res.body.organization.categories[1].should.equals('Deutsch6');
 
             res.body.exportedNetworkingPlatforms.length.should.equals(1);
 

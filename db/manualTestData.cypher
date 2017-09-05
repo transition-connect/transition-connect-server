@@ -101,3 +101,12 @@ match (admin:Admin {adminId: '2'})
 merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '4', name: 'Bio für Jede'});
 match (org:Organization {organizationId: '4'}), (np:NetworkingPlatform {platformId: '2'})
 merge (np)-[:CREATED]->(org);
+
+//Assign categories to organizations
+//Organization sinndrin genossenschaft
+match (org:Organization {organizationId: '1'}), (np:NetworkingPlatform {platformId: '1'})
+merge (org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)
+with assigner
+match (category:Category)
+where category.categoryId IN ['7', '8']
+merge (assigner)-[:ASSIGNED]->(category);
