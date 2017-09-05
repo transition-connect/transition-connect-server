@@ -5,7 +5,7 @@
                 <svgicon icon="settings" width="28" height="28"></svgicon>
             </div>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="global-dropdown-setting-icon">
-                <li><a v-on:click="logout()">Logout</a></li>
+                <li><a v-on:click="logout()" href="#">Logout</a></li>
             </ul>
         </div>
     </div>
