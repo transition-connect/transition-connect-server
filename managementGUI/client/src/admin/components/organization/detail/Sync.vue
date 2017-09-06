@@ -4,7 +4,7 @@
         <div class="sync-container">
             <div class="sync-name">{{organization.createdNetworkingPlatformName}}
                 <span class="original-name">(Originale Plattform)</span></div>
-            <div class="org-created">{{organization.name}} wurde von dieser Plattform auf TC erstellt am {{organization.created}}</div>
+            <div class="org-created">{{organization.name}} wurde von dieser Plattform auf TC am {{organization.created}} erstellt.</div>
             <sync-categories :categories="organization.categories"></sync-categories>
         </div>
         <div v-for="np in nps" class="sync-container">
@@ -77,7 +77,7 @@
                 font-size: 16px;
                 .original-name {
                     font-weight: 400;
-                    font-size: 14px;
+                    font-size: 12px;
                 }
             }
             .org-created {
