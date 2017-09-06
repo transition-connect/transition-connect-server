@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div class="panel panel-default" v-show="overviewData.nps.length > 0">
-                <div class="panel-heading">Deine Vernetzungsplattform</div>
+                <div class="panel-heading">Deine Vernetzungsplattformen</div>
                 <div class="panel-body">
                     <networking-platform-element v-for="np in overviewData.nps" :np="np"
                                           :key="np.platformId"></networking-platform-element>

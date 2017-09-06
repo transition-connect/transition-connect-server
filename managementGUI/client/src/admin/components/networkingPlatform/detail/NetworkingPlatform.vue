@@ -1,24 +1,26 @@
 <template>
     <div id="tc-detail-np">
-        <div id="tc-container" v-show="npLoaded">
+        <div id="tc-container" v-if="npLoaded">
             <div id="tc-detail-header">
                 <button type="button" class="btn btn-default"
                         v-on:click="$router.push({name: 'npConfig', params: {id: $route.params.id}})">
                     Konfigurieren
                 </button>
             </div>
+            <info :np="this.detail.np"></info>
         </div>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import Info from './Info.vue';
     import moment from 'moment';
 
     export default {
-        components: {},
+        components: {Info},
         data: function () {
-            return {detail: {organization: {}}, npLoaded: false};
+            return {detail: {np: {}}, npLoaded: false};
         },
         created: function () {
             HTTP.get(`/admin/api/networkingPlatform/detail`,

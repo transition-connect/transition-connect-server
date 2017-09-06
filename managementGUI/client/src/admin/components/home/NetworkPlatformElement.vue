@@ -33,12 +33,12 @@
         margin-bottom: 18px;
         .np-header {
             display: table-cell;
+            vertical-align: middle;
             width: auto;
             .np-title {
                 cursor: pointer;
                 font-weight: 300;
                 font-size: 22px;
-                margin-bottom: 3px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;

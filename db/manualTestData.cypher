@@ -100,7 +100,9 @@ match (org:Organization {organizationId: '3'}), (np:NetworkingPlatform {platform
 merge (np)-[:CREATED]->(org);
 
 match (admin:Admin {adminId: '2'})
-merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '4', name: 'Bio für Jede'});
+merge (admin)-[:IS_ADMIN]->(org:Organization {organizationId: '4', name: 'Bio für Jede', slogan: '',
+description: 'Wir arbeiten mit den Lebensmittel, welche bereits vorhanden sind, mit dem Wissen, welches gegenwärtig ist. Wir möchten, dass es jedem möglich ist, sich von biologischen Lebensmitteln zu ernähren. Wir wollen gegen die Wegwerf-Gesellschaft angehen und unabhängig vorhandenes Wissen weitergeben. Wir wollen weiter kommen an den Punkt, an dem wir jetzt stehen.',
+website: 'https://biofürjede.ch/', created: 1504500000, modified: 1504504377});
 match (org:Organization {organizationId: '4'}), (np:NetworkingPlatform {platformId: '2'})
 merge (np)-[:CREATED]->(org);
 
