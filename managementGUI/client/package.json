@@ -10,8 +10,8 @@
     "watchify": "concurrently \"npm run watchify-public\" \"npm run watchify-admin\"",
     "test": "karma start karma.conf.js",
     "generate-icons": "vsvg -s ./static/svg/icons -t ./src/icons",
-    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude moment -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
-    "build-admin": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude moment -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
+    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude moment --exclude babel-polyfill -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
+    "build-admin": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude moment --exclude babel-polyfill -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
   },
   "browserify": {
     "transform": [
@@ -26,6 +26,7 @@
     "vuex": "vuex/dist/vuex.js",
     "axios": "axios/dist/axios.js",
     "moment": "moment/min/moment-with-locales.js",
+    "babel-polyfill": "babel-polyfill/dist/polyfill.min.js",
     "vue-svgicon": "vue-svgicon/dist/index.js",
     "vue-bootstrap-toggle": "vue-bootstrap-toggle/dist/index.js"
   },
@@ -36,6 +37,7 @@
     "vuex": "2.3.1",
     "axios": "0.16.2",
     "moment": "2.18.1",
+    "babel-polyfill": "6.26.0",
     "vue-svgicon": "^1.1.10",
     "vue-bootstrap-toggle": "1.1.1"
   },

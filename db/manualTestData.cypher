@@ -54,10 +54,12 @@ create (category:Category {categoryId: '13'})-[:DE]->(:CategoryTranslated {name:
 merge (category)-[:EN]->(:CategoryTranslated {name: 'Garden'});
 create (category:Category {categoryId: '14'})-[:DE]->(:CategoryTranslated {name: 'Versand und Import'})
 merge (category)-[:EN]->(:CategoryTranslated {name: 'Distribution and import'});
+create (category:Category {categoryId: '20'})-[:DE]->(:CategoryTranslated {name: 'Wirtschaft und Politik'})
+merge (category)-[:EN]->(:CategoryTranslated {name: 'Economy and politics'});
 
 //Set used categories for networking platform Transition Zürich
 match (np:NetworkingPlatform {platformId: '2'}), (category:Category)
-where category.categoryId IN ['9', '10', '11', '12', '13', '14']
+where category.categoryId IN ['9', '10', '11', '12', '13', '14', '20']
 merge (np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(category);
 
 //Create categories Gemeinsam Jetzt
@@ -110,3 +112,14 @@ with assigner
 match (category:Category)
 where category.categoryId IN ['7', '8']
 merge (assigner)-[:ASSIGNED]->(category);
+
+match (org:Organization {organizationId: '1'}), (np:NetworkingPlatform {platformId: '2'})
+merge (org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)
+with assigner
+match (category:Category)
+where category.categoryId IN ['20']
+merge (assigner)-[:ASSIGNED]->(category);
+
+//Epxort organizations
+match (org:Organization {organizationId: '1'}), (np:NetworkingPlatform {platformId: '2'})
+merge (org)-[:EXPORT {exportTimestamp: 1504593500}]->(np);

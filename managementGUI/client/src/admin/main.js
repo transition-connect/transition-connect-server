@@ -3,6 +3,7 @@ import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 import svgicon from 'vue-svgicon';
 import moment from 'moment';
+import "babel-polyfill";
 import App from './App.vue';
 import routes from './routes';
 
