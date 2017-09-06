@@ -6,7 +6,6 @@
                     {{organization.name}}
                 </router-link>
             </div>
-            <status-display :status-admin="organization.statusOrganizationAdmin"></status-display>
             <div class="np-name">Erstellt auf der Plattform
                 <span class="np-name-bold">{{organization.nameNetworkingPlatform}}</span>
             </div>
@@ -21,11 +20,10 @@
 </template>
 
 <script>
-    import StatusDisplay from './StatusDisplay.vue';
 
     export default {
         props: ['organization'],
-        components: {StatusDisplay}
+        components: {}
     }
 </script>
 
@@ -52,8 +50,7 @@
             .np-name {
                 display: inline-block;
                 line-height: 20px;
-                padding-left: 4px;
-                font-size: 12px;
+                font-size: 14px;
                 .np-name-bold {
                     font-weight: 500;
                 }
