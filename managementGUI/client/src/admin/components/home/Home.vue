@@ -7,6 +7,13 @@
                     <todo-element v-for="todo in overviewData.todo" :todo="todo"></todo-element>
                 </div>
             </div>
+            <div class="panel panel-default" v-show="overviewData.nps.length > 0">
+                <div class="panel-heading">Deine Vernetzungsplattform</div>
+                <div class="panel-body">
+                    <networking-platform-element v-for="np in overviewData.nps" :np="np"
+                                          :key="np.platformId"></networking-platform-element>
+                </div>
+            </div>
             <div class="panel panel-default" v-show="overviewData.organization.length > 0">
                 <div class="panel-heading">Deine Organisationen/Projekte</div>
                 <div class="panel-body">
@@ -21,12 +28,13 @@
 <script>
     import {HTTP} from './../../../utils/http-common';
     import OrganizationElement from './OrganizationElement.vue';
+    import NetworkingPlatformElement from './NetworkPlatformElement.vue';
     import TodoElement from './todo/TodoElement.vue';
 
     export default {
-        components: {OrganizationElement, TodoElement},
+        components: {OrganizationElement, NetworkingPlatformElement, TodoElement},
         data: function () {
-            return {overviewData: {organization: {}}};
+            return {overviewData: {organization: {}, nps: {}}};
         },
         created: function () {
             HTTP.get(`/admin/api`).then((resp) => {

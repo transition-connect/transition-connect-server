@@ -50,11 +50,6 @@
             max-width: $application-width;
             #tc-detail-header {
                 margin-bottom: 12px;
-                #org-name {
-                    font-size: 20px;
-                    font-weight: 500;
-                    padding-bottom: 3px;
-                }
             }
         }
     }

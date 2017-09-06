@@ -5,7 +5,7 @@ let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
 
-describe('Getting overview of all organization for an Administrator', function () {
+describe('Getting all administrated organizations for an Administrator', function () {
 
     let startTime;
 

@@ -5,6 +5,8 @@ let dbConnectionHandling = require('./dbConnectionHandling');
 
 let createNetworkingPlatform = function (networkingPlatformId, data) {
     data.name = data.name || `nP${networkingPlatformId}Name`;
+    data.description = data.description || `description${networkingPlatformId}`;
+    data.link = data.link || `www.nplink${networkingPlatformId}.org`;
     data.adminId = data.adminId || `1`;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(admin:Admin {adminId: {adminId}})`)
