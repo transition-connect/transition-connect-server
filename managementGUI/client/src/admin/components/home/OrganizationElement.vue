@@ -2,7 +2,9 @@
     <div class="org-container">
         <div class="org-header">
             <div class="org-title">
-                {{organization.name}}
+                <router-link :to="{name: 'orgDetail', params: {id: organization.organizationId}}">
+                    {{organization.name}}
+                </router-link>
             </div>
             <status-display :status-admin="organization.statusOrganizationAdmin"></status-display>
             <div class="np-name">Erstellt auf der Plattform
@@ -46,9 +48,6 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 max-width: 500px;
-            }
-            .org-title:hover {
-                text-decoration: underline;
             }
             .np-name {
                 display: inline-block;
