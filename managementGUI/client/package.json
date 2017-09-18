@@ -27,8 +27,7 @@
     "axios": "axios/dist/axios.js",
     "moment": "moment/min/moment-with-locales.js",
     "babel-polyfill": "babel-polyfill/dist/polyfill.min.js",
-    "vue-svgicon": "vue-svgicon/dist/index.js",
-    "vue-bootstrap-toggle": "vue-bootstrap-toggle/dist/index.js"
+    "vue-svgicon": "vue-svgicon/dist/index.js"
   },
   "dependencies": {
     "vue": "2.3.4",
@@ -38,8 +37,7 @@
     "axios": "0.16.2",
     "moment": "2.18.1",
     "babel-polyfill": "6.26.0",
-    "vue-svgicon": "^1.1.10",
-    "vue-bootstrap-toggle": "1.1.1"
+    "vue-svgicon": "^1.1.10"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

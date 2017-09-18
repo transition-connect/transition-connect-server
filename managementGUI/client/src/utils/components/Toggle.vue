@@ -8,6 +8,9 @@
         props: ['on', 'off', 'size', 'onstyle', 'offstyle', 'height', 'width', 'state'],
         mounted: function () {
             let element = this;
+            if (this.state) {
+                this.$el.checked = true;
+            }
             $(this.$el).bootstrapToggle({
                 on: this.on,
                 off: this.off,
@@ -17,11 +20,6 @@
                 height: this.height,
                 width: this.width
             });
-            if (this.state) {
-                $(this.$el).bootstrapToggle('on');
-            } else {
-                $(this.$el).bootstrapToggle('off');
-            }
             $(this.$el).change(function () {
                 element.$emit('changed', $(this).prop('checked'));
             });
