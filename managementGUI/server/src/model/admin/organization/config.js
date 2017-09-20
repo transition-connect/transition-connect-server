@@ -25,7 +25,10 @@ let checkAllowedToGetConfig = function (adminId, organizationId, req) {
 
 let getOrganizationCommand = function (organizationId) {
     return db.cypher().match(`(org:Organization {organizationId: {organizationId}})`)
-        .return(`org.name AS name`)
+        .optionalMatch(`(org)<-[:IS_ADMIN]-(admin:Admin)`)
+        .with(`org, admin`)
+        .orderBy(`admin.email`)
+        .return(`org.name AS name, COLLECT(admin.email) AS administrators`)
         .end({organizationId: organizationId}).getCommand();
 };
 

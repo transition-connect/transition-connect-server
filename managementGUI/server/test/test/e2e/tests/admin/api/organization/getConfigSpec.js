@@ -30,7 +30,7 @@ describe('Integration Tests for getting configuration of an organization', funct
             dbDsl.mapNetworkingPlatformToCategory('6', {npId: '3', usedCategoryId: '13', similarCategoryIds: []});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
-            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 502});
+            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502});
 
             dbDsl.assignOrganizationToCategory('1', {organizationId: '2', npId: '1', categories: ['1', '6']});
             dbDsl.assignOrganizationToCategory('2', {organizationId: '2', npId: '2', categories: ['10']});
@@ -54,6 +54,9 @@ describe('Integration Tests for getting configuration of an organization', funct
             res.status.should.equal(200);
 
             res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.administrators.length.should.equals(2);
+            res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
+            res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
 
             res.body.networkingPlatforms.length.should.equals(2);
 
