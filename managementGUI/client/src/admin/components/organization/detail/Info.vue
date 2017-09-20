@@ -20,8 +20,7 @@
                 <div class="org-detail-text">{{organization.description}}</div>
             </div>
             <div class="org-detail-row">
-                <div class="org-detail-title" v-if="organization.administrators.length === 1">E-Mail Administrator</div>
-                <div class="org-detail-title" v-if="organization.administrators.length > 1">E-Mail Administratoren</div>
+                <div class="org-detail-title">{{administratorEMail}}</div>
                 <div class="org-detail-text">
                     <div v-for="administrator in organization.administrators">
                         {{administrator}}
@@ -34,7 +33,16 @@
 
 <script>
     export default {
-        props: ['organization']
+        props: ['organization'],
+        computed: {
+            administratorEMail: function () {
+                if (this.organization && this.organization.administrators) {
+                    return this.organization.administrators.length > 1
+                        ? 'Administratoren' : 'Administrator';
+                }
+                return '';
+            }
+        }
     }
 </script>
 
