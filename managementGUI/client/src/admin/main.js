@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 import svgicon from 'vue-svgicon';
+import 'innersvg-polyfill';
 import moment from 'moment';
 import es6Promise from 'es6-promise';
 import "babel-polyfill";
