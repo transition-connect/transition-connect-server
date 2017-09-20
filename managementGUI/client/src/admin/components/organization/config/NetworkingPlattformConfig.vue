@@ -2,7 +2,9 @@
     <div class="np-config">
         <div class="np-config-header">
             <div class="sync-toggle-container">
-                <toggle on="Ja" off="Nein" size="normal" onstyle="success" offstyle="danger" :state="np.isExported"
+                <toggle on="Ja" off="Nein" size="normal"
+                        :onstyle="np.isExported ? 'success': 'warning'"
+                        :offstyle="!np.isExported ? 'danger': 'warning'" :state="np.isExported"
                         height="32px" width="80px" @changed="syncChanged"></toggle>
                 <span class="np-name">Synchronisieren mit {{np.name}}</span>
             </div>
@@ -16,7 +18,7 @@
             <div v-for="category in np.categories">
                 <div class="checkbox">
                     <label><input type="checkbox" v-model="category.isSelected">
-                        <span :class="{disabled: !np.isExported}">{{category.name}}</span>
+                        <span>{{category.name}}</span>
                     </label>
                 </div>
             </div>
@@ -33,9 +35,18 @@
         data: function () {
             return {config: {}};
         },
+        watch: {
+            np: {
+                handler: function () {
+                    this.$emit('changed');
+                },
+                deep: true
+            }
+        },
         methods: {
             syncChanged: function (newState) {
                 this.np.isExported = newState;
+                this.$emit('changed');
             }
         }
     }
