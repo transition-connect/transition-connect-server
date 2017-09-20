@@ -28,6 +28,7 @@
             padding: 3px 6px;
             border-radius: 4px;
             display: inline-block;
+            font-size: 12px;
             background-color: #616161;
             color: #ffffff;
         }
