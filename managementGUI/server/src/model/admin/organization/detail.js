@@ -47,9 +47,13 @@ let getOrganizationCommand = function (organizationId, language) {
         .where(`TYPE(categoryLanguage) = {language}`)
         .with(`np, org, categoryTranslated`)
         .orderBy(`categoryTranslated.name`)
+        .with(`np, org, COLLECT(categoryTranslated.name) AS categories`)
+        .optionalMatch(`(org)<-[:IS_ADMIN]-(admin:Admin)`)
+        .with(`np, org, categories, admin`)
+        .orderBy(`admin.email`)
         .return(`org.name AS name, org.slogan AS slogan, org.description AS description, org.website AS website,
                  org.created AS created, org.modified AS modified, np.name AS createdNetworkingPlatformName,
-                 COLLECT(categoryTranslated.name) AS categories`)
+                 categories, COLLECT(admin.email) AS administrators`)
         .end({organizationId: organizationId, language: language}).getCommand();
 };
 

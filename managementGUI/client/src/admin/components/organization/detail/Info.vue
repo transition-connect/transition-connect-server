@@ -19,6 +19,15 @@
                 <div class="org-detail-title">Beschreibung</div>
                 <div class="org-detail-text">{{organization.description}}</div>
             </div>
+            <div class="org-detail-row">
+                <div class="org-detail-title" v-if="organization.administrators.length === 1">E-Mail Administrator</div>
+                <div class="org-detail-title" v-if="organization.administrators.length > 1">E-Mail Administratoren</div>
+                <div class="org-detail-text">
+                    <div v-for="administrator in organization.administrators">
+                        {{administrator}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
