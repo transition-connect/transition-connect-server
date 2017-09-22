@@ -10,7 +10,8 @@
                     </button>
                 </div>
             </div>
-            <administrator :admins="config.organization.administrators"></administrator>
+            <administrator :admins="config.organization.administrators"
+                           @changed="configChanged"></administrator>
             <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
                                         :np="networkingPlatform" @changed="configChanged">
             </networking-platform-config>
@@ -40,7 +41,9 @@
         methods: {
             configChanged: function () {
                 this.showConfigChanged = JSON.stringify(this.config.networkingPlatforms)
-                    !== JSON.stringify(this.configOriginal.networkingPlatforms);
+                    !== JSON.stringify(this.configOriginal.networkingPlatforms) ||
+                    JSON.stringify(this.config.organization.administrators)
+                    !== JSON.stringify(this.configOriginal.organization.administrators);
             }
         }
     }

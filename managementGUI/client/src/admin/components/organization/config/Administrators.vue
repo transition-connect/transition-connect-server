@@ -35,12 +35,14 @@
             addAdministrator: function () {
                 if (!this.checkEMailExists(this.email)) {
                     this.admins.push(this.email);
+                    this.$emit('changed');
                 }
                 this.email = '';
             },
             removeAdministrator: function (adminToRemove) {
                 if (this.admins && this.admins.length > 1) {
                     this.admins.splice(this.admins.findIndex((admin) => admin === adminToRemove), 1);
+                    this.$emit('changed');
                 }
             },
             checkEMailExists: function (email) {
