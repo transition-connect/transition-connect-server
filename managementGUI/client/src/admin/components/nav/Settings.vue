@@ -13,7 +13,6 @@
 
 <script>
     import {HTTP} from './../../../utils/http-common';
-    import '../../../icons/settings'
 
     export default {
         methods: {
