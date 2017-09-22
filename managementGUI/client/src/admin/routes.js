@@ -6,6 +6,7 @@ import NetworkingPlatformDetail from './components/networkingPlatform/detail/Net
 export default [
     {
         path: '/',
+        name: 'Home',
         component: Home
     },
     {

@@ -1,7 +1,8 @@
 <template>
     <div id="tc-header">
         <div id="tc-header-container">
-            <div id="tc-logo">TRANSITION-<span class="c-logo">C</span>ONNECT</div>
+            <div id="tc-logo"v-on:click="$router.push({name: 'Home'})">
+                TRANSITION-<span class="c-logo">C</span>ONNECT</div>
             <nav-settings id="nav-settings"></nav-settings>
         </div>
     </div>
@@ -41,6 +42,7 @@
                 font-weight: 500;
                 line-height: 80px;
                 color: #4D4D4D;
+                cursor: pointer;
                 .c-logo {
                     color: #2A7FFF;
                 }
