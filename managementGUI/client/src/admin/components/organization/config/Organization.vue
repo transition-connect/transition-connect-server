@@ -10,6 +10,7 @@
                     </button>
                 </div>
             </div>
+            <administrator :admins="config.organization.administrators"></administrator>
             <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
                                         :np="networkingPlatform" @changed="configChanged">
             </networking-platform-config>
@@ -20,11 +21,12 @@
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import Administrator from './Administrators.vue';
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
 
     export default {
-        components: {NetworkingPlatformConfig, ChangeConfigCommand},
+        components: {Administrator, NetworkingPlatformConfig, ChangeConfigCommand},
         data: function () {
             return {config: {organization: {}}, showConfigChanged: false};
         },
@@ -51,11 +53,12 @@
         width: 100%;
         padding-top: 104px;
         #tc-container {
-            margin: 0 auto 90px auto;
+            margin: 0 auto;
+            padding-bottom: 90px;
             width: 100%;
             max-width: $application-width;
             #org-config-header {
-                margin-bottom: 32px;
+                margin-bottom: 12px;
                 border-bottom: 1px solid $divider;
                 #org-name {
                     font-size: 20px;
