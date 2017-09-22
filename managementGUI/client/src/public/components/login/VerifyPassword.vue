@@ -8,7 +8,7 @@
         </div>
         <button v-on:click.prevent="abort" class="btn btn-default">Abbrechen</button>
         <button v-on:click.prevent="sendPasswordVerification" class="btn btn-primary"
-                :disabled="errors.has('password') || password === ''">Login
+                :disabled="errors.has('password') || password === '' || !password">Login
         </button>
     </form>
 </template>

@@ -8,7 +8,7 @@
             <p class="text-danger" v-show="errors.has('email')">Korrekte E-Mail Adresse wird benötigt</p>
         </div>
         <button v-on:click.prevent="sendPasswordRequest" class="btn btn-primary"
-                :disabled="errors.has('email') || email === ''">Weiter
+                :disabled="errors.has('email') || email === '' || !email">Weiter
         </button>
     </form>
 </template>
