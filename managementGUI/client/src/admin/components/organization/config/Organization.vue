@@ -2,12 +2,10 @@
     <div id="tc-config-organization">
         <div id="tc-container">
             <div id="org-config-header">
-                <div id="org-name">Konfiguration für '{{config.organization.name}}'</div>
-                <div id="org-config-commands">
-                    <button type="button" class="btn btn-default"
-                            v-on:click="$router.push({name: 'orgDetail', params: {id: $route.params.id}})">
-                        Detailansicht
-                    </button>
+                <div id="org-name">Konfiguration für '
+                    <router-link :to="{name: 'orgDetail', params: {id: $route.params.id}}">
+                        {{config.organization.name}}'
+                    </router-link>
                 </div>
             </div>
             <administrator :admins="config.organization.administrators"
@@ -61,14 +59,11 @@
             width: 100%;
             max-width: $application-width;
             #org-config-header {
-                margin-bottom: 12px;
+                margin-bottom: 18px;
                 border-bottom: 1px solid $divider;
                 #org-name {
                     font-size: 20px;
                     font-weight: 500;
-                    padding-bottom: 6px;
-                }
-                #org-config-commands {
                     padding-bottom: 6px;
                 }
             }
