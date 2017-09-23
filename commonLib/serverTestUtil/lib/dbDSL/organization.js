@@ -25,16 +25,16 @@ let createOrganization = function (organizationId, data) {
         }).getCommand());
 };
 
-let assignOrganizationToCategory = function (categoryAssignerId, data) {
+let assignOrganizationToCategory = function (data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner {assignerId: {categoryAssignerId}})-[:ASSIGNED]->(np)`)
+        .merge(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
         .with(`assigner`)
         .match(`(category:Category)`)
         .where(`category.categoryId IN {categories}`)
         .createUnique(`(assigner)-[:ASSIGNED]->(category)`)
         .end({
-            categoryAssignerId: categoryAssignerId, organizationId: data.organizationId,
+            organizationId: data.organizationId,
             categories: data.categories, npId: data.npId
         }).getCommand());
 };

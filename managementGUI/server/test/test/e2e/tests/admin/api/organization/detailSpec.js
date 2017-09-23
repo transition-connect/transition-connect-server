@@ -33,9 +33,9 @@ describe('Integration Tests for getting details of an organization', function ()
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500, lastUpdate: 500});
             dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502, lastUpdate: 503});
 
-            dbDsl.assignOrganizationToCategory('1', {organizationId: '2', npId: '1', categories: ['1', '6']});
-            dbDsl.assignOrganizationToCategory('2', {organizationId: '2', npId: '2', categories: ['10']});
-            dbDsl.assignOrganizationToCategory('3', {organizationId: '2', npId: '3', categories: ['13', '14']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', categories: ['13', '14']});
         });
     });
 

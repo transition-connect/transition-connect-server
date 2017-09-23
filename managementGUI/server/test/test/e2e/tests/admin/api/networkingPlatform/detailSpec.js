@@ -37,15 +37,15 @@ describe('Integration Tests for getting details of a networking platform', funct
             dbDsl.createOrganization('5', {networkingPlatformId: '3', adminIds: ['3'], created: 508, lastUpdate: 509});
             dbDsl.createOrganization('6', {networkingPlatformId: '3', adminIds: ['3'], created: 510, lastUpdate: 511});
 
-            dbDsl.assignOrganizationToCategory('1', {organizationId: '2', npId: '1', categories: ['1', '6']});
-            dbDsl.assignOrganizationToCategory('2', {organizationId: '2', npId: '2', categories: ['10']});
-            dbDsl.assignOrganizationToCategory('3', {organizationId: '2', npId: '3', categories: ['13', '14']});
-            dbDsl.assignOrganizationToCategory('4', {organizationId: '3', npId: '1', categories: ['7', '6']});
-            dbDsl.assignOrganizationToCategory('5', {organizationId: '4', npId: '1', categories: ['7']});
-            dbDsl.assignOrganizationToCategory('6', {organizationId: '5', npId: '1', categories: ['6']});
-            dbDsl.assignOrganizationToCategory('7', {organizationId: '5', npId: '3', categories: ['13']});
-            dbDsl.assignOrganizationToCategory('8', {organizationId: '6', npId: '1', categories: ['1']});
-            dbDsl.assignOrganizationToCategory('9', {organizationId: '6', npId: '3', categories: ['14']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', categories: ['13', '14']});
+            dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '1', categories: ['7', '6']});
+            dbDsl.assignOrganizationToCategory({organizationId: '4', npId: '1', categories: ['7']});
+            dbDsl.assignOrganizationToCategory({organizationId: '5', npId: '1', categories: ['6']});
+            dbDsl.assignOrganizationToCategory({organizationId: '5', npId: '3', categories: ['13']});
+            dbDsl.assignOrganizationToCategory({organizationId: '6', npId: '1', categories: ['1']});
+            dbDsl.assignOrganizationToCategory({organizationId: '6', npId: '3', categories: ['14']});
 
             dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 504});
             dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});

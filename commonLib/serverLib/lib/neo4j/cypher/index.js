@@ -50,6 +50,14 @@ let Cypher = function (driver) {
         return this.chainingQuery(condition, ' MERGE ', true);
     };
 
+    this.onCreate = function (condition) {
+        return this.chainingQuery(condition, ' ON CREATE ', true);
+    };
+
+    this.onMatch = function (condition) {
+        return this.chainingQuery(condition, ' ON MATCH ', true);
+    };
+
     this.case = function (condition) {
         return this.chainingQuery(condition, ' CASE ');
     };
