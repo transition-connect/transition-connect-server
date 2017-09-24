@@ -51,11 +51,11 @@ let Cypher = function (driver) {
     };
 
     this.onCreate = function (condition) {
-        return this.chainingQuery(condition, ' ON CREATE ', true);
+        return this.chainingQuery(condition, ' ON CREATE ');
     };
 
     this.onMatch = function (condition) {
-        return this.chainingQuery(condition, ' ON MATCH ', true);
+        return this.chainingQuery(condition, ' ON MATCH ');
     };
 
     this.case = function (condition) {

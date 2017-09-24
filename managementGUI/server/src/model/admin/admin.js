@@ -15,9 +15,9 @@ let getTodoResponse = function (todos) {
 };
 
 let getTodo = function (adminId) {
-    return db.cypher().match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[isAdmin:IS_ADMIN]
+    return db.cypher().match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]
                               -(:Admin {adminId: {adminId}})`)
-        .where(`NOT EXISTS(isAdmin.lastConfigUpdate)`)
+        .where(`NOT EXISTS(org.lastConfigUpdate)`)
         .return(`np, org, 'INIT_ORGANISATION' AS action`)
         .end({adminId: adminId}).getCommand();
 };

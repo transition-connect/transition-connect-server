@@ -3,6 +3,7 @@
 let db = require('server-lib').neo4j;
 let logger = require('server-lib').logging.getLogger(__filename);
 let exceptions = require('server-lib').exceptions;
+let time = require('server-lib').time;
 let _ = require('lodash');
 
 let checkCategoryForNPExists = function (adminId, nps, databaseNpsConfig, req) {
@@ -76,33 +77,32 @@ let assignCategories = function (organizationId, nps) {
         .end({organizationId: organizationId, nps: nps}).getCommand();
 };
 
-let setExport = function (organizationId, nps) {
+let setExportRelationship = function (manuallyAcceptOrg, exportLabel, lastConfigUpdate, organizationId, nps) {
     return db.cypher().unwind(`{nps} AS np`)
         .match(`(org:Organization {organizationId: {organizationId}}), 
                 (networkingPlatform:NetworkingPlatform {platformId: np.platformId})-[:EXPORT_RULES]->(rules:ExportRules)`)
-        .where(`NOT (org)-[]->(networkingPlatform) AND rules.manuallyAcceptOrganization = false`)
-        .merge(`(org)-[:EXPORT]->(networkingPlatform)`)
-        .return(`NULL`).union()
-        .unwind(`{nps} AS np`)
-        .match(`(org:Organization {organizationId: {organizationId}}), 
-                (networkingPlatform:NetworkingPlatform {platformId: np.platformId})-[:EXPORT_RULES]->(rules:ExportRules)`)
-        .where(`NOT (org)-[]->(networkingPlatform) AND rules.manuallyAcceptOrganization = true`)
-        .merge(`(org)-[:EXPORT_REQUEST]->(networkingPlatform)`)
-        .return(`NULL`).union()
-        .match(`(:Organization {organizationId: {organizationId}})-[export:EXPORT|EXPORT_REQUEST]->(np:NetworkingPlatform)`)
+        .where(`NOT (org)-[]->(networkingPlatform) AND rules.manuallyAcceptOrganization = ${manuallyAcceptOrg}`)
+        .merge(`(org)-[${exportLabel}]->(networkingPlatform)`)
+        .set(`org`, {lastConfigUpdate: lastConfigUpdate})
+        .return(`NULL`).end({organizationId: organizationId, nps: nps}).getCommand();
+};
+
+let setExport = function (commands, organizationId, nps) {
+    let lastConfigUpdate = time.getNowUtcTimestamp();
+    commands.push(setExportRelationship('false', ':EXPORT', lastConfigUpdate, organizationId, nps));
+    commands.push(setExportRelationship('true', ':EXPORT_REQUEST', lastConfigUpdate, organizationId, nps));
+    return db.cypher().match(`(:Organization {organizationId: {organizationId}})
+                              -[export:EXPORT|EXPORT_REQUEST]->(np:NetworkingPlatform)`)
         .where(`none(np2 IN {nps} WHERE np2.platformId = np.platformId)`)
         .delete(`export`)
-        .return(`NULL`)
         .end({organizationId: organizationId, nps: nps});
 };
 
 
 let changeConfig = function (adminId, params, req) {
     return checkAllowedToEditConfig(adminId, params.organizationId, params.nps, req).then(function () {
-        let commands = [];
-        commands.push(assignCategories(params.organizationId, params.nps));
-        return setExport(params.organizationId, params.nps)
-            .send(commands);
+        let commands = [assignCategories(params.organizationId, params.nps)];
+        return setExport(commands, params.organizationId, params.nps).send(commands);
     });
 };
 

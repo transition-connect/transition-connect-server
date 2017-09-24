@@ -60,13 +60,14 @@ describe('Integration Tests for saving export config of an organization', functi
                 });
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`exportedNP.platformId AS platformId`)
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId`)
                 .orderBy(`exportedNP.platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(2);
             nps[0].platformId.should.equals('2');
+            nps[0].org.lastConfigUpdate.should.at.least(startTime);
             nps[1].platformId.should.equals('3');
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
@@ -206,12 +207,13 @@ describe('Integration Tests for saving export config of an organization', functi
                 .return(`exportedNP.platformId AS platformId`).end().send();
         }).then(function (nps) {
             nps.length.should.equals(0);
-            return db.cypher().match("(:Organization {organizationId: '2'})-[:EXPORT_REQUEST]->(exportedNP:NetworkingPlatform)")
-                .return(`exportedNP.platformId AS platformId`)
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT_REQUEST]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
             nps[0].platformId.should.equals('2');
+            nps[0].org.lastConfigUpdate.should.at.least(startTime);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
                                       -[:ASSIGNED]->(np:NetworkingPlatform)`)

@@ -9,11 +9,12 @@ let createOrganization = function (organizationId, data) {
     data.website = data.website || `www.link${organizationId}.org`;
     data.slogan = data.slogan || `best${organizationId}Org`;
     data.modified = data.modified || data.created;
+    data.lastConfigUpdate = data.lastConfigUpdate || null;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
         .createUnique(`(np)-[:CREATED]->(org:Organization {organizationId: {organizationId}, name: {name}, 
                        description: {description}, slogan: {slogan}, website: {website}, 
-                       created: {created}, modified: {modified}})`)
+                       created: {created}, modified: {modified}, lastConfigUpdate: {lastConfigUpdate}})`)
         .with(`org`)
         .match(`(admin:Admin)`)
         .where(`admin.adminId IN {adminIds}`)
@@ -21,6 +22,7 @@ let createOrganization = function (organizationId, data) {
         .end({
             organizationId: organizationId, platformId: data.networkingPlatformId,
             name: data.name, adminIds: data.adminIds, created: data.created, modified: data.modified,
+            lastConfigUpdate: data.lastConfigUpdate,
             description: data.description, website: data.website, slogan: data.slogan
         }).getCommand());
 };

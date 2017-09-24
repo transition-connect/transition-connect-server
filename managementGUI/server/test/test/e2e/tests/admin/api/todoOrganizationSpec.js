@@ -27,6 +27,7 @@ describe('Getting todo lists for an Administrator of an Organisation', function 
 
         dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['2'], created: 500});
         dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 501});
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 502, lastConfigUpdate: 503});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
