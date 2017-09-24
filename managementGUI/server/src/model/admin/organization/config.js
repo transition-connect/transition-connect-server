@@ -61,56 +61,6 @@ let getConfig = function (adminId, organizationId, language, req) {
     });
 };
 
-/**
- * First Step: Delete all CategoryAssigner except the CategoryAssigner which belongs to the creator networking platform
- * of the organization. Second Step: Assign categories to CategoryAssigner.
- *
- * @param organizationId
- * @param nps
- * @returns {{statement, parameters, isWriteCommand}}
- */
-let assignCategories = function (organizationId, nps) {
-    return db.cypher()
-        .match(`(org:Organization {organizationId: {organizationId}})-[rel1:ASSIGNED]->(assigner:CategoryAssigner)
-                 -[:ASSIGNED]->(networkingPlatform:NetworkingPlatform)`)
-        .where(`NOT (org)<-[:CREATED]-(networkingPlatform)`)
-        .match(`(assigner)-[rel2]->()`)
-        .delete(`rel1, rel2, assigner`)
-        .return(`NULL AS dummy`)
-        .union()
-        .unwind(`{nps} AS np`)
-        .match(`(org:Organization {organizationId: {organizationId}}), 
-                (networkingPlatform:NetworkingPlatform {platformId: np.platformId})`)
-        .where(`NOT (org)<-[:CREATED]-(networkingPlatform)`)
-        .merge(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(networkingPlatform)`)
-        .with(`np.categories AS categories, assigner`)
-        .unwind(`categories AS categoryId`)
-        .match(`(category:Category {categoryId: categoryId})`)
-        .merge(`(assigner)-[:ASSIGNED]->(category)`)
-        .return(`NULL AS dummy`)
-        .end({organizationId: organizationId, nps: nps}).getCommand();
-};
-
-let setExport = function (organizationId, nps) {
-    return db.cypher().unwind(`{nps} AS np`)
-        .match(`(org:Organization {organizationId: {organizationId}}), 
-                    (networkingPlatform:NetworkingPlatform {platformId: np.platformId})`)
-        .where(`NOT (org)-[]->(networkingPlatform)`)
-        .merge(`(org)-[:EXPORT]->(networkingPlatform)`)
-        .end({organizationId: organizationId, nps: nps});
-};
-
-
-let changeConfig = function (adminId, params, req) {
-    return checkAllowedToAccessConfig(adminId, params.organizationId, req).then(function () {
-        let commands = [];
-        commands.push(assignCategories(params.organizationId, params.nps));
-        return setExport(params.organizationId, params.nps)
-            .send(commands);
-    });
-};
-
 module.exports = {
-    getConfig,
-    changeConfig
+    getConfig
 };

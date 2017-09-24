@@ -19,6 +19,15 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
         }).getCommand());
 };
 
+let createNetworkingPlatformExportRules = function (networkingPlatformId, data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
+        .create(`(np)-[:EXPORT_RULES]->(:ExportRules {manuallyAcceptOrganization: {manuallyAcceptOrganization}})`)
+        .end({
+            platformId: networkingPlatformId, manuallyAcceptOrganization: data.manuallyAcceptOrganization
+        }).getCommand());
+};
+
 let mapNetworkingPlatformToCategory = function (mappingId, data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
@@ -38,5 +47,6 @@ let mapNetworkingPlatformToCategory = function (mappingId, data) {
 
 module.exports = {
     createNetworkingPlatform,
+    createNetworkingPlatformExportRules,
     mapNetworkingPlatformToCategory
 };

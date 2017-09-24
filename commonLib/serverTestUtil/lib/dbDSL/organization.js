@@ -41,9 +41,10 @@ let assignOrganizationToCategory = function (data) {
 
 let exportOrgToNp = function (data) {
     data.exportTimestamp = data.exportTimestamp || null;
+    data.exportStatus = data.exportStatus || ':EXPORT';
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT {exportTimestamp: {exportTimestamp}}]->(np)`)
+        .createUnique(`(org)-[${data.exportStatus} {exportTimestamp: {exportTimestamp}}]->(np)`)
         .end({
             organizationId: data.organizationId, npId: data.npId, exportTimestamp: data.exportTimestamp
         }).getCommand());
