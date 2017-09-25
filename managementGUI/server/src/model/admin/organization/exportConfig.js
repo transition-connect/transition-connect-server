@@ -64,9 +64,28 @@ let checkAllowedToEditConfig = function (adminId, organizationId, nps, req) {
         });
 };
 
+let setLastConfigUpdateOnCategoryAssigner = function (organizationId, nps) {
+    return db.cypher().unwind(`{nps} AS np`)
+        .match(`(org:Organization {organizationId: {organizationId}})-[:ASSIGNED]->(assigner:CategoryAssigner)
+                 -[:ASSIGNED]->(networkingPlatform:NetworkingPlatform {platformId: np.platformId})`)
+        .with(`np, assigner`)
+        .match(`(assigner)-[:ASSIGNED]->(category:Category)`)
+        .with(`np, assigner, category`)
+        .orderBy(`category.categoryId`)
+        .with(`np, assigner, collect(category.categoryId) AS categories`)
+        .unwind(`np.categories AS category`)
+        .with(`np, assigner, category, categories`)
+        .orderBy(`category`)
+        .with(`np, assigner, categories, collect(category) AS npCategories`)
+        .where(`categories <> npCategories`)
+        .set(`assigner`, {lastConfigUpdate: time.getNowUtcTimestamp()})
+        .end({organizationId: organizationId, nps: nps}).getCommand();
+};
+
 /**
- * First Step: Delete all CategoryAssigner except the CategoryAssigner which belongs to the creator networking platform
- * of the organization. Second Step: Assign categories to CategoryAssigner.
+ * First Step: Delete all categories of CategoryAssigner except the categories of the CategoryAssigner
+ * which belongs to the creator networking platform of the organization.
+ * Second Step: Assign categories to CategoryAssigner.
  *
  * @param organizationId
  * @param nps
@@ -74,23 +93,24 @@ let checkAllowedToEditConfig = function (adminId, organizationId, nps, req) {
  */
 let assignCategories = function (organizationId, nps) {
     return db.cypher()
-        .match(`(org:Organization {organizationId: {organizationId}})-[rel1:ASSIGNED]->(assigner:CategoryAssigner)
+        .match(`(org:Organization {organizationId: {organizationId}})-[:ASSIGNED]->(assigner:CategoryAssigner)
                  -[:ASSIGNED]->(networkingPlatform:NetworkingPlatform)`)
         .where(`NOT (org)<-[:CREATED]-(networkingPlatform)`)
-        .match(`(assigner)-[rel2]->()`)
-        .delete(`rel1, rel2, assigner`)
+        .match(`(assigner)-[rel]->(:Category)`)
+        .delete(`rel`)
         .return(`NULL`).union()
         .unwind(`{nps} AS np`)
         .match(`(org:Organization {organizationId: {organizationId}}), 
                 (networkingPlatform:NetworkingPlatform {platformId: np.platformId})`)
         .where(`NOT (org)<-[:CREATED]-(networkingPlatform)`)
         .merge(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(networkingPlatform)`)
+        .onCreate(`SET assigner.lastConfigUpdate = {now}`)
         .with(`np.categories AS categories, assigner`)
         .unwind(`categories AS categoryId`)
         .match(`(category:Category {categoryId: categoryId})`)
         .merge(`(assigner)-[:ASSIGNED]->(category)`)
         .return(`NULL`)
-        .end({organizationId: organizationId, nps: nps}).getCommand();
+        .end({organizationId: organizationId, nps: nps, now: time.getNowUtcTimestamp()}).getCommand();
 };
 
 let setExportRelationship = function (manuallyAcceptOrg, exportLabel, lastConfigUpdate, organizationId, nps) {
@@ -117,7 +137,9 @@ let setExport = function (commands, organizationId, nps) {
 
 let changeConfig = function (adminId, params, req) {
     return checkAllowedToEditConfig(adminId, params.organizationId, params.nps, req).then(function () {
-        let commands = [assignCategories(params.organizationId, params.nps)];
+        let commands = [
+            setLastConfigUpdateOnCategoryAssigner(params.organizationId, params.nps),
+            assignCategories(params.organizationId, params.nps)];
         return setExport(commands, params.organizationId, params.nps).send(commands);
     });
 };

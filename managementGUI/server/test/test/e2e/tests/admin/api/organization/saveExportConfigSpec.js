@@ -35,8 +35,8 @@ describe('Integration Tests for saving export config of an organization', functi
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
             dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502});
 
-            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
-            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['11']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', lastConfigUpdate: 600, categories: ['1', '6']});
+            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', lastConfigUpdate: 601, categories: ['11']});
         });
     });
 
@@ -69,26 +69,31 @@ describe('Integration Tests for saving export config of an organization', functi
             nps[0].platformId.should.equals('2');
             nps[0].org.lastConfigUpdate.should.at.least(startTime);
             nps[1].platformId.should.equals('3');
+            nps[1].org.lastConfigUpdate.should.at.least(startTime);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
                                       -[:ASSIGNED]->(np:NetworkingPlatform)`)
                 .with(`assigner, np`)
                 .match(`(assigner)-[:ASSIGNED]->(category:Category)`)
-                .with(`np, category`)
+                .with(`np, assigner, category`)
                 .orderBy(`category.categoryId`)
-                .return(`np.platformId AS platformId, collect(category.categoryId) AS categories`)
+                .return(`np.platformId AS platformId, assigner.lastConfigUpdate AS lastConfigUpdate,
+                 collect(category.categoryId) AS categories`)
                 .orderBy(`np.platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(3);
             nps[0].platformId.should.equals('1');
+            nps[0].lastConfigUpdate.should.equals(600);
             nps[0].categories.length.should.equals(2);
             nps[0].categories[0].should.equals('1');
             nps[0].categories[1].should.equals('6');
             nps[1].platformId.should.equals('2');
+            nps[1].lastConfigUpdate.should.at.least(startTime);
             nps[1].categories.length.should.equals(1);
             nps[1].categories[0].should.equals('10');
             nps[2].platformId.should.equals('3');
+            nps[2].lastConfigUpdate.should.at.least(startTime);
             nps[2].categories.length.should.equals(2);
             nps[2].categories[0].should.equals('14');
             nps[2].categories[1].should.equals('15');
@@ -185,6 +190,56 @@ describe('Integration Tests for saving export config of an organization', functi
             nps[1].platformId.should.equals('2');
             nps[1].categories.length.should.equals(1);
             nps[1].categories[0].should.equals('11');
+        });
+    });
+
+    it('Activate export with no change of previous categories', function () {
+
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', lastConfigUpdate: 601, categories: ['14', '15']});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/exportConfig',
+                {
+                    organizationId: '2', nps: [
+                    {platformId: '3', categories: ['15', '14']}]
+                });
+        }).then(function (res) {
+            res.status.should.equal(200);
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId`)
+                .orderBy(`exportedNP.platformId`)
+                .end().send();
+        }).then(function (nps) {
+            nps.length.should.equals(1);
+            nps[0].platformId.should.equals('3');
+            nps[0].org.lastConfigUpdate.should.at.least(startTime);
+
+            return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
+                                      -[:ASSIGNED]->(np:NetworkingPlatform)`)
+                .with(`assigner, np`)
+                .match(`(assigner)-[:ASSIGNED]->(category:Category)`)
+                .with(`np, assigner, category`)
+                .orderBy(`category.categoryId`)
+                .return(`np.platformId AS platformId, assigner.lastConfigUpdate AS lastConfigUpdate,
+                 collect(category.categoryId) AS categories`)
+                .orderBy(`np.platformId`)
+                .end().send();
+        }).then(function (nps) {
+            nps.length.should.equals(2);
+            nps[0].platformId.should.equals('1');
+            nps[0].lastConfigUpdate.should.equals(600);
+            nps[0].categories.length.should.equals(2);
+            nps[0].categories[0].should.equals('1');
+            nps[0].categories[1].should.equals('6');
+            nps[1].platformId.should.equals('3');
+            nps[1].lastConfigUpdate.should.equals(601);
+            nps[1].categories.length.should.equals(2);
+            nps[1].categories[0].should.equals('14');
+            nps[1].categories[1].should.equals('15');
         });
     });
 
