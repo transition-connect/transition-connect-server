@@ -2,12 +2,15 @@
     <div id="tc-commands-config-container">
         <div id="tc-commands">
             <button type="button" id="change-config-button" class="btn btn-warning"
-                    v-on:click="changeExportConfig" :disabled="showLoading">
+                    v-on:click="changeExportConfig" :disabled="showLoading || !isValidNpConfig">
                 Konfiguration ändern
             </button>
             <loader id="config-change-loader" v-show="showLoading"></loader>
             <div id="config-upload-failed" v-show="configUpdateFailed">
                 Fehler: Konfiguration konnte nicht gespeichert werden
+            </div>
+            <div id="invalid-config" v-show="!isValidNpConfig">
+                Konfiguration ist noch nicht vollständig
             </div>
         </div>
     </div>
@@ -17,6 +20,7 @@
     import {HTTP} from './../../../../utils/http-common';
     import Loader from './../../../../utils/components/Loader.vue';
     import {getExportMessage} from './exportConfigHandler';
+    import {isValidConfig} from './exportConfigHandler';
 
     export default {
         components: {Loader},
@@ -40,6 +44,11 @@
                         this.configUpdateFailed = true;
                     })
                 }
+            }
+        },
+        computed: {
+            isValidNpConfig: function () {
+                return isValidConfig(this.nps);
             }
         }
     }
@@ -74,6 +83,11 @@
                 display: inline-block;
                 font-weight: 500;
                 color: $error;
+            }
+            #invalid-config {
+                display: inline-block;
+                font-weight: 500;
+                color: $warning;
             }
         }
     }

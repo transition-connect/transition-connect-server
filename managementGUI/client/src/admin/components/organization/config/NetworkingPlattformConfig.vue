@@ -15,6 +15,9 @@
             <div class="category-title">
                 Welchen Kategorien soll dieses Projekt auf {{np.name}} zugeordnet werden?
             </div>
+            <div id="category-config-warning" v-show="!categorySelected">
+                Mindestens eine Kategorie muss ausgewählt werden
+            </div>
             <div v-for="category in np.categories">
                 <div class="checkbox">
                     <label><input type="checkbox" v-model="category.isSelected">
@@ -33,11 +36,17 @@
         components: {Toggle},
         props: ['np'],
         data: function () {
-            return {config: {}};
+            return {config: {}, categorySelected: true};
         },
         watch: {
             np: {
-                handler: function () {
+                handler: function (newNp) {
+                    this.categorySelected = false;
+                    for (let category of newNp.categories) {
+                        if (category.isSelected) {
+                            this.categorySelected = true;
+                        }
+                    }
                     this.$emit('changed');
                 },
                 deep: true
@@ -79,6 +88,10 @@
             .category-title {
                 font-size: 14px;
                 font-weight: 500;
+            }
+            #category-config-warning {
+                font-size: 12px;
+                color: $warning;
             }
         }
     }
