@@ -1,6 +1,6 @@
 import Home from './components/home/Home.vue';
-import OrganizationConfig from './components/organization/config/Organization.vue';
-import OrganizationDetail from './components/organization/detail/Organization.vue';
+import OrganizationConfig from './components/organization/config/Config.vue';
+import OrganizationDetail from './components/organization/detail/Detail.vue';
 import NetworkingPlatformDetail from './components/networkingPlatform/detail/NetworkingPlatform.vue';
 
 export default [
