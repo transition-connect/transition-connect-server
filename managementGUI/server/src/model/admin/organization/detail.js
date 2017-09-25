@@ -25,7 +25,7 @@ let checkAllowedToGetDetail = function (adminId, organizationId, req) {
 
 let setStatus = function (nps, orgModifiedTimestamp) {
     for (let np of nps) {
-        if (np.exportType === 'EXPORT_REQUESTED') {
+        if (np.exportType === 'EXPORT_REQUEST') {
             np.status = 'EXPORT_REQUESTED';
         } else if (!np.hasOwnProperty('exportTimestamp')) {
             np.status = 'NOT_EXPORTED';
@@ -63,7 +63,7 @@ let getDetails = function (adminId, organizationId, language, req) {
         let commands = [];
         commands.push(getOrganizationCommand(organizationId, language));
 
-        return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUESTED]
+        return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST]
                                    -(org:Organization {organizationId: {organizationId}})`)
             .with(`np, export, org`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(:Category)

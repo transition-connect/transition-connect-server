@@ -55,7 +55,7 @@ let exportOrgToNp = function (data) {
 let exportRequestOrgToNp = function (data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_REQUESTED]->(np)`)
+        .createUnique(`(org)-[:EXPORT_REQUEST]->(np)`)
         .end({
             organizationId: data.organizationId, npId: data.npId
         }).getCommand());
