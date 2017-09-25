@@ -28,6 +28,20 @@ let checkValidCategoryAssignment = function (adminId, nps, req) {
         });
 };
 
+let checkNotOriginalPlatformForExport = function (organizationId, nps, req) {
+    return db.cypher().unwind(`{nps} AS np`)
+        .match(`(networkingPlatform:NetworkingPlatform {platformId: np.platformId})-[:CREATED]->
+                (:Organization {organizationId: {organizationId}})`)
+        .return(`networkingPlatform.platformId AS platformId`)
+        .end({nps: nps, organizationId: organizationId}).send()
+        .then(function (resp) {
+            if (resp.length > 0) {
+                return exceptions.getInvalidOperation(`Organization ${organizationId} can 
+                not be exported to original platform`, logger, req);
+            }
+        });
+};
+
 let checkAllowedToEditConfig = function (adminId, organizationId, nps, req) {
 
     function userNotAdmin(resp) {
@@ -45,6 +59,8 @@ let checkAllowedToEditConfig = function (adminId, organizationId, nps, req) {
             }
         }).then(function () {
             return checkValidCategoryAssignment(adminId, nps, req);
+        }).then(function () {
+            return checkNotOriginalPlatformForExport(organizationId, nps, req);
         });
 };
 

@@ -282,6 +282,42 @@ describe('Integration Tests for saving export config of an organization', functi
         });
     });
 
+    it('Not allowed to set EXPORT relationship to networking platform which created organization', function () {
+
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/exportConfig',
+                {
+                    organizationId: '2', nps: [
+                    {platformId: '1', categories: ['7']}]
+                });
+        }).then(function (res) {
+            res.status.should.equal(400);
+        });
+    });
+
+    it('At least one category is required', function () {
+
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/exportConfig',
+                {
+                    organizationId: '2', nps: [
+                    {platformId: '2', categories: []}]
+                });
+        }).then(function (res) {
+            res.status.should.equal(400);
+        });
+    });
+
     it('Only allow to save export config of administrated organizations', function () {
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
