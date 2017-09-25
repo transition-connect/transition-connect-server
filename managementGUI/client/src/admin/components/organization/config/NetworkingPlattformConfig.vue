@@ -8,7 +8,7 @@
                         height="32px" width="80px" @changed="syncChanged"></toggle>
                 <span class="np-name">Synchronisieren mit {{np.name}}</span>
             </div>
-            <a target="_blank" :href="np.link">{{np.link}}</a>
+            <a target="_blank" rel="noopener" :href="np.link">{{np.link}}</a>
             <div class="np-description">{{np.description}}</div>
         </div>
         <div class="category-container" v-show="np.isExported">
