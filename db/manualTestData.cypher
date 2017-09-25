@@ -9,14 +9,23 @@ create (:Admin {adminId: '5', email: 'test5@localhost.localdomain'});
 
 //Create networking platforms
 match (admin:Admin {adminId: '2'})
-merge (:NetworkingPlatform {platformId: '1', name: 'Elyoos', description: 'Elyoos ist eine Internetplattform, welche den Austausch von Informationen zur konstruktiven Gestaltung der Gesellschaft ermöglicht.',
-link: 'https://www.elyoos.org'})<-[:IS_ADMIN]-(admin);
+merge (np:NetworkingPlatform {platformId: '1', name: 'Elyoos', description: 'Elyoos ist eine Internetplattform, welche den Austausch von Informationen zur konstruktiven Gestaltung der Gesellschaft ermöglicht.',
+link: 'https://www.elyoos.org'})
+merge (np)<-[:IS_ADMIN]-(admin)
+create (exportRules:ExportRules {manuallyAcceptOrganization: false})
+merge (np)-[:EXPORT_RULES]->(exportRules);
 match (admin:Admin {adminId: '3'})
-merge (:NetworkingPlatform {platformId: '2', name: 'Transition Zürich', description:'Zürich ist bunt und lebendig! Es gibt Gemeinschaftsgärten, Repair-Cafés, alternative Wirtschaftsmodelle, Informationsveranstaltungen zum Thema Nachhaltigkeit und und und…
-Transition Zürich will die Kraft dieser Organisationen und Initiativen bündeln', link: 'http://www.transition-zuerich.ch/'})<-[:IS_ADMIN]-(admin);
+merge (np:NetworkingPlatform {platformId: '2', name: 'Transition Zürich', description:'Zürich ist bunt und lebendig! Es gibt Gemeinschaftsgärten, Repair-Cafés, alternative Wirtschaftsmodelle, Informationsveranstaltungen zum Thema Nachhaltigkeit und und und…
+Transition Zürich will die Kraft dieser Organisationen und Initiativen bündeln', link: 'http://www.transition-zuerich.ch/'})
+merge (np)<-[:IS_ADMIN]-(admin)
+create (exportRules:ExportRules {manuallyAcceptOrganization: false})
+merge (np)-[:EXPORT_RULES]->(exportRules);
 match (admin:Admin {adminId: '4'})
-merge (:NetworkingPlatform {platformId: '3', name: 'Gemeinsam Jetzt', description: 'gemeinsam.jetzt ist eine Plattform die mit verschiedenen Angeboten zivilgesellschaftliche Initiativen & Akteur*innen verschiedener Themenbereiche (Ernährung - Gesellschaft - Kultur - Ökologie - Politik - Wirtschaft) unterstützt. Das gemeinsame Ziel ist ein gesellschaftlicher Wandel, unter dem Leitrahmen eines minimalen Wertekonsens: Achtsamkeit - Menschenwürde - Partizipation - Solidarität - Zukunftsfähigkeit ',
-                            link: 'https://steiermark.gemeinsam.jetzt/'})<-[:IS_ADMIN]-(admin);
+merge (np:NetworkingPlatform {platformId: '3', name: 'Gemeinsam Jetzt', description: 'gemeinsam.jetzt ist eine Plattform die mit verschiedenen Angeboten zivilgesellschaftliche Initiativen & Akteur*innen verschiedener Themenbereiche (Ernährung - Gesellschaft - Kultur - Ökologie - Politik - Wirtschaft) unterstützt. Das gemeinsame Ziel ist ein gesellschaftlicher Wandel, unter dem Leitrahmen eines minimalen Wertekonsens: Achtsamkeit - Menschenwürde - Partizipation - Solidarität - Zukunftsfähigkeit ',
+                            link: 'https://steiermark.gemeinsam.jetzt/'})
+merge (np)<-[:IS_ADMIN]-(admin)
+create (exportRules:ExportRules {manuallyAcceptOrganization: true})
+merge (np)-[:EXPORT_RULES]->(exportRules);
 
 //Create categories Elyoos
 create (category:Category {categoryId: '1'})-[:DE]->(:CategoryTranslated {name: 'Gesundheit'})

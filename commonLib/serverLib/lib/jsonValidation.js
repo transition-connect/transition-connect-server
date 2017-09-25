@@ -46,9 +46,8 @@ let convertValues = function (data, requestSchema) {
 module.exports = {
     validateRequest: function (req, requestSchema, logger) {
 
-        if (req.body.model) {
-            req.body = JSON.parse(req.body.model);
-            delete req.body.model;
+        if (req.body.params) {
+            req.body = req.body.params;
         }
 
         return validate(req, req.body, requestSchema, logger);

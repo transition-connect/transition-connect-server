@@ -1,17 +1,47 @@
 <template>
-    <div id="tc-commands-config-container" v-show="showConfigChanged">
+    <div id="tc-commands-config-container">
         <div id="tc-commands">
-            <button type="button" class="btn btn-warning"
-                    v-on:click="$router.push({name: 'npConfig', params: {id: $route.params.id}})">
+            <button type="button" id="change-config-button" class="btn btn-warning"
+                    v-on:click="changeExportConfig" :disabled="showLoading">
                 Konfiguration ändern
             </button>
+            <loader id="config-change-loader" v-show="showLoading"></loader>
+            <div id="config-upload-failed" v-show="configUpdateFailed">
+                Fehler: Konfiguration konnte nicht gespeichert werden
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import {HTTP} from './../../../../utils/http-common';
+    import Loader from './../../../../utils/components/Loader.vue';
+    import {getExportMessage} from './exportConfigHandler';
+
     export default {
-        components: {}
+        components: {Loader},
+        props: ['nps', 'previousNps', 'organizationId'],
+        data: function () {
+            return {showLoading: false, configUpdateFailed: false};
+        },
+        methods: {
+            changeExportConfig: function () {
+                if (JSON.stringify(this.nps) !== JSON.stringify(this.previousNps)) {
+                    let npsMessage = getExportMessage(this.nps);
+                    this.showLoading = true;
+                    this.configUpdateFailed = false;
+                    HTTP.put(`/admin/api/organization/exportConfig`,
+                        {params: {organizationId: this.organizationId, nps: npsMessage}}).then(() => {
+                        this.showLoading = false;
+                        this.$emit('updateSuccess');
+                    }).catch(e => {
+                        console.log(e);
+                        this.showLoading = false;
+                        this.configUpdateFailed = true;
+                    })
+                }
+            }
+        }
     }
 </script>
 
@@ -32,6 +62,19 @@
             width: 100%;
             padding-top: 19px;
             max-width: $application-width;
+            #change-config-button {
+                display: inline-block;
+                margin-right: 12px;
+            }
+            #config-change-loader {
+                position: relative;
+                top: 8px;
+            }
+            #config-upload-failed {
+                display: inline-block;
+                font-weight: 500;
+                color: $error;
+            }
         }
     }
 </style>

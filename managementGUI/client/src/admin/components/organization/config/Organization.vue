@@ -14,7 +14,11 @@
                                         :np="networkingPlatform" @changed="configChanged">
             </networking-platform-config>
         </div>
-        <change-config-command v-show="showConfigChanged"></change-config-command>
+        <change-config-command v-if="showConfigChanged" :nps="config.networkingPlatforms"
+                               :previous-nps="configOriginal.networkingPlatforms"
+                               :organizationId="$route.params.id"
+                               @updateSuccess="$router.push({name: 'orgDetail', params: {id: $route.params.id}})">
+        </change-config-command>
     </div>
 </template>
 

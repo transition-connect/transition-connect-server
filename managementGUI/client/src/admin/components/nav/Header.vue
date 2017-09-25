@@ -1,7 +1,7 @@
 <template>
     <div id="tc-header">
         <div id="tc-header-container">
-            <div id="tc-logo"v-on:click="$router.push({name: 'Home'})">
+            <div id="tc-logo" v-on:click="$router.push({name: 'Home'})">
                 TRANSITION-<span class="c-logo">C</span>ONNECT</div>
             <nav-settings id="nav-settings"></nav-settings>
         </div>
