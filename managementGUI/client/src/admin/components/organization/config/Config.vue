@@ -16,6 +16,8 @@
         </div>
         <change-config-command v-if="showConfigChanged" :nps="config.networkingPlatforms"
                                :previous-nps="configOriginal.networkingPlatforms"
+                               :admins="config.organization.administrators"
+                               :previous-admins="configOriginal.organization.administrators"
                                :organizationId="$route.params.id"
                                @updateSuccess="$router.push({name: 'orgDetail', params: {id: $route.params.id}})">
         </change-config-command>

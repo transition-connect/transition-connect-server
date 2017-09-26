@@ -24,18 +24,24 @@
 
     export default {
         components: {Loader},
-        props: ['nps', 'previousNps', 'organizationId'],
+        props: ['nps', 'previousNps', 'admins', 'previousAdmins', 'organizationId'],
         data: function () {
             return {showLoading: false, configUpdateFailed: false};
         },
         methods: {
             changeExportConfig: function () {
+                let commands = [];
                 if (JSON.stringify(this.nps) !== JSON.stringify(this.previousNps)) {
                     let npsMessage = getExportMessage(this.nps);
-                    this.showLoading = true;
-                    this.configUpdateFailed = false;
-                    HTTP.put(`/admin/api/organization/exportConfig`,
-                        {params: {organizationId: this.organizationId, nps: npsMessage}}).then(() => {
+                    commands.push(HTTP.put(`/admin/api/organization/exportConfig`,
+                        {params: {organizationId: this.organizationId, nps: npsMessage}}));
+                }
+                if (JSON.stringify(this.admins) !== JSON.stringify(this.previousAdmins)) {
+                    commands.push(HTTP.put(`/admin/api/organization/adminConfig`,
+                        {params: {organizationId: this.organizationId, admins: this.admins}}));
+                }
+                if(commands.length > 0) {
+                    Promise.all(commands).then(() => {
                         this.showLoading = false;
                         this.$emit('updateSuccess');
                     }).catch(e => {
