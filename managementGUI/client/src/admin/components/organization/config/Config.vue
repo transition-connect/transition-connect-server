@@ -19,21 +19,37 @@
                                :admins="config.organization.administrators"
                                :previous-admins="configOriginal.organization.administrators"
                                :organizationId="$route.params.id"
-                               @updateSuccess="$router.push({name: 'orgDetail', params: {id: $route.params.id}})">
+                               @updateSuccess="updateSuccess">
         </change-config-command>
+
+        <modal-dialog v-if="showWarningDialog">
+            <h3 slot="header">Konfiguration nicht gespeichert</h3>
+            <div slot="body">Die Konfiguration wurde noch nicht gespeichert. Möchtest du trotzdem diese Seite verlassen?</div>
+            <div slot="footer">
+                <button type="button" class="btn btn-default"
+                        v-on:click="stayOnPage">
+                    Zurück
+                </button>
+                <button type="button" class="btn btn-primary"
+                        v-on:click="navigateToNext">
+                    Nicht Speichern
+                </button>
+            </div>
+        </modal-dialog>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import ModalDialog from './../../../../utils/components/ModalDialog.vue';
     import Administrator from './Administrators.vue';
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
 
     export default {
-        components: {Administrator, NetworkingPlatformConfig, ChangeConfigCommand},
+        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand},
         data: function () {
-            return {config: {organization: {}}, showConfigChanged: false};
+            return {config: {organization: {}}, showConfigChanged: false, showWarningDialog: false, nextRoute: null};
         },
         created: function () {
             HTTP.get(`/admin/api/organization/config`,
@@ -48,6 +64,25 @@
                     !== JSON.stringify(this.configOriginal.networkingPlatforms) ||
                     JSON.stringify(this.config.organization.administrators)
                     !== JSON.stringify(this.configOriginal.organization.administrators);
+            },
+            updateSuccess: function () {
+                this.showConfigChanged = false;
+                this.$router.push({name: 'orgDetail', params: {id: this.$route.params.id}})
+            },
+            navigateToNext: function () {
+                this.nextRoute();
+            },
+            stayOnPage: function () {
+                this.nextRoute(false);
+                this.showWarningDialog = false;
+            }
+        },
+        beforeRouteLeave: function (to, from, next) {
+            if (this.showConfigChanged) {
+                this.showWarningDialog = true;
+                this.nextRoute = next;
+            } else {
+                next();
             }
         }
     }
