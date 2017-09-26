@@ -12,7 +12,7 @@ let schemaGetNpDetail = {
     additionalProperties: false,
     required: ['platformId', 'language'],
     properties: {
-        platformId: {type: 'string', format: 'id', maxLength: 30},
+        platformId: {type: 'string', format: 'notEmptyString', maxLength: 50},
         language: {enum: ['DE', 'EN', 'FR', 'IT']}
     }
 };

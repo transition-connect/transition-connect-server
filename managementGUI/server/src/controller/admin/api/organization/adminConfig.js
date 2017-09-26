@@ -12,7 +12,7 @@ let schemaChangeConfigOrg = {
     additionalProperties: false,
     required: ['organizationId', 'admins'],
     properties: {
-        organizationId: {type: 'string', format: 'id', maxLength: 30},
+        organizationId: {type: 'string', format: 'notEmptyString', maxLength: 50},
         admins: {
             type: 'array',
             items: {type: 'string', format: 'notEmptyString', maxLength: 255},

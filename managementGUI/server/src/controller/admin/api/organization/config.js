@@ -12,7 +12,7 @@ let schemaGetConfig = {
     additionalProperties: false,
     required: ['organizationId', 'language'],
     properties: {
-        organizationId: {type: 'string', format: 'id', maxLength: 30},
+        organizationId: {type: 'string', format: 'notEmptyString', maxLength: 50},
         language: {enum: ['DE', 'EN', 'FR', 'IT']}
     }
 };

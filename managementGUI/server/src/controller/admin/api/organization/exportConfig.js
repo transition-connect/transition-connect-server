@@ -12,7 +12,7 @@ let schemaChangeConfigOrg = {
     additionalProperties: false,
     required: ['organizationId', 'nps'],
     properties: {
-        organizationId: {type: 'string', format: 'id', maxLength: 30},
+        organizationId: {type: 'string', format: 'notEmptyString', maxLength: 50},
         nps: {
             type: 'array',
             items: {
@@ -20,10 +20,10 @@ let schemaChangeConfigOrg = {
                 additionalProperties: false,
                 required: ['platformId', 'categories'],
                 properties: {
-                    platformId: {type: 'string', format: 'id', maxLength: 30},
+                    platformId: {type: 'string', format: 'notEmptyString', maxLength: 50},
                     categories: {
                         type: 'array',
-                        items: {type: 'string', format: 'id', maxLength: 30},
+                        items: {type: 'string', format: 'notEmptyString', maxLength: 50},
                         minItems: 1,
                         maxItems: 1000,
                         uniqueItems: true

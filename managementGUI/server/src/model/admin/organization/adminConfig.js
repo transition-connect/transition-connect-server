@@ -3,7 +3,7 @@
 let db = require('server-lib').neo4j;
 let logger = require('server-lib').logging.getLogger(__filename);
 let exceptions = require('server-lib').exceptions;
-let time = require('server-lib').time;
+let uuid = require('server-lib').uuid;
 
 let checkAllowedToAccessConfig = function (adminId, organizationId, req) {
 
@@ -33,8 +33,12 @@ let changeConfig = function (adminId, params, req) {
             .with(`DISTINCT org`)
             .unwind(`{admins} AS adminEmail`)
             .merge(`(admin:Admin {email: adminEmail})`)
+            .onCreate(`SET admin.adminId = {uuid}`)
             .merge(`(org)<-[:IS_ADMIN]-(admin)`)
-            .end({organizationId: params.organizationId, admins: params.admins}).send();
+            .end({
+                organizationId: params.organizationId, admins: params.admins,
+                uuid: uuid.generateUUID()
+            }).send();
     });
 };
 
