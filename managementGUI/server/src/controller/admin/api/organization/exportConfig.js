@@ -44,7 +44,7 @@ module.exports = function (router) {
         return controllerErrors('Error occurs when changing export config of org', req, res, logger, function () {
             return validation.validateRequest(req, schemaChangeConfigOrg, logger).then(function (request) {
                 logger.info(`Change export config of org`, req);
-                return exportConfig.changeConfig(req.user.id, request);
+                return exportConfig.changeConfig(req.user.id, request, req);
             }).then(function (data) {
                 res.status(200).json(data);
             });
