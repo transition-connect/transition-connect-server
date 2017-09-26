@@ -29,7 +29,8 @@ let setStatus = function (nps, orgModifiedTimestamp) {
             np.status = 'EXPORT_REQUESTED';
         } else if (!np.hasOwnProperty('exportTimestamp')) {
             np.status = 'NOT_EXPORTED';
-        } else if (np.exportTimestamp < orgModifiedTimestamp) {
+        } else if (np.exportTimestamp < orgModifiedTimestamp ||
+            np.exportTimestamp < np.lastConfigUpdate) {
             np.status = 'EXPORT_UPDATE_NEEDED';
         } else {
             np.status = 'EXPORTED';
@@ -69,10 +70,11 @@ let getDetails = function (adminId, organizationId, language, req) {
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(:Category)
                     -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
             .where(`TYPE(categoryLanguage) = {language} AND (assigner)-[:ASSIGNED]->(np)`)
-            .with(`np, export, org, categoryTranslated`)
+            .with(`np, export, org, categoryTranslated, assigner`)
             .orderBy(`categoryTranslated.name`)
             .return(`np.name AS name, np.description AS description, np.link AS link, TYPE(export) AS exportType,
-                     export.exportTimestamp AS exportTimestamp, COLLECT(categoryTranslated.name) AS categories`)
+                     export.exportTimestamp AS exportTimestamp, assigner.lastConfigUpdate AS lastConfigUpdate,
+                     COLLECT(categoryTranslated.name) AS categories`)
             .orderBy(`export.exportTimestamp DESC`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {

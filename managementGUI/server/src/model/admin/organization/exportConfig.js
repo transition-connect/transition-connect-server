@@ -89,7 +89,7 @@ let setLastConfigUpdateOnCategoryAssigner = function (organizationId, nps) {
  *
  * @param organizationId
  * @param nps
- * @returns {{statement, parameters, isWriteCommand}}
+ * @returns Promise
  */
 let assignCategories = function (organizationId, nps) {
     return db.cypher()

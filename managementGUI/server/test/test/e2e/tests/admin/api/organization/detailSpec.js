@@ -30,11 +30,10 @@ describe('Integration Tests for getting details of an organization', function ()
             dbDsl.mapNetworkingPlatformToCategory('6', {npId: '3', usedCategoryId: '13', similarCategoryIds: []});
             dbDsl.mapNetworkingPlatformToCategory('7', {npId: '3', usedCategoryId: '14', similarCategoryIds: []});
 
-            dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500, lastUpdate: 500});
-            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502, lastUpdate: 503});
+            dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
+            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502});
 
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
-            dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', categories: ['13', '14']});
         });
     });
@@ -45,6 +44,7 @@ describe('Integration Tests for getting details of an organization', function ()
 
     it('Getting details of organization (Export status NOT_EXPORTED and EXPORTED)', function () {
 
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 504});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
 
@@ -88,9 +88,10 @@ describe('Integration Tests for getting details of an organization', function ()
         });
     });
 
-    it('Getting details of organization (Export status EXPORT_UPDATE_NEEDED)', function () {
+    it('Getting details of organization (Status EXPORT_UPDATE_NEEDED because org data has changed)', function () {
 
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 500});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10'], lastConfigUpdate: 701});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 700});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -126,6 +127,7 @@ describe('Integration Tests for getting details of an organization', function ()
 
     it('Getting details of organization (Export status EXPORT_REQUESTED)', function () {
 
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
         dbDsl.exportRequestOrgToNp({organizationId: '2', npId: '2'});
 
         return dbDsl.sendToDb().then(function () {

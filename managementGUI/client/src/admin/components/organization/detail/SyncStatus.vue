@@ -14,6 +14,9 @@
         <div class="tc-sync-status-text" v-if="status === 'EXPORT_REQUESTED'">
             Synchronisation muss von Plattform bestätigt werden.
         </div>
+        <div class="tc-sync-status-text" v-if="status === 'EXPORT_UPDATE_NEEDED'">
+            Es kann einige Minuten dauern bis die Änderungen synchronisiert werden.
+        </div>
     </div>
 </template>
 

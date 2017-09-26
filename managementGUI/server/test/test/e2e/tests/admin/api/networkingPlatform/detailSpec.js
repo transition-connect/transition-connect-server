@@ -30,12 +30,12 @@ describe('Integration Tests for getting details of a networking platform', funct
             dbDsl.mapNetworkingPlatformToCategory('6', {npId: '3', usedCategoryId: '13', similarCategoryIds: []});
             dbDsl.mapNetworkingPlatformToCategory('7', {npId: '3', usedCategoryId: '14', similarCategoryIds: []});
 
-            dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500, lastUpdate: 500});
-            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['3'], created: 502, lastUpdate: 503});
-            dbDsl.createOrganization('3', {networkingPlatformId: '1', adminIds: ['1'], created: 504, lastUpdate: 505});
-            dbDsl.createOrganization('4', {networkingPlatformId: '1', adminIds: ['2'], created: 506, lastUpdate: 507});
-            dbDsl.createOrganization('5', {networkingPlatformId: '3', adminIds: ['3'], created: 508, lastUpdate: 509});
-            dbDsl.createOrganization('6', {networkingPlatformId: '3', adminIds: ['3'], created: 510, lastUpdate: 511});
+            dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
+            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['3'], created: 502});
+            dbDsl.createOrganization('3', {networkingPlatformId: '1', adminIds: ['1'], created: 504});
+            dbDsl.createOrganization('4', {networkingPlatformId: '1', adminIds: ['2'], created: 506});
+            dbDsl.createOrganization('5', {networkingPlatformId: '3', adminIds: ['3'], created: 508});
+            dbDsl.createOrganization('6', {networkingPlatformId: '3', adminIds: ['3'], created: 510});
 
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
