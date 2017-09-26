@@ -1,12 +1,9 @@
 "use strict";
 
-let intformat = require('biguint-format');
-let FlakeId = require('flake-idgen');
-
-let flakeIdGen = new FlakeId({datacenter: Math.floor(Math.random() * 31) + 1, worker: Math.floor(Math.random() * 31) + 1});
+const uuidv4 = require('uuid/v4');
 
 let generateUUID = function () {
-    return intformat(flakeIdGen.next(), 'hex');
+    return uuidv4();
 };
 
 module.exports = {
