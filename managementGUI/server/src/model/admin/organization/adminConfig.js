@@ -32,7 +32,7 @@ let changeConfig = function (adminId, params, req) {
             .delete(`isAdmin`)
             .with(`DISTINCT org`)
             .unwind(`{admins} AS adminEmail`)
-            .merge(`(admin:Admin {email: adminEmail})`)
+            .merge(`(admin:Admin {email: toLower(adminEmail)})`)
             .onCreate(`SET admin.adminId = {uuid}`)
             .merge(`(org)<-[:IS_ADMIN]-(admin)`)
             .end({
