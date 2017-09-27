@@ -316,7 +316,7 @@ describe('Integration Tests for saving export config of an organization', functi
 
     it('Deactivate export (EXPORT_REQUEST relationship)', function () {
 
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportStatus: ':EXPORT_REQUEST'});
+        dbDsl.exportRequestOrgToNp({organizationId: '2', npId: '2'});
         dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
         dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
 
