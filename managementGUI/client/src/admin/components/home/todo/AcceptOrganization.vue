@@ -1,15 +1,19 @@
 <template>
     <div class="accept-organisation">
         <div class="action-title">
-            '<span class="org-name">{{actionData.organizationName}}</span>' möchte mit
-            '<span class="org-name">{{actionData.nameNetworkingPlatform}}</span>' synchronisiert werden
+            <router-link :to="{name: 'orgDetail', params: {id: actionData.organizationId}}">
+                {{actionData.organizationName}}
+            </router-link> möchte mit
+            <router-link :to="{name: 'npDetail', params: {id: actionData.platformId}}">
+                {{actionData.nameNetworkingPlatform}}
+            </router-link> synchronisiert werden
         </div>
         <div class="todo-commands">
             <button type="button" class="btn btn-default todo-button"
                     v-on:click="">
                 Ablehnen
             </button>
-            <button type="button" class="btn btn-default todo-button"
+            <button type="button" class="btn btn-primary todo-button"
                     v-on:click="">
                 Akzeptieren
             </button>

@@ -2,10 +2,25 @@
     <div id="tc-detail-organization">
         <div id="tc-container" v-show="organizationLoaded">
             <div id="tc-detail-header">
-                <button type="button" class="btn btn-default"
-                        v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
-                    Konfigurieren
-                </button>
+                <div v-if="detail.organization.isAdmin">
+                    <button type="button" class="btn btn-default"
+                            v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
+                        Konfigurieren
+                    </button>
+                </div>
+                <div v-else>
+                    <div v-for="np in detail.exportedNetworkingPlatforms" v-if="np.isAdminOfExportRequestedNp">
+                        <button type="button" class="btn btn-default"
+                                v-on:click="">
+                            Ablehnen
+                        </button>
+                        <button type="button" class="btn btn-primary todo-button"
+                                v-on:click="">
+                            Akzeptieren
+                        </button>
+                        <div class="export-np-request-text">Mit {{np.name}} synchronisieren</div>
+                    </div>
+                </div>
             </div>
             <info :organization="detail.organization"></info>
             <sync :nps="detail.exportedNetworkingPlatforms"
@@ -50,6 +65,11 @@
             max-width: $application-width;
             #tc-detail-header {
                 margin-bottom: 12px;
+                .export-np-request-text {
+                    margin-left: 12px;
+                    display: inline-block;
+                    font-weight: 500;
+                }
             }
         }
     }
