@@ -1,0 +1,47 @@
+'use strict';
+
+let dbDsl = require('server-test-util').dbDSL;
+let admin = require('server-test-util').admin;
+let requestHandler = require('server-test-util').requestHandler;
+let moment = require('moment');
+
+describe('Getting todo for an networking platform to accepting an new organization', function () {
+
+    let startTime;
+
+    beforeEach(function () {
+        startTime = Math.floor(moment.utc().valueOf() / 1000);
+        return dbDsl.init().then(function () {
+            dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
+            dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
+
+            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos'});
+            dbDsl.createNetworkingPlatform('2', {adminId: '1', name: 'Elyoos2'});
+            dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['1'], created: 500, lastConfigUpdate: 600});
+            dbDsl.exportOrgToNp({organizationId: '1', npId: '2', exportStatus: ':EXPORT_REQUEST'});
+        });
+    });
+
+    afterEach(function () {
+        return requestHandler.logout();
+    });
+
+    it('Todo request export', function () {
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api');
+        }).then(function (res) {
+            res.status.should.equal(200);
+
+            res.body.todo.length.should.equals(1);
+
+            res.body.todo[0].action.should.equals('EXPORT_REQUEST');
+            res.body.todo[0].actionData.organizationName.should.equals('organization1Name');
+            res.body.todo[0].actionData.organizationId.should.equals('1');
+            res.body.todo[0].actionData.nameNetworkingPlatform.should.equals('Elyoos2');
+            res.body.todo[0].actionData.platformId.should.equals('2');
+        });
+    });
+});
