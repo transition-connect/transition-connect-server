@@ -1,6 +1,10 @@
 <template>
     <div id="tc-detail-export-container">
-        <div id="export-title">Mit {{numberOfExported + 1}} Plattformen synchronisiert</div>
+        <div class="export-header">
+            <div id="export-title">Mit {{numberOfExported + 1}} {{platformDescription}} synchronisiert</div>
+            <div class="export-subtitle" v-if="numberOfPendingExport > 0">{{numberOfPendingExport}} {{pendingExportDescription}} gestartet</div>
+            <div class="export-subtitle" v-if="numberOfRequestExport > 0">{{numberOfRequestExport}} {{requestExportDescription}} auf Freigabe</div>
+        </div>
         <div class="sync-container">
             <div class="sync-name">{{organization.createdNetworkingPlatformName}}
                 <span class="original-name">(Originale Plattform)</span></div>
@@ -50,6 +54,16 @@
                 this.numberOfPendingExport = this.getNumberOfSyncStatus(newNps, ['NOT_EXPORTED']);
                 this.numberOfRequestExport = this.getNumberOfSyncStatus(newNps, ['EXPORT_REQUESTED']);
             }
+        }, computed: {
+            platformDescription: function () {
+                return this.numberOfExported > 1 ? 'Plattformen' : 'Plattform'
+            },
+            pendingExportDescription: function () {
+                return this.numberOfPendingExport > 1 ? 'Synchronisationen wurden' : 'Synchronisation wurde'
+            },
+            requestExportDescription: function () {
+                return this.numberOfRequestExport > 1 ? 'Warten' : 'Wartet'
+            }
         }
     }
 </script>
@@ -59,13 +73,19 @@
 
     #tc-detail-export-container {
         margin-top: 24px;
-        #export-title {
-            margin-bottom: 6px;
-            font-size: 20px;
-            font-weight: 500;
-        }
-        #sync-created-container {
-
+        .export-header {
+            margin-bottom: 12px;
+            #export-title {
+                margin-bottom: 6px;
+                font-size: 20px;
+                font-weight: 500;
+            }
+            .export-subtitle {
+                font-size: 14px;
+                margin-bottom: 6px;
+                color: $secondary-text;
+                font-weight: 500;
+            }
         }
         .sync-container {
             border: 2px solid $divider;

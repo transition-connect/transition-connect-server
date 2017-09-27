@@ -4,7 +4,7 @@
             <div class="tc-sync-exported tc-sync-text"
                  v-if="status === 'EXPORTED'">Synchronisiert</div>
             <div class="tc-sync-running tc-sync-text"
-                 v-if="status === 'NOT_EXPORTED' || status === 'EXPORT_UPDATE_NEEDED'">Synchronisation läuft
+                 v-if="status === 'NOT_EXPORTED' || status === 'EXPORT_UPDATE_NEEDED'">Synchronisation gestartet
             </div>
             <div class="tc-sync-requested tc-sync-text"
                  v-if="status === 'EXPORT_REQUESTED'">Warte auf Freigabe</div>
