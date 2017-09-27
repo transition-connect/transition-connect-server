@@ -160,6 +160,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description2');
             res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink2.org');
             res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_REQUESTED');
+            res.body.exportedNetworkingPlatforms[0].isAdminOfExportRequestedNp.should.equals(false);
             res.body.exportedNetworkingPlatforms[0].categories.length.should.equals(1);
             res.body.exportedNetworkingPlatforms[0].categories[0].should.equals('Deutsch10');
         });
@@ -223,6 +224,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.isAdmin.should.equals(false);
             res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos2');
             res.body.exportedNetworkingPlatforms.length.should.equals(1);
+            res.body.exportedNetworkingPlatforms[0].isAdminOfExportRequestedNp.should.equals(true);
         });
     });
 

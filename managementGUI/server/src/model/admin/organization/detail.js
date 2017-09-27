@@ -78,7 +78,8 @@ let getDetails = function (adminId, organizationId, language, req) {
             .orderBy(`categoryTranslated.name`)
             .return(`np.name AS name, np.description AS description, np.link AS link, TYPE(export) AS exportType,
                      export.exportTimestamp AS exportTimestamp, assigner.lastConfigUpdate AS lastConfigUpdate,
-                     COLLECT(categoryTranslated.name) AS categories`)
+                     (EXISTS((np)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})) AND TYPE(export) = 'EXPORT_REQUEST')
+                     AS isAdminOfExportRequestedNp, COLLECT(categoryTranslated.name) AS categories`)
             .orderBy(`export.exportTimestamp DESC`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
