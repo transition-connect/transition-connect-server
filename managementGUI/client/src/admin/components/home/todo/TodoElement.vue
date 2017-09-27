@@ -1,15 +1,17 @@
 <template>
     <div class="todo-container">
-        <init-organisation v-show="todo.action === 'INIT_ORGANISATION'" :action-data="todo.actionData"></init-organisation>
+        <init-organization v-show="todo.action === 'INIT_ORGANISATION'" :action-data="todo.actionData"></init-organization>
+        <accept-organization v-show="todo.action === 'EXPORT_REQUEST'" :action-data="todo.actionData"></accept-organization>
     </div>
 </template>
 
 <script>
-    import InitOrganisation from './InitOrganisation.vue';
+    import AcceptOrganization from './AcceptOrganization.vue';
+    import InitOrganization from './InitOrganization.vue';
 
     export default {
         props: ['todo'],
-        components: {InitOrganisation}
+        components: {AcceptOrganization, InitOrganization}
     }
 </script>
 
