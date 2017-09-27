@@ -2,7 +2,7 @@
     <form id="verify-password-container">
         <div class="form-group" :class="{'has-error': errors.has('password')}">
             <h1 class="password-title">Passwort eingeben</h1>
-            <h2 class="password-description">Geben Sie das Passwort ein, welches Sie per E-Mail erhalten haben.</h2>
+            <h2 class="password-description">Gib das Passwort ein, welches du per E-Mail erhalten hast.</h2>
             <input v-model="password" v-validate="'required'" type="text" name="password"
                    class="form-control" placeholder="Passwort">
         </div>

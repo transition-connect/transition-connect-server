@@ -2,7 +2,7 @@
     <form id="request-password-container">
         <div class="form-group" :class="{'has-error': errors.has('email')}">
             <h1 class="email-title">E-Mail Adresse eingeben</h1>
-            <h2 class="email-description">Geben Sie Ihre E-Mail Adresse ein, um sich anzumelden.</h2>
+            <h2 class="email-description">Gib deine E-Mail Adresse ein, um dich anzumelden.</h2>
             <input v-model="email" v-validate="'required|email'" type="text" name="email"
                    class="form-control" placeholder="E-Mail">
             <p class="text-danger" v-show="errors.has('email')">Korrekte E-Mail Adresse wird benötigt</p>
