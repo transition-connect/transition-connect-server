@@ -12,7 +12,10 @@ let checkAllowedToGetDetail = function (adminId, organizationId, req) {
     }
 
     return db.cypher()
-        .match("(org:Organization {organizationId: {organizationId}})<-[:IS_ADMIN]-(admin:Admin {adminId: {adminId}})")
+        .match(`(org:Organization {organizationId: {organizationId}})`)
+        .where(`(org)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}}) OR 
+                (org)<-[:CREATED]-(:NetworkingPlatform)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}}) OR
+                (org)-[:EXPORT|EXPORT_REQUEST]->(:NetworkingPlatform)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})`)
         .return("org")
         .end({adminId: adminId, organizationId: organizationId}).send()
         .then(function (resp) {
@@ -39,7 +42,7 @@ let setStatus = function (nps, orgModifiedTimestamp) {
     }
 };
 
-let getOrganizationCommand = function (organizationId, language) {
+let getOrganizationCommand = function (adminId, organizationId, language) {
     return db.cypher().match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization {organizationId: {organizationId}})`)
         .optionalMatch(`(np)<-[:ASSIGNED]-(assigner:CategoryAssigner)<-[:ASSIGNED]-(org)`)
         .with(`np, org, assigner`)
@@ -54,15 +57,16 @@ let getOrganizationCommand = function (organizationId, language) {
         .orderBy(`admin.email`)
         .return(`org.name AS name, org.slogan AS slogan, org.description AS description, org.website AS website,
                  org.created AS created, org.modified AS modified, np.name AS createdNetworkingPlatformName,
-                 categories, COLLECT(admin.email) AS administrators`)
-        .end({organizationId: organizationId, language: language}).getCommand();
+                 categories, COLLECT(admin.email) AS administrators,
+                 EXISTS((org)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})) AS isAdmin`)
+        .end({adminId: adminId, organizationId: organizationId, language: language}).getCommand();
 };
 
 let getDetails = function (adminId, organizationId, language, req) {
 
     return checkAllowedToGetDetail(adminId, organizationId, req).then(function () {
         let commands = [];
-        commands.push(getOrganizationCommand(organizationId, language));
+        commands.push(getOrganizationCommand(adminId, organizationId, language));
 
         return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST]
                                    -(org:Organization {organizationId: {organizationId}})`)

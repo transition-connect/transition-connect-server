@@ -57,6 +57,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.status.should.equal(200);
 
             res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.isAdmin.should.equals(true);
             res.body.organization.created.should.equals(502);
             res.body.organization.slogan.should.equals('best2Org');
             res.body.organization.description.should.equals('org2description');
@@ -102,6 +103,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.status.should.equal(200);
 
             res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.isAdmin.should.equals(true);
             res.body.organization.created.should.equals(502);
             res.body.organization.slogan.should.equals('best2Org');
             res.body.organization.description.should.equals('org2description');
@@ -139,6 +141,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.status.should.equal(200);
 
             res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.isAdmin.should.equals(true);
             res.body.organization.created.should.equals(502);
             res.body.organization.slogan.should.equals('best2Org');
             res.body.organization.description.should.equals('org2description');
@@ -159,6 +162,67 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_REQUESTED');
             res.body.exportedNetworkingPlatforms[0].categories.length.should.equals(1);
             res.body.exportedNetworkingPlatforms[0].categories[0].should.equals('Deutsch10');
+        });
+    });
+
+    it('Organization details can be accessed by administrators of the original network platform', function () {
+
+        dbDsl.createOrganization('3', {networkingPlatformId: '1', adminIds: ['2'], created: 500});
+        dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '1', categories: ['10']});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api/organization/detail',
+                {organizationId: '3', language: 'DE'});
+        }).then(function (res) {
+            res.status.should.equal(200);
+            res.body.organization.name.should.equals('organization3Name');
+            res.body.organization.isAdmin.should.equals(false);
+            res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.exportedNetworkingPlatforms.length.should.equals(0);
+        });
+    });
+
+    it('Organization details can be accessed by administrators of exported network platform', function () {
+
+        dbDsl.createOrganization('3', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
+        dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '2', categories: ['10']});
+        dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '1', categories: ['11']});
+        dbDsl.exportOrgToNp({organizationId: '3', npId: '1'});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api/organization/detail',
+                {organizationId: '3', language: 'DE'});
+        }).then(function (res) {
+            res.status.should.equal(200);
+            res.body.organization.name.should.equals('organization3Name');
+            res.body.organization.isAdmin.should.equals(false);
+            res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms.length.should.equals(1);
+        });
+    });
+
+    it('Organization details can be accessed by administrators of network platform with export request from organization', function () {
+
+        dbDsl.createOrganization('3', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
+        dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '2', categories: ['10']});
+        dbDsl.assignOrganizationToCategory({organizationId: '3', npId: '1', categories: ['11']});
+        dbDsl.exportRequestOrgToNp({organizationId: '3', npId: '1'});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api/organization/detail',
+                {organizationId: '3', language: 'DE'});
+        }).then(function (res) {
+            res.status.should.equal(200);
+            res.body.organization.name.should.equals('organization3Name');
+            res.body.organization.isAdmin.should.equals(false);
+            res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms.length.should.equals(1);
         });
     });
 
