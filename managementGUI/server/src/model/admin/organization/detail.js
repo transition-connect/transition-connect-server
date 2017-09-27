@@ -80,7 +80,7 @@ let getDetails = function (adminId, organizationId, language, req) {
                      export.exportTimestamp AS exportTimestamp, assigner.lastConfigUpdate AS lastConfigUpdate,
                      (EXISTS((np)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})) AND TYPE(export) = 'EXPORT_REQUEST')
                      AS isAdminOfExportRequestedNp, COLLECT(categoryTranslated.name) AS categories`)
-            .orderBy(`export.exportTimestamp DESC`)
+            .orderBy(`export.exportTimestamp DESC, np.name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
                 setStatus(resp[1], resp[0][0].modified);
