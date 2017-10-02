@@ -73,6 +73,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms.length.should.equals(2);
 
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');
+            res.body.exportedNetworkingPlatforms[0].platformId.should.equals('3');
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description3');
             res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink3.org');
             res.body.exportedNetworkingPlatforms[0].status.should.equals('NOT_EXPORTED');
@@ -81,6 +82,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms[0].categories[1].should.equals('Deutsch14');
 
             res.body.exportedNetworkingPlatforms[1].name.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms[1].platformId.should.equals('2');
             res.body.exportedNetworkingPlatforms[1].description.should.equals('description2');
             res.body.exportedNetworkingPlatforms[1].link.should.equals('www.npLink2.org');
             res.body.exportedNetworkingPlatforms[1].status.should.equals('EXPORTED');
@@ -119,6 +121,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms.length.should.equals(1);
 
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms[0].platformId.should.equals('2');
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description2');
             res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink2.org');
             res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_UPDATE_NEEDED');
@@ -157,6 +160,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms.length.should.equals(1);
 
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms[0].platformId.should.equals('2');
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description2');
             res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink2.org');
             res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_REQUESTED');
