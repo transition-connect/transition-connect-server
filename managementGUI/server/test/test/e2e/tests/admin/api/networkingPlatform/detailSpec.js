@@ -72,6 +72,7 @@ describe('Integration Tests for getting details of a networking platform', funct
             res.body.np.categories[1].should.equals('Deutsch6');
             res.body.np.categories[2].should.equals('Deutsch7');
 
+            res.body.numberOfOrgCreatedByNp.should.equals(3);
             res.body.orgCreatedByNp.length.should.equals(3);
             res.body.orgCreatedByNp[0].name.should.equals('organization4Name');
             res.body.orgCreatedByNp[0].organizationId.should.equals('4');
@@ -83,6 +84,7 @@ describe('Integration Tests for getting details of a networking platform', funct
             res.body.orgCreatedByNp[2].organizationId.should.equals('2');
             res.body.orgCreatedByNp[2].created.should.equals(502);
 
+            res.body.numberOfOrgExportedToNp.should.equals(2);
             res.body.orgExportedToNp.length.should.equals(2);
             res.body.orgExportedToNp[0].name.should.equals('organization6Name');
             res.body.orgExportedToNp[0].organizationId.should.equals('6');
@@ -90,12 +92,14 @@ describe('Integration Tests for getting details of a networking platform', funct
             res.body.orgExportedToNp[1].organizationId.should.equals('5');
             res.body.orgExportedToNp[1].exportTimestamp.should.equals(505);
 
+            res.body.numberOfOrgRequestedExportToNp.should.equals(2);
             res.body.orgRequestedExportToNp.length.should.equals(2);
             res.body.orgRequestedExportToNp[0].name.should.equals('organization10Name');
             res.body.orgRequestedExportToNp[0].organizationId.should.equals('10');
             res.body.orgRequestedExportToNp[1].name.should.equals('organization9Name');
             res.body.orgRequestedExportToNp[1].organizationId.should.equals('9');
 
+            res.body.numberOfOrgDeniedExportToNp.should.equals(2);
             res.body.orgDeniedExportToNp.length.should.equals(2);
             res.body.orgDeniedExportToNp[0].name.should.equals('organization12Name');
             res.body.orgDeniedExportToNp[0].organizationId.should.equals('12');

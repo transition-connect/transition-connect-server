@@ -2,14 +2,22 @@
 
 let db = require('server-lib').neo4j;
 
-let getOrgCommand = function (adminId, platformId) {
-    return db.cypher().match(`(:Admin {adminId: {adminId}})-[:IS_ADMIN]->
-                        (:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->(org:Organization)`)
+let getNumberOfOrgCommand = function (platformId) {
+    return db.cypher()
+        .match(`(:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->(org:Organization)`)
+        .return(`count (*) AS numberOfOrg`)
+        .end({platformId: platformId});
+};
+
+let getOrgCommand = function (platformId) {
+    return db.cypher()
+        .match(`(:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->(org:Organization)`)
         .return(`org.name AS name, org.organizationId AS organizationId, org.created AS created`)
         .orderBy(`created DESC`)
-        .end({adminId: adminId, platformId: platformId});
+        .end({platformId: platformId});
 };
 
 module.exports = {
+    getNumberOfOrgCommand,
     getOrgCommand
 };
