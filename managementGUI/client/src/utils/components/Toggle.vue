@@ -5,11 +5,14 @@
 <script>
 
     export default {
-        props: ['on', 'off', 'size', 'onstyle', 'offstyle', 'height', 'width', 'state'],
+        props: ['on', 'off', 'size', 'onstyle', 'offstyle', 'height', 'width', 'state', 'disabled'],
         mounted: function () {
             let element = this;
             if (this.state) {
                 this.$el.checked = true;
+            }
+            if (this.disabled) {
+                this.$el.disabled = true;
             }
             $(this.$el).bootstrapToggle({
                 on: this.on,

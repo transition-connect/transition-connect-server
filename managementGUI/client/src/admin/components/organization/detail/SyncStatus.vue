@@ -8,6 +8,8 @@
             </div>
             <div class="tc-sync-requested tc-sync-text"
                  v-if="status === 'EXPORT_REQUESTED'">Warte auf Freigabe</div>
+            <div class="tc-sync-denied tc-sync-text"
+                 v-if="status === 'EXPORT_DENIED'">Synchronisation abgelehnt</div>
         </div>
         <div class="tc-sync-status-text" v-if="status === 'EXPORTED'">Synchronisiert am {{getDateTime}}</div>
         <div class="tc-sync-status-text" v-if="status === 'NOT_EXPORTED'">Es kann einige Minuten dauern bis die Synchronisation abgeschlossen ist.</div>
@@ -16,6 +18,9 @@
         </div>
         <div class="tc-sync-status-text" v-if="status === 'EXPORT_UPDATE_NEEDED'">
             Es kann einige Minuten dauern bis die Änderungen synchronisiert werden.
+        </div>
+        <div class="tc-sync-status-text" v-if="status === 'EXPORT_DENIED'">
+            Die Synchronisationsanfrage wurde abgelehnt.
         </div>
     </div>
 </template>
@@ -53,6 +58,9 @@
         }
         .tc-sync-requested {
             background-color: $warning;
+        }
+        .tc-sync-denied {
+            background-color: $error;
         }
     }
 

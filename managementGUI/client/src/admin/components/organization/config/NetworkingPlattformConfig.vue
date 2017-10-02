@@ -2,20 +2,23 @@
     <div class="np-config">
         <div class="np-config-header">
             <div class="sync-toggle-container">
-                <toggle on="Ja" off="Nein" size="normal"
-                        :onstyle="np.isExported ? 'success': 'warning'"
+                <toggle :on="np.isDenied ? 'Nein': 'Ja'" off="Nein" size="normal"
+                        :onstyle="getOnStyle" :disabled="np.isDenied"
                         :offstyle="!np.isExported ? 'danger': 'warning'" :state="np.isExported"
                         height="32px" width="80px" @changed="syncChanged"></toggle>
                 <span class="np-name">Synchronisieren mit {{np.name}}</span>
             </div>
+            <div class="category-config-denied" v-show="np.isDenied">
+                Synchronisationsanfrage wurde abgelehnt
+            </div>
             <a target="_blank" rel="noopener" :href="np.link">{{np.link}}</a>
             <div class="np-description">{{np.description}}</div>
         </div>
-        <div class="category-container" v-show="np.isExported">
+        <div class="category-container" v-show="np.isExported && !np.isDenied">
             <div class="category-title">
                 Welchen Kategorien soll dieses Projekt auf {{np.name}} zugeordnet werden?
             </div>
-            <div id="category-config-warning" v-show="!categorySelected">
+            <div class="category-config-warning" v-show="!categorySelected">
                 Mindestens eine Kategorie muss ausgewählt werden
             </div>
             <div v-for="category in np.categories">
@@ -57,6 +60,14 @@
                 this.np.isExported = newState;
                 this.$emit('changed');
             }
+        },
+        computed: {
+            getOnStyle: function () {
+                if(this.np.isDenied) {
+                    return 'danger'
+                }
+                return this.np.isExported ? 'success': 'warning'
+            }
         }
     }
 </script>
@@ -78,6 +89,11 @@
                 font-size: 14px;
                 color: $secondary-text;
             }
+            .category-config-denied {
+                margin-top: -4px;
+                margin-bottom: 6px;
+                color: $error;
+            }
         }
         .np-name {
             font-size: 16px;
@@ -89,7 +105,7 @@
                 font-size: 14px;
                 font-weight: 500;
             }
-            #category-config-warning {
+            .category-config-warning {
                 font-size: 12px;
                 color: $warning;
             }
