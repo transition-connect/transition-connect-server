@@ -50,10 +50,11 @@ let getConfig = function (adminId, organizationId, language, req) {
             .orderBy(`categoryTranslated.name`)
             .match(`(org:Organization {organizationId: {organizationId}})`)
             .return(`np.name AS name, np.description AS description, np.link AS link, np.platformId AS platformId, 
-                     EXISTS((org)-[:EXPORT|:EXPORT_REQUEST]->(np)) AS isExported,
+                     EXISTS((org)-[:EXPORT|:EXPORT_REQUEST|:EXPORT_DENY]->(np)) AS isExported,
+                     EXISTS((org)-[:EXPORT_DENY]->(np)) AS isDenied,
                      COLLECT({name: categoryTranslated.name, categoryId: category.categoryId, 
                      isSelected: EXISTS((assigner)-[:ASSIGNED]->(category))}) AS categories`)
-            .orderBy(`isExported DESC`)
+            .orderBy(`isExported DESC, name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
                 return {organization: resp[0][0], networkingPlatforms: resp[1]};
