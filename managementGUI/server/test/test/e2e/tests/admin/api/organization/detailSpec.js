@@ -170,7 +170,7 @@ describe('Integration Tests for getting details of an organization', function ()
         });
     });
 
-    it('Getting details of organization (Export status EXPORT_DENY)', function () {
+    it('Getting details of organization (Export status EXPORT_DENIED)', function () {
 
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
         dbDsl.exportDenyOrgToNp({organizationId: '2', npId: '2'});
@@ -203,7 +203,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.exportedNetworkingPlatforms[0].platformId.should.equals('2');
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description2');
             res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink2.org');
-            res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_DENY');
+            res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_DENIED');
             res.body.exportedNetworkingPlatforms[0].isAdminOfExportRequestedNp.should.equals(false);
             res.body.exportedNetworkingPlatforms[0].categories.length.should.equals(1);
             res.body.exportedNetworkingPlatforms[0].categories[0].should.equals('Deutsch10');

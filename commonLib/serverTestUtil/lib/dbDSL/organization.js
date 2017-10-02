@@ -65,7 +65,7 @@ let exportRequestOrgToNp = function (data) {
 let exportDenyOrgToNp = function (data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_DENY]->(np)`)
+        .createUnique(`(org)-[:EXPORT_DENIED]->(np)`)
         .end({
             organizationId: data.organizationId, npId: data.npId
         }).getCommand());
