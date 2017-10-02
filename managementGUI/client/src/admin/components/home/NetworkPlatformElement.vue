@@ -19,8 +19,7 @@
 <script>
 
     export default {
-        props: ['np'],
-        components: {}
+        props: ['np']
     }
 </script>
 

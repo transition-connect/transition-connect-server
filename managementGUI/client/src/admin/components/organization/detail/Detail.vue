@@ -11,11 +11,11 @@
                 <div v-else>
                     <div v-for="np in detail.exportedNetworkingPlatforms" v-if="np.isAdminOfExportRequestedNp">
                         <button type="button" class="btn btn-default"
-                                v-on:click="">
+                                v-on:click="sendExportRequestStatus(false, np)">
                             Ablehnen
                         </button>
                         <button type="button" class="btn btn-primary todo-button"
-                                v-on:click="">
+                                v-on:click="sendExportRequestStatus(true, np)">
                             Akzeptieren
                         </button>
                         <div class="export-np-request-text">Mit {{np.name}} synchronisieren</div>
@@ -49,6 +49,26 @@
             }).catch(e => {
                 console.log(e);
             })
+        },
+        methods: {
+            sendExportRequestStatus: function (accept, np) {
+                HTTP.put(`/admin/api/networkingPlatform/organization/exportRequest`, {
+                    params: {
+                        platformId: np.platformId,
+                        organizationId: this.$route.params.id,
+                        accept: accept
+                    }
+                }).then(() => {
+                    np.isAdminOfExportRequestedNp = false;
+                    if (accept) {
+                        np.status = 'NOT_EXPORTED';
+                    } else {
+                        np.status = 'EXPORT_DENY';
+                    }
+                }).catch(e => {
+                    console.log(e);
+                })
+            }
         }
     }
 </script>

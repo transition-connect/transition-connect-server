@@ -22,8 +22,7 @@
 <script>
 
     export default {
-        props: ['organization'],
-        components: {}
+        props: ['organization']
     }
 </script>
 

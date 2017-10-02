@@ -4,14 +4,14 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Todo's</div>
                 <div class="panel-body">
-                    <todo-element v-for="todo in overviewData.todo" :todo="todo"></todo-element>
+                    <todo-element v-for="todo in overviewData.todo" :todo="todo" @remove="removeTodo(todo)"></todo-element>
                 </div>
             </div>
             <div class="panel panel-default" v-show="overviewData.nps.length > 0">
                 <div class="panel-heading">Deine Vernetzungsplattformen</div>
                 <div class="panel-body">
                     <networking-platform-element v-for="np in overviewData.nps" :np="np"
-                                          :key="np.platformId"></networking-platform-element>
+                                                 :key="np.platformId"></networking-platform-element>
                 </div>
             </div>
             <div class="panel panel-default" v-show="overviewData.organization.length > 0">
@@ -42,6 +42,12 @@
             }).catch(e => {
                 console.log(e);
             })
+        },
+        methods: {
+            removeTodo: function (todo) {
+                this.overviewData.todo.splice(
+                    this.overviewData.todo.findIndex((todoElement) => todoElement === todo), 1);
+            }
         }
     }
 </script>

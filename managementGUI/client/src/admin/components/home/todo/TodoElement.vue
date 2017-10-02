@@ -1,7 +1,8 @@
 <template>
     <div class="todo-container">
         <init-organization v-show="todo.action === 'INIT_ORGANISATION'" :action-data="todo.actionData"></init-organization>
-        <accept-organization v-show="todo.action === 'EXPORT_REQUEST'" :action-data="todo.actionData"></accept-organization>
+        <accept-organization v-show="todo.action === 'EXPORT_REQUEST'" :action-data="todo.actionData"
+                             @remove="$emit('remove')"></accept-organization>
     </div>
 </template>
 

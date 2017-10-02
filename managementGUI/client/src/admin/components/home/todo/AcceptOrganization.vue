@@ -3,18 +3,20 @@
         <div class="action-title">
             <router-link :to="{name: 'orgDetail', params: {id: actionData.organizationId}}">
                 {{actionData.organizationName}}
-            </router-link> möchte mit
+            </router-link>
+            möchte mit
             <router-link :to="{name: 'npDetail', params: {id: actionData.platformId}}">
                 {{actionData.nameNetworkingPlatform}}
-            </router-link> synchronisiert werden
+            </router-link>
+            synchronisiert werden
         </div>
         <div class="todo-commands">
             <button type="button" class="btn btn-default todo-button"
-                    v-on:click="">
+                    v-on:click="sendExportRequestStatus(false)">
                 Ablehnen
             </button>
             <button type="button" class="btn btn-primary todo-button"
-                    v-on:click="">
+                    v-on:click="sendExportRequestStatus(true)">
                 Akzeptieren
             </button>
         </div>
@@ -22,9 +24,25 @@
 </template>
 
 <script>
+    import {HTTP} from './../../../../utils/http-common';
+
     export default {
         props: ['actionData'],
-        components: {}
+        methods: {
+            sendExportRequestStatus: function (accept) {
+                HTTP.put(`/admin/api/networkingPlatform/organization/exportRequest`, {
+                    params: {
+                        platformId: this.actionData.platformId,
+                        organizationId: this.actionData.organizationId,
+                        accept: accept
+                    }
+                }).then(() => {
+                    this.$emit('remove');
+                }).catch(e => {
+                    console.log(e);
+                })
+            }
+        }
     }
 </script>
 
