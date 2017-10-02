@@ -62,9 +62,19 @@ let exportRequestOrgToNp = function (data) {
         }).getCommand());
 };
 
+let exportDenyOrgToNp = function (data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:EXPORT_DENY]->(np)`)
+        .end({
+            organizationId: data.organizationId, npId: data.npId
+        }).getCommand());
+};
+
 module.exports = {
     createOrganization,
     assignOrganizationToCategory,
     exportOrgToNp,
-    exportRequestOrgToNp
+    exportRequestOrgToNp,
+    exportDenyOrgToNp
 };

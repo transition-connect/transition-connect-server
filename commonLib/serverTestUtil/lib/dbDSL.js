@@ -26,5 +26,6 @@ module.exports = {
     assignOrganizationToCategory: organization.assignOrganizationToCategory,
     exportOrgToNp: organization.exportOrgToNp,
     exportRequestOrgToNp: organization.exportRequestOrgToNp,
+    exportDenyOrgToNp: organization.exportDenyOrgToNp,
     createEvent: organizationEvent.createEvent
 };
