@@ -54,20 +54,22 @@ let exportOrgToNp = function (data) {
 };
 
 let exportRequestOrgToNp = function (data) {
+    data.requestTimestamp = data.requestTimestamp || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_REQUEST]->(np)`)
+        .createUnique(`(org)-[:EXPORT_REQUEST {requestTimestamp: {requestTimestamp}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId
+            organizationId: data.organizationId, npId: data.npId, requestTimestamp: data.requestTimestamp
         }).getCommand());
 };
 
 let exportDenyOrgToNp = function (data) {
+    data.timestamp = data.timestamp || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_DENIED]->(np)`)
+        .createUnique(`(org)-[:EXPORT_DENIED {timestamp: {timestamp}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId
+            organizationId: data.organizationId, npId: data.npId, timestamp: data.timestamp
         }).getCommand());
 };
 
