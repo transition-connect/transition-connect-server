@@ -67,6 +67,7 @@ describe('Integration Tests for getting details of a networking platform', funct
             res.body.np.name.should.equals('Elyoos');
             res.body.np.description.should.equals('description');
             res.body.np.link.should.equals('www.npLink.org');
+            res.body.np.requestTimestamp.should.be.at.least(startTime);
             res.body.np.categories.length.should.equals(3);
             res.body.np.categories[0].should.equals('Deutsch1');
             res.body.np.categories[1].should.equals('Deutsch6');

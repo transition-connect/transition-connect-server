@@ -1,31 +1,13 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
-let logger = require('server-lib').logging.getLogger(__filename);
-let exceptions = require('server-lib').exceptions;
+let security = require(`./secuity`);
+let time = require('server-lib').time;
 let orgCreatedByNp = require('./orgCreatedByNP');
 let orgExportedToNp = require('./orgExportedToNP');
 let orgExportRequestToNp = require('./orgExportRequestToNP');
 let orgDeniedExportToNp = require('./orgDeniedExportToNP');
 
-
-let checkAllowedToGetDetail = function (adminId, platformId, req) {
-
-    function userNotAdmin(resp) {
-        return resp.length === 0;
-    }
-
-    return db.cypher()
-        .match("(np:NetworkingPlatform {platformId: {platformId}})<-[:IS_ADMIN]-(admin:Admin {adminId: {adminId}})")
-        .return("np")
-        .end({adminId: adminId, platformId: platformId}).send()
-        .then(function (resp) {
-            if (userNotAdmin(resp)) {
-                return exceptions.getInvalidOperation(`Not admin tries to get 
-                config of networking platform ${platformId}`, logger, req);
-            }
-        });
-};
 
 let getNetworkingPlatformInfo = function (platformId, language) {
     return db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})`)
@@ -41,21 +23,22 @@ let getNetworkingPlatformInfo = function (platformId, language) {
 
 let getDetails = function (adminId, platformId, language, req) {
 
-    return checkAllowedToGetDetail(adminId, platformId, req).then(function () {
+    return security.checkAllowedToGetNpInfo(adminId, platformId, req).then(function () {
 
-        let commands = [
+        let maxTime = time.getNowUtcTimestamp(), commands = [
             getNetworkingPlatformInfo(platformId, language),
             orgExportedToNp.getOrgCommand(platformId).getCommand(),
             orgExportedToNp.getNumberOfOrgCommand(platformId).getCommand(),
             orgExportRequestToNp.getOrgCommand(platformId).getCommand(),
             orgExportRequestToNp.getNumberOfOrgCommand(platformId).getCommand(),
-            orgDeniedExportToNp.getOrgCommand( platformId).getCommand(),
-            orgDeniedExportToNp.getNumberOfOrgCommand( platformId).getCommand(),
-            orgCreatedByNp.getNumberOfOrgCommand(platformId).getCommand()
+            orgDeniedExportToNp.getOrgCommand(platformId).getCommand(),
+            orgDeniedExportToNp.getNumberOfOrgCommand(platformId).getCommand(),
+            orgCreatedByNp.getNumberOfOrgCommand(platformId, maxTime).getCommand()
         ];
 
-        return orgCreatedByNp.getOrgCommand(platformId)
+        return orgCreatedByNp.getOrgCommand(platformId, 0, 10, maxTime)
             .send(commands).then(function (resp) {
+                resp[0][0].requestTimestamp = maxTime;
                 return {
                     np: resp[0][0], orgExportedToNp: resp[1],
                     numberOfOrgExportedToNp: resp[2][0].numberOfOrg,

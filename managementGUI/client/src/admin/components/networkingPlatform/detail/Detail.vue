@@ -18,9 +18,10 @@
                                       detail.orgRequestedExportToNp, 'numberOfOrgRequestedExportToNp',
                                       detail.orgDeniedExportToNp, 'numberOfOrgDeniedExportToNp')">
             </org-request-export-to-np>
-            <org-created-by-np :organizations="detail.orgCreatedByNp"
+            <org-created-by-np :organizations="detail.orgCreatedByNp" :max-time="detail.np.requestTimestamp"
                                :number-of-organizations="detail.numberOfOrgCreatedByNp"
-                               :name-np="detail.np.name">
+                               :name-np="detail.np.name" :platform-id="$route.params.id"
+                               @addOrg="org => detail.orgCreatedByNp = detail.orgCreatedByNp.concat(org)">
             </org-created-by-np>
             <org-exported-to-np :organizations="detail.orgExportedToNp"
                                 :number-of-organizations="detail.numberOfOrgExportedToNp"

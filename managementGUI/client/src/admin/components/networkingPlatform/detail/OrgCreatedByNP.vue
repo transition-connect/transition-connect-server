@@ -7,17 +7,38 @@
             </router-link>
             <div class="org-created">Erstellt am {{getCreated(org.created)}}</div>
         </div>
+        <div class="next-org-container" v-if="numberOfOrganizations > organizations.length">
+            <button type="button" class="btn btn-default todo-button"
+                    v-on:click="getNext()">
+                Nächste
+            </button>
+        </div>
     </div>
 </template>
 
 <script>
     import moment from 'moment';
+    import {HTTP} from './../../../../utils/http-common';
 
     export default {
-        props: ['organizations', 'numberOfOrganizations', 'nameNp'],
+        props: ['organizations', 'platformId', 'numberOfOrganizations', 'nameNp', 'maxTime'],
         methods: {
             getCreated: function (created) {
                 return moment.unix(created).format('LLL')
+            },
+            getNext: function () {
+                HTTP.get(`/admin/api/networkingPlatform/orgCreatedByNp`, {
+                    params: {
+                        platformId: this.platformId,
+                        skip: this.organizations.length,
+                        limit: 20,
+                        maxTime: this.maxTime
+                    }
+                }).then((resp) => {
+                    this.$emit('addOrg', resp.data.org);
+                }).catch(e => {
+                    console.log(e);
+                })
             }
         }
     }
@@ -43,6 +64,9 @@
                 display: inline-block;
                 color: $secondary-text;
             }
+        }
+        .next-org-container {
+
         }
     }
 </style>
