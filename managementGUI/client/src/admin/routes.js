@@ -1,7 +1,7 @@
 import Home from './components/home/Home.vue';
 import OrganizationConfig from './components/organization/config/Config.vue';
 import OrganizationDetail from './components/organization/detail/Detail.vue';
-import NetworkingPlatformDetail from './components/networkingPlatform/detail/NetworkingPlatform.vue';
+import NetworkingPlatformDetail from './components/networkingPlatform/detail/Detail.vue';
 
 export default [
     {
