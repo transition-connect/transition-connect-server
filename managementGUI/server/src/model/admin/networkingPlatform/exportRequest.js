@@ -26,7 +26,8 @@ let checkAllowedToSetExportRequest = function (adminId, organizationId, platform
 let setExport = function (organizationId, platformId, accept) {
     let exportLabel = () => accept ? ':EXPORT' : ':EXPORT_DENIED';
     return db.cypher().match(`(org:Organization {organizationId: {organizationId}})
-                              -[export:EXPORT_REQUEST]->(np:NetworkingPlatform {platformId: {platformId}})`)
+                              -[export:EXPORT_REQUEST|EXPORT_DENIED|EXPORT]->
+                              (np:NetworkingPlatform {platformId: {platformId}})`)
         .delete(`export`)
         .with(`org, np`)
         .merge(`(org)-[${exportLabel()}]->(np)`)
