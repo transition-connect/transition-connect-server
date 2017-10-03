@@ -45,8 +45,8 @@ describe('Integration Tests for getting details of an organization', function ()
     it('Getting details of organization (Export status NOT_EXPORTED and EXPORTED)', function () {
 
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 504});
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', created: 500, lastExportTimestamp: 504});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '3', created: 501});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -91,10 +91,49 @@ describe('Integration Tests for getting details of an organization', function ()
         });
     });
 
-    it('Getting details of organization (Status EXPORT_UPDATE_NEEDED because org data has changed)', function () {
+    it('Getting details of organization (Status EXPORT_UPDATE_NEEDED because config of org has been changed)', function () {
 
-        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10'], lastConfigUpdate: 701});
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 700});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10'], lastConfigUpdate: 506});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 505});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api/organization/detail',
+                {organizationId: '2', language: 'DE'});
+        }).then(function (res) {
+            res.status.should.equal(200);
+
+            res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.isAdmin.should.equals(true);
+            res.body.organization.created.should.equals(502);
+            res.body.organization.slogan.should.equals('best2Org');
+            res.body.organization.description.should.equals('org2description');
+            res.body.organization.website.should.equals('www.link2.org');
+            res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.organization.categories.length.should.equals(2);
+            res.body.organization.categories[0].should.equals('Deutsch1');
+            res.body.organization.categories[1].should.equals('Deutsch6');
+            res.body.organization.administrators.length.should.equals(2);
+            res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
+            res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
+
+            res.body.exportedNetworkingPlatforms.length.should.equals(1);
+
+            res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms[0].platformId.should.equals('2');
+            res.body.exportedNetworkingPlatforms[0].description.should.equals('description2');
+            res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink2.org');
+            res.body.exportedNetworkingPlatforms[0].status.should.equals('EXPORT_UPDATE_NEEDED');
+            res.body.exportedNetworkingPlatforms[0].categories.length.should.equals(1);
+            res.body.exportedNetworkingPlatforms[0].categories[0].should.equals('Deutsch10');
+        });
+    });
+
+    it('Getting details of organization (Status EXPORT_UPDATE_NEEDED because org data has changed )', function () {
+
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10'], lastConfigUpdate: 501});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 501});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);

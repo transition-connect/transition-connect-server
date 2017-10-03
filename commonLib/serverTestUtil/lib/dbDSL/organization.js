@@ -43,33 +43,34 @@ let assignOrganizationToCategory = function (data) {
 };
 
 let exportOrgToNp = function (data) {
-    data.exportTimestamp = data.exportTimestamp || null;
-    data.exportStatus = data.exportStatus || ':EXPORT';
+    data.created = data.created || 500;
+    data.lastExportTimestamp = data.lastExportTimestamp || null;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[${data.exportStatus} {exportTimestamp: {exportTimestamp}}]->(np)`)
+        .createUnique(`(org)-[:EXPORT {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId, exportTimestamp: data.exportTimestamp
+            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp,
+            created: data.created
         }).getCommand());
 };
 
 let exportRequestOrgToNp = function (data) {
-    data.requestTimestamp = data.requestTimestamp || 500;
+    data.created = data.created || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_REQUEST {requestTimestamp: {requestTimestamp}}]->(np)`)
+        .createUnique(`(org)-[:EXPORT_REQUEST {created: {created}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId, requestTimestamp: data.requestTimestamp
+            organizationId: data.organizationId, npId: data.npId, created: data.created
         }).getCommand());
 };
 
 let exportDenyOrgToNp = function (data) {
-    data.timestamp = data.timestamp || 500;
+    data.created = data.created || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT_DENIED {timestamp: {timestamp}}]->(np)`)
+        .createUnique(`(org)-[:EXPORT_DENIED {created: {created}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId, timestamp: data.timestamp
+            organizationId: data.organizationId, npId: data.npId, created: data.created
         }).getCommand());
 };
 

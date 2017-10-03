@@ -118,8 +118,8 @@ let setExportRelationship = function (manuallyAcceptOrg, exportLabel, lastConfig
         .match(`(org:Organization {organizationId: {organizationId}}), 
                 (networkingPlatform:NetworkingPlatform {platformId: np.platformId})-[:EXPORT_RULES]->(rules:ExportRules)`)
         .where(`NOT (org)-[]->(networkingPlatform) AND rules.manuallyAcceptOrganization = ${manuallyAcceptOrg}`)
-        .merge(`(org)-[${exportLabel}]->(networkingPlatform)`)
-        .set(`org`, {lastConfigUpdate: lastConfigUpdate})
+        .merge(`(org)-[${exportLabel} {created: {created}}]->(networkingPlatform)`)
+        .set(`org`, {lastConfigUpdate: lastConfigUpdate, created: time.getNowUtcTimestamp()})
         .return(`NULL`).end({organizationId: organizationId, nps: nps}).getCommand();
 };
 

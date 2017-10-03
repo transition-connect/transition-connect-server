@@ -32,10 +32,10 @@ let setStatus = function (nps, orgModifiedTimestamp) {
             np.status = 'EXPORT_REQUESTED';
         } else if (np.exportType === 'EXPORT_DENIED') {
             np.status = 'EXPORT_DENIED';
-        } else if (!np.hasOwnProperty('exportTimestamp')) {
+        } else if (!np.hasOwnProperty('lastExportTimestamp')) {
             np.status = 'NOT_EXPORTED';
-        } else if (np.exportTimestamp < orgModifiedTimestamp ||
-            np.exportTimestamp < np.lastConfigUpdate) {
+        } else if (np.lastExportTimestamp < orgModifiedTimestamp ||
+            np.lastExportTimestamp < np.lastConfigUpdate) {
             np.status = 'EXPORT_UPDATE_NEEDED';
         } else {
             np.status = 'EXPORTED';
@@ -79,11 +79,11 @@ let getDetails = function (adminId, organizationId, language, req) {
             .with(`np, export, org, categoryTranslated, assigner`)
             .orderBy(`categoryTranslated.name`)
             .return(`np.name AS name, np.description AS description, np.link AS link, TYPE(export) AS exportType,
-                     export.exportTimestamp AS exportTimestamp, assigner.lastConfigUpdate AS lastConfigUpdate,
+                     export.created AS created, export.lastExportTimestamp AS lastExportTimestamp, 
+                     assigner.lastConfigUpdate AS lastConfigUpdate, np.platformId AS platformId,
                      (EXISTS((np)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})) AND TYPE(export) = 'EXPORT_REQUEST')
-                     AS isAdminOfExportRequestedNp, COLLECT(categoryTranslated.name) AS categories,
-                     np.platformId AS platformId`)
-            .orderBy(`export.exportTimestamp DESC, np.name`)
+                     AS isAdminOfExportRequestedNp, COLLECT(categoryTranslated.name) AS categories`)
+            .orderBy(`export.created DESC, np.name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
                 setStatus(resp[1], resp[0][0].modified);

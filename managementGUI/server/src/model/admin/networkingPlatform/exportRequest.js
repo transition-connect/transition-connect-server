@@ -3,6 +3,7 @@
 let db = require('server-lib').neo4j;
 let logger = require('server-lib').logging.getLogger(__filename);
 let exceptions = require('server-lib').exceptions;
+let time = require('server-lib').time;
 
 let checkAllowedToSetExportRequest = function (adminId, organizationId, platformId, req) {
 
@@ -30,8 +31,11 @@ let setExport = function (organizationId, platformId, accept) {
                               (np:NetworkingPlatform {platformId: {platformId}})`)
         .delete(`export`)
         .with(`org, np`)
-        .merge(`(org)-[${exportLabel()}]->(np)`)
-        .end({organizationId: organizationId, platformId: platformId, accept: accept});
+        .merge(`(org)-[${exportLabel()} {created: {created}}]->(np)`)
+        .end({
+            organizationId: organizationId, platformId: platformId, accept: accept,
+            created: time.getNowUtcTimestamp()
+        });
 };
 
 

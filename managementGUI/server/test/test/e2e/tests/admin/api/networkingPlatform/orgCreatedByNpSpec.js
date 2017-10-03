@@ -24,7 +24,7 @@ describe('Integration Tests for getting organizations created by an networking p
             dbDsl.createOrganization('3', {networkingPlatformId: '1', adminIds: ['1'], created: 504});
             dbDsl.createOrganization('4', {networkingPlatformId: '2', adminIds: ['2'], created: 506});
 
-            dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 504});
+            dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 504});
 
         });
     });

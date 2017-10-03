@@ -39,14 +39,14 @@ describe('Integration Tests for getting details of a networking platform', funct
             dbDsl.createOrganization('11', {networkingPlatformId: '3', adminIds: ['3'], created: 510});
             dbDsl.createOrganization('12', {networkingPlatformId: '3', adminIds: ['3'], created: 510});
 
-            dbDsl.exportOrgToNp({organizationId: '2', npId: '2', exportTimestamp: 504});
+            dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 504});
             dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
-            dbDsl.exportOrgToNp({organizationId: '5', npId: '1', exportTimestamp: 505});
-            dbDsl.exportOrgToNp({organizationId: '6', npId: '1'});
-            dbDsl.exportRequestOrgToNp({organizationId: '9', npId: '1', requestTimestamp: 500});
-            dbDsl.exportRequestOrgToNp({organizationId: '10', npId: '1', requestTimestamp: 501});
-            dbDsl.exportDenyOrgToNp({organizationId: '11', npId: '1', timestamp: 500});
-            dbDsl.exportDenyOrgToNp({organizationId: '12', npId: '1', timestamp: 501});
+            dbDsl.exportOrgToNp({organizationId: '5', npId: '1', created: 505, lastExportTimestamp: 506});
+            dbDsl.exportOrgToNp({organizationId: '6', npId: '1', created: 506,});
+            dbDsl.exportRequestOrgToNp({organizationId: '9', npId: '1', created: 500});
+            dbDsl.exportRequestOrgToNp({organizationId: '10', npId: '1', created: 501});
+            dbDsl.exportDenyOrgToNp({organizationId: '11', npId: '1', created: 500});
+            dbDsl.exportDenyOrgToNp({organizationId: '12', npId: '1', created: 501});
         });
     });
 
@@ -89,9 +89,10 @@ describe('Integration Tests for getting details of a networking platform', funct
             res.body.orgExportedToNp.length.should.equals(2);
             res.body.orgExportedToNp[0].name.should.equals('organization6Name');
             res.body.orgExportedToNp[0].organizationId.should.equals('6');
+            res.body.orgExportedToNp[0].created.should.equals(506);
             res.body.orgExportedToNp[1].name.should.equals('organization5Name');
             res.body.orgExportedToNp[1].organizationId.should.equals('5');
-            res.body.orgExportedToNp[1].exportTimestamp.should.equals(505);
+            res.body.orgExportedToNp[1].created.should.equals(505);
 
             res.body.numberOfOrgRequestedExportToNp.should.equals(2);
             res.body.orgRequestedExportToNp.length.should.equals(2);

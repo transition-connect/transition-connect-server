@@ -18,7 +18,7 @@ describe('Getting todo for an networking platform to accepting an new organizati
             dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos'});
             dbDsl.createNetworkingPlatform('2', {adminId: '1', name: 'Elyoos2'});
             dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['1'], created: 500, lastConfigUpdate: 600});
-            dbDsl.exportOrgToNp({organizationId: '1', npId: '2', exportStatus: ':EXPORT_REQUEST'});
+            dbDsl.exportRequestOrgToNp({organizationId: '1', npId: '2'});
         });
     });
 

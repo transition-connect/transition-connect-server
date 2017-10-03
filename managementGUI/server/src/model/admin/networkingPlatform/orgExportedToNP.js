@@ -12,8 +12,8 @@ let getNumberOfOrgCommand = function (platformId) {
 let getOrgCommand = function (platformId) {
     return db.cypher()
         .match(`(:NetworkingPlatform {platformId: {platformId}})<-[export:EXPORT]-(org:Organization)`)
-        .return(`org.name AS name, org.organizationId AS organizationId, export.exportTimestamp AS exportTimestamp`)
-        .orderBy(`exportTimestamp DESC`)
+        .return(`org.name AS name, org.organizationId AS organizationId, export.created AS created`)
+        .orderBy(`created DESC`)
         .end({platformId: platformId});
 };
 

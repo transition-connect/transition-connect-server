@@ -4,10 +4,14 @@ let dbDsl = require('server-test-util').dbDSL;
 let db = require('server-test-util').db;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
+let moment = require('moment');
 
 describe('Integration Tests for accepting/deny an organization as admin of an networking platform', function () {
 
+    let startTime;
+
     beforeEach(function () {
+        startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
@@ -33,11 +37,12 @@ describe('Integration Tests for accepting/deny an organization as admin of an ne
                 {platformId: '1', organizationId: '1', accept: true});
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '1'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`org.organizationId`)
+            return db.cypher().match("(org:Organization {organizationId: '1'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`export.created AS created`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
+            nps[0].created.should.at.least(startTime);
         });
     });
 
@@ -51,11 +56,12 @@ describe('Integration Tests for accepting/deny an organization as admin of an ne
                 {platformId: '1', organizationId: '1', accept: true});
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '1'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`org.organizationId`)
+            return db.cypher().match("(org:Organization {organizationId: '1'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`export.created AS created`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
+            nps[0].created.should.at.least(startTime);
         });
     });
 
@@ -69,11 +75,12 @@ describe('Integration Tests for accepting/deny an organization as admin of an ne
                 {platformId: '1', organizationId: '1', accept: false});
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '1'})-[:EXPORT_DENIED]->(exportedNP:NetworkingPlatform)")
-                .return(`org.organizationId`)
+            return db.cypher().match("(org:Organization {organizationId: '1'})-[export:EXPORT_DENIED]->(exportedNP:NetworkingPlatform)")
+                .return(`export.created AS created`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
+            nps[0].created.should.at.least(startTime);
         });
     });
 
@@ -87,11 +94,12 @@ describe('Integration Tests for accepting/deny an organization as admin of an ne
                 {platformId: '1', organizationId: '1', accept: false});
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '1'})-[:EXPORT_DENIED]->(exportedNP:NetworkingPlatform)")
-                .return(`org.organizationId`)
+            return db.cypher().match("(org:Organization {organizationId: '1'})-[export:EXPORT_DENIED]->(exportedNP:NetworkingPlatform)")
+                .return(`export.created AS created`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
+            nps[0].created.should.at.least(startTime);
         });
     });
 

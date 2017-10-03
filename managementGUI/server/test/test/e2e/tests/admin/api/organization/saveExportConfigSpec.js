@@ -60,15 +60,17 @@ describe('Integration Tests for saving export config of an organization', functi
                 });
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`org, exportedNP.platformId AS platformId`)
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
                 .orderBy(`exportedNP.platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(2);
             nps[0].platformId.should.equals('2');
+            nps[0].created.should.at.least(startTime);
             nps[0].org.lastConfigUpdate.should.at.least(startTime);
             nps[1].platformId.should.equals('3');
+            nps[1].created.should.at.least(startTime);
             nps[1].org.lastConfigUpdate.should.at.least(startTime);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
@@ -102,7 +104,7 @@ describe('Integration Tests for saving export config of an organization', functi
 
     it('Activate export (Export exists and NP automatically accepts Org)', function () {
 
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '3', created: 600});
         dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
         dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
 
@@ -117,14 +119,16 @@ describe('Integration Tests for saving export config of an organization', functi
                 });
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`exportedNP.platformId AS platformId`)
+            return db.cypher().match("(:Organization {organizationId: '2'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`exportedNP.platformId AS platformId, export.created AS created`)
                 .orderBy(`exportedNP.platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(2);
             nps[0].platformId.should.equals('2');
+            nps[0].created.should.at.least(startTime);
             nps[1].platformId.should.equals('3');
+            nps[1].created.should.equals(600);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
                                       -[:ASSIGNED]->(np:NetworkingPlatform)`)
@@ -209,13 +213,14 @@ describe('Integration Tests for saving export config of an organization', functi
                 });
         }).then(function (res) {
             res.status.should.equal(200);
-            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT]->(exportedNP:NetworkingPlatform)")
-                .return(`org, exportedNP.platformId AS platformId`)
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
                 .orderBy(`exportedNP.platformId`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
             nps[0].platformId.should.equals('3');
+            nps[0].created.should.at.least(startTime);
             nps[0].org.lastConfigUpdate.should.at.least(startTime);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
@@ -262,12 +267,13 @@ describe('Integration Tests for saving export config of an organization', functi
                 .return(`exportedNP.platformId AS platformId`).end().send();
         }).then(function (nps) {
             nps.length.should.equals(0);
-            return db.cypher().match("(org:Organization {organizationId: '2'})-[:EXPORT_REQUEST]->(exportedNP:NetworkingPlatform)")
-                .return(`org, exportedNP.platformId AS platformId`)
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[export:EXPORT_REQUEST]->(exportedNP:NetworkingPlatform)")
+                .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
                 .end().send();
         }).then(function (nps) {
             nps.length.should.equals(1);
             nps[0].platformId.should.equals('2');
+            nps[0].created.should.at.least(startTime);
             nps[0].org.lastConfigUpdate.should.at.least(startTime);
 
             return db.cypher().match(`(:Organization {organizationId: '2'})-[:ASSIGNED]->(assigner:CategoryAssigner)
