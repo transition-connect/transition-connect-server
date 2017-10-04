@@ -20,14 +20,19 @@
                 Akzeptieren
             </button>
         </div>
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import Snackbar from './../../../../utils/components/Snackbar.vue';
 
     export default {
         props: ['actionData'],
+        components: {Snackbar},
         methods: {
             sendExportRequestStatus: function (accept) {
                 HTTP.put(`/admin/api/networkingPlatform/organization/exportRequest`, {
@@ -39,6 +44,7 @@
                 }).then(() => {
                     this.$emit('remove');
                 }).catch(e => {
+                    this.$emit('showNotification', true);
                     console.log(e);
                 })
             }

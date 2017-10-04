@@ -22,6 +22,10 @@
                                @updateSuccess="updateSuccess">
         </change-config-command>
 
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
+
         <modal-dialog v-if="showWarningDialog">
             <h3 slot="header">Konfiguration nicht gespeichert</h3>
             <div slot="body">Die Konfiguration wurde noch nicht gespeichert. Möchtest du trotzdem diese Seite verlassen?</div>
@@ -45,9 +49,10 @@
     import Administrator from './Administrators.vue';
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
+    import Snackbar from './../../../../utils/components/Snackbar.vue';
 
     export default {
-        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand},
+        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, Snackbar},
         data: function () {
             return {config: {organization: {}}, showConfigChanged: false, showWarningDialog: false, nextRoute: null};
         },
@@ -56,7 +61,10 @@
                 {params: {organizationId: this.$route.params.id, language: 'DE'}}).then((resp) => {
                 this.config = resp.data;
                 this.configOriginal = JSON.parse(JSON.stringify(resp.data));
-            }).catch(e => console.log(e))
+            }).catch(e => {
+                this.$emit('showNotification', true);
+                console.log(e);
+            })
         },
         methods: {
             configChanged: function () {

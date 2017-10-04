@@ -41,11 +41,15 @@
                                       detail.orgExportedToNp, 'numberOfOrgExportedToNp')">
             </org-export-denied>
         </div>
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import Snackbar from './../../../../utils/components/Snackbar.vue';
     import Info from './Info.vue';
     import OrgCreatedByNp from './OrgCreatedByNP.vue';
     import OrgExportDenied from './OrgExportDenied.vue';
@@ -54,7 +58,7 @@
     import moment from 'moment';
 
     export default {
-        components: {Info, OrgCreatedByNp, OrgExportDenied, OrgRequestExportToNp, OrgExportedToNp},
+        components: {Snackbar, Info, OrgCreatedByNp, OrgExportDenied, OrgRequestExportToNp, OrgExportedToNp},
         data: function () {
             return {detail: {np: {}}, npLoaded: false};
         },
@@ -64,6 +68,7 @@
                 this.npLoaded = true;
                 this.detail = resp.data;
             }).catch(e => {
+                this.$emit('showNotification', true);
                 console.log(e);
             })
         },

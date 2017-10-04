@@ -26,16 +26,21 @@
                               url="/admin/api/networkingPlatform/orgExportRequestToNp"
                               @addOrg="org => $emit('addOrg', org)"></next-org-command>
         </div>
+
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import NextOrgCommand from './NextOrgCommand.vue';
+    import Snackbar from './../../../../utils/components/Snackbar.vue';
 
     export default {
         props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId', 'maxTime'],
-        components: {NextOrgCommand},
+        components: {NextOrgCommand, Snackbar},
         methods: {
             sendExportRequestStatus: function (org, accept) {
                 HTTP.put(`/admin/api/networkingPlatform/organization/exportRequest`, {
@@ -51,6 +56,7 @@
                         this.$emit('moveToDeny', org);
                     }
                 }).catch(e => {
+                    this.$emit('showNotification', true);
                     console.log(e);
                 })
             }

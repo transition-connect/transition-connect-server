@@ -8,18 +8,24 @@
                 <li><a v-on:click="logout()" href="#">Logout</a></li>
             </ul>
         </div>
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist beim Logout aufgetreten.</div>
+        </snackbar>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../utils/http-common';
+    import Snackbar from './../../../utils/components/Snackbar.vue';
 
     export default {
+        components: {Snackbar},
         methods: {
             logout: function () {
                 HTTP.post(`/admin/api/logout`).then(() => {
                     window.location.href = "/";
                 }).catch(e => {
+                    this.$emit('showNotification', true);
                     console.log(e);
                 })
             }

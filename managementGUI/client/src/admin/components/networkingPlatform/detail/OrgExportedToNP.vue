@@ -23,6 +23,10 @@
                               @addOrg="org => $emit('addOrg', org)"></next-org-command>
         </div>
 
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
+
         <modal-dialog v-if="showWarningDialog">
             <h3 slot="header">Synchronisation beenden</h3>
             <div slot="body">Soll die Synchronisation für
@@ -46,10 +50,11 @@
     import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
     import NextOrgCommand from './NextOrgCommand.vue';
+    import Snackbar from './../../../../utils/components/Snackbar.vue';
 
     export default {
         props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId', 'maxTime'],
-        components: {ModalDialog, NextOrgCommand},
+        components: {ModalDialog, NextOrgCommand, Snackbar},
         data: function () {
             return {showWarningDialog: false, orgToDeny: null};
         },
@@ -69,6 +74,7 @@
                 }).then(() => {
                     this.$emit('moveToDeny', this.orgToDeny);
                 }).catch(e => {
+                    this.$emit('showNotification', true);
                     console.log(e);
                 })
             },
@@ -83,6 +89,7 @@
                 }).then((resp) => {
                     this.$emit('addOrg', resp.data.org);
                 }).catch(e => {
+                    this.$emit('showNotification', true);
                     console.log(e);
                 })
             }

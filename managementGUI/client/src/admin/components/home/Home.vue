@@ -22,17 +22,21 @@
                 </div>
             </div>
         </div>
+        <snackbar type="error">
+            <div slot="text">Ein Fehler ist aufgetreten.</div>
+        </snackbar>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../utils/http-common';
+    import Snackbar from './../../../utils/components/Snackbar.vue';
     import OrganizationElement from './OrganizationElement.vue';
     import NetworkingPlatformElement from './NetworkPlatformElement.vue';
     import TodoElement from './todo/TodoElement.vue';
 
     export default {
-        components: {OrganizationElement, NetworkingPlatformElement, TodoElement},
+        components: {Snackbar, OrganizationElement, NetworkingPlatformElement, TodoElement},
         data: function () {
             return {overviewData: {organization: {}, nps: {}}};
         },
@@ -40,6 +44,7 @@
             HTTP.get(`/admin/api`).then((resp) => {
                 this.overviewData = resp.data;
             }).catch(e => {
+                this.$emit('showNotification', true);
                 console.log(e);
             })
         },
