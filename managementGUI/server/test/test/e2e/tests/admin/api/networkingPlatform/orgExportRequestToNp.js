@@ -16,8 +16,8 @@ describe('Integration Tests for getting organizations requesting an export to an
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
             dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description', link:'www.npLink.org'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2', description: 'description2', link:'www.npLink2.org'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos', description: 'description', link:'www.npLink.org'});
+            dbDsl.createNetworkingPlatform('2', {adminIds: ['2'], name: 'Elyoos2', description: 'description2', link:'www.npLink2.org'});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
             dbDsl.createOrganization('2', {networkingPlatformId: '2', adminIds: ['3'], created: 502});

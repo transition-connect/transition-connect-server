@@ -16,8 +16,8 @@ describe('Integration Tests for accepting/deny an organization as admin of an ne
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description', link: 'www.link.org'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2', description: 'description2', link: 'www.link2.org'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos', description: 'description', link: 'www.link.org'});
+            dbDsl.createNetworkingPlatform('2', {adminIds: ['2'], name: 'Elyoos2', description: 'description2', link: 'www.link2.org'});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
         });

@@ -7,14 +7,14 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
     data.name = data.name || `nP${networkingPlatformId}Name`;
     data.description = data.description || `description${networkingPlatformId}`;
     data.link = data.link || `www.nplink${networkingPlatformId}.org`;
-    data.adminId = data.adminId || `1`;
+    data.adminId = data.adminIds || [`1`];
     dbConnectionHandling.getCommands().push(db.cypher()
-        .match(`(admin:Admin {adminId: {adminId}})`)
-        .createUnique(`(:NetworkingPlatform {platformId: {platformId}, name: {name}, description: {description}, 
-                        link: {link}})
-                        <-[:IS_ADMIN]-(admin)`)
+        .match(`(admin:Admin)`)
+        .where(`admin.adminId IN {adminIds}`)
+        .merge(`(np:NetworkingPlatform {platformId: {platformId}, name: {name}, description: {description}, link: {link}})`)
+        .merge(`(np)<-[:IS_ADMIN]-(admin)`)
         .end({
-            platformId: networkingPlatformId, adminId: data.adminId, name: data.name, description: data.description,
+            platformId: networkingPlatformId, adminIds: data.adminIds, name: data.name, description: data.description,
             link: data.link
         }).getCommand());
 };

@@ -24,9 +24,9 @@ describe('Getting all administrated networking platforms for an Administrator', 
 
     it('Organisation overview for an administrator', function () {
 
-        dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos'});
-        dbDsl.createNetworkingPlatform('2', {adminId: '1', name: 'Transition ZH'});
-        dbDsl.createNetworkingPlatform('3', {adminId: '2', name: 'Basel Wandel'});
+        dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos'});
+        dbDsl.createNetworkingPlatform('2', {adminIds: ['1'], name: 'Transition ZH'});
+        dbDsl.createNetworkingPlatform('3', {adminIds: ['2'], name: 'Basel Wandel'});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);

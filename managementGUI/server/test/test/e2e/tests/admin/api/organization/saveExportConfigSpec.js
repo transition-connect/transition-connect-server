@@ -17,9 +17,9 @@ describe('Integration Tests for saving export config of an organization', functi
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
             dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description', link: 'www.link.org'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2', description: 'description2', link: 'www.link2.org'});
-            dbDsl.createNetworkingPlatform('3', {adminId: '3', name: 'Elyoos3', description: 'description3', link: 'www.link3.org'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos', description: 'description', link: 'www.link.org'});
+            dbDsl.createNetworkingPlatform('2', {adminIds: ['2'], name: 'Elyoos2', description: 'description2', link: 'www.link2.org'});
+            dbDsl.createNetworkingPlatform('3', {adminIds: ['3'], name: 'Elyoos3', description: 'description3', link: 'www.link3.org'});
 
             dbDsl.createCategory(16);
 

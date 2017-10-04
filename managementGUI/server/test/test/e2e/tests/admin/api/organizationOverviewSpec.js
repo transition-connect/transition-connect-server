@@ -15,8 +15,8 @@ describe('Getting all administrated organizations for an Administrator', functio
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
             dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
-            dbDsl.createNetworkingPlatform('1', {adminId: '2', name: 'Elyoos'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '3', name: 'Transition ZH'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['2'], name: 'Elyoos'});
+            dbDsl.createNetworkingPlatform('2', {adminIds: ['3'], name: 'Transition ZH'});
         });
     });
 

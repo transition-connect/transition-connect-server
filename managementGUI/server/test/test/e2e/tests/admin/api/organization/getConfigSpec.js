@@ -16,11 +16,11 @@ describe('Integration Tests for getting the configuration of an organization', f
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
             dbDsl.createAdmin('3', {email: 'user3@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description', link:'www.link.org'});
-            dbDsl.createNetworkingPlatform('2', {adminId: '2', name: 'Elyoos2', description: 'description2', link:'www.link2.org'});
-            dbDsl.createNetworkingPlatform('3', {adminId: '3', name: 'Elyoos3', description: 'description3', link:'www.link3.org'});
-            dbDsl.createNetworkingPlatform('4', {adminId: '3', name: 'Elyoos4', description: 'description4', link:'www.link4.org'});
-            dbDsl.createNetworkingPlatform('5', {adminId: '3', name: 'Elyoos5', description: 'description5', link:'www.link5.org'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos', description: 'description', link:'www.link.org'});
+            dbDsl.createNetworkingPlatform('2', {adminIds: ['2'], name: 'Elyoos2', description: 'description2', link:'www.link2.org'});
+            dbDsl.createNetworkingPlatform('3', {adminIds: ['3'], name: 'Elyoos3', description: 'description3', link:'www.link3.org'});
+            dbDsl.createNetworkingPlatform('4', {adminIds: ['3'], name: 'Elyoos4', description: 'description4', link:'www.link4.org'});
+            dbDsl.createNetworkingPlatform('5', {adminIds: ['3'], name: 'Elyoos5', description: 'description5', link:'www.link5.org'});
 
             dbDsl.createCategory(16);
 

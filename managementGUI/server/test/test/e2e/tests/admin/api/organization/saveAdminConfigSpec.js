@@ -16,7 +16,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
 
-            dbDsl.createNetworkingPlatform('1', {adminId: '1', name: 'Elyoos', description: 'description', link: 'www.link.org'});
+            dbDsl.createNetworkingPlatform('1', {adminIds: ['1'], name: 'Elyoos', description: 'description', link: 'www.link.org'});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['2'], created: 500});
         });
