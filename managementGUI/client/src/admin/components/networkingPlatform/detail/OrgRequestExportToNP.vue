@@ -21,15 +21,21 @@
                     </router-link>
                 </div>
             </div>
+            <next-org-command :organizations="organizations" :platformId="platformId"
+                              :numberOfOrganizations="numberOfOrganizations" :maxTime="maxTime"
+                              url="/admin/api/networkingPlatform/orgExportRequestToNp"
+                              @addOrg="org => $emit('addOrg', org)"></next-org-command>
         </div>
     </div>
 </template>
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import NextOrgCommand from './NextOrgCommand.vue';
 
     export default {
-        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId'],
+        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId', 'maxTime'],
+        components: {NextOrgCommand},
         methods: {
             sendExportRequestStatus: function (org, accept) {
                 HTTP.put(`/admin/api/networkingPlatform/organization/exportRequest`, {

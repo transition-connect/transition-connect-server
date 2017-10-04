@@ -8,9 +8,10 @@
                 </button>
             </div>
             <info :np="detail.np"></info>
-            <org-request-export-to-np :organizations="detail.orgRequestedExportToNp"
+            <org-request-export-to-np :organizations="detail.orgRequestedExportToNp" :max-time="detail.np.requestTimestamp"
                                       :number-of-organizations="detail.numberOfOrgRequestedExportToNp"
                                       :name-np="detail.np.name" :platform-id="$route.params.id"
+                                      @addOrg="org => detail.orgRequestedExportToNp = detail.orgRequestedExportToNp.concat(org)"
                                       @moveToSync="org => moveTo(org,
                                       detail.orgRequestedExportToNp, 'numberOfOrgRequestedExportToNp',
                                       detail.orgExportedToNp, 'numberOfOrgExportedToNp')"
@@ -31,9 +32,10 @@
                                       detail.orgExportedToNp, 'numberOfOrgExportedToNp',
                                       detail.orgDeniedExportToNp, 'numberOfOrgDeniedExportToNp')">
             </org-exported-to-np>
-            <org-export-denied :organizations="detail.orgDeniedExportToNp"
+            <org-export-denied :organizations="detail.orgDeniedExportToNp" :max-time="detail.np.requestTimestamp"
                                :number-of-organizations="detail.numberOfOrgDeniedExportToNp"
                                :name-np="detail.np.name" :platform-id="$route.params.id"
+                               @addOrg="org => detail.orgDeniedExportToNp = detail.orgDeniedExportToNp.concat(org)"
                                @moveToSync="org => moveTo(org,
                                       detail.orgDeniedExportToNp, 'numberOfOrgDeniedExportToNp',
                                       detail.orgExportedToNp, 'numberOfOrgExportedToNp')">

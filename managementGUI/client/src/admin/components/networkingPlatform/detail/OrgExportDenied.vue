@@ -17,6 +17,10 @@
                     </router-link>
                 </div>
             </div>
+            <next-org-command :organizations="organizations" :platformId="platformId"
+                              :numberOfOrganizations="numberOfOrganizations" :maxTime="maxTime"
+                              url="/admin/api/networkingPlatform/orgDeniedExportToNp"
+                              @addOrg="org => $emit('addOrg', org)"></next-org-command>
         </div>
 
         <modal-dialog v-if="showWarningDialog">
@@ -41,10 +45,11 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
+    import NextOrgCommand from './NextOrgCommand.vue';
 
     export default {
-        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId'],
-        components: {ModalDialog},
+        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId', 'maxTime'],
+        components: {ModalDialog, NextOrgCommand},
         data: function () {
             return {showWarningDialog: false, orgToSync: null};
         },

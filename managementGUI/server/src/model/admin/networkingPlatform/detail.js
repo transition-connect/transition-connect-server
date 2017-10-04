@@ -29,10 +29,10 @@ let getDetails = function (adminId, platformId, language, req) {
             getNetworkingPlatformInfo(platformId, language),
             orgExportedToNp.getOrgCommand(platformId, 0, 10, maxTime).getCommand(),
             orgExportedToNp.getNumberOfOrgCommand(platformId, maxTime).getCommand(),
-            orgExportRequestToNp.getOrgCommand(platformId).getCommand(),
-            orgExportRequestToNp.getNumberOfOrgCommand(platformId).getCommand(),
-            orgDeniedExportToNp.getOrgCommand(platformId).getCommand(),
-            orgDeniedExportToNp.getNumberOfOrgCommand(platformId).getCommand(),
+            orgExportRequestToNp.getOrgCommand(platformId, 0, 10, maxTime).getCommand(),
+            orgExportRequestToNp.getNumberOfOrgCommand(platformId, maxTime).getCommand(),
+            orgDeniedExportToNp.getOrgCommand(platformId, 0, 10, maxTime).getCommand(),
+            orgDeniedExportToNp.getNumberOfOrgCommand(platformId, maxTime).getCommand(),
             orgCreatedByNp.getNumberOfOrgCommand(platformId, maxTime).getCommand()
         ];
 
