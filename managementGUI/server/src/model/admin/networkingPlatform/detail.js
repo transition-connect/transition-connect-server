@@ -27,8 +27,8 @@ let getDetails = function (adminId, platformId, language, req) {
 
         let maxTime = time.getNowUtcTimestamp(), commands = [
             getNetworkingPlatformInfo(platformId, language),
-            orgExportedToNp.getOrgCommand(platformId).getCommand(),
-            orgExportedToNp.getNumberOfOrgCommand(platformId).getCommand(),
+            orgExportedToNp.getOrgCommand(platformId, 0, 10, maxTime).getCommand(),
+            orgExportedToNp.getNumberOfOrgCommand(platformId, maxTime).getCommand(),
             orgExportRequestToNp.getOrgCommand(platformId).getCommand(),
             orgExportRequestToNp.getNumberOfOrgCommand(platformId).getCommand(),
             orgDeniedExportToNp.getOrgCommand(platformId).getCommand(),

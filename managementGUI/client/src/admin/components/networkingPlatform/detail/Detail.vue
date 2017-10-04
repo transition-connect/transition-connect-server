@@ -23,9 +23,10 @@
                                :name-np="detail.np.name" :platform-id="$route.params.id"
                                @addOrg="org => detail.orgCreatedByNp = detail.orgCreatedByNp.concat(org)">
             </org-created-by-np>
-            <org-exported-to-np :organizations="detail.orgExportedToNp"
+            <org-exported-to-np :organizations="detail.orgExportedToNp" :max-time="detail.np.requestTimestamp"
                                 :number-of-organizations="detail.numberOfOrgExportedToNp"
                                 :name-np="detail.np.name" :platform-id="$route.params.id"
+                                @addOrg="org => detail.orgExportedToNp = detail.orgExportedToNp.concat(org)"
                                 @moveToDeny="org => moveTo(org,
                                       detail.orgExportedToNp, 'numberOfOrgExportedToNp',
                                       detail.orgDeniedExportToNp, 'numberOfOrgDeniedExportToNp')">

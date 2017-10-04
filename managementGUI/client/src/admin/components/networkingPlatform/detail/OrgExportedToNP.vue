@@ -6,7 +6,7 @@
         <div class="org-container">
             <div v-for="org in organizations" class="org-row">
                 <div class="org-commands">
-                    <button type="button" class="btn btn-default todo-button"
+                    <button type="button" class="btn btn-primary todo-button"
                             v-on:click="showWarningDenyOrganisation(org)">
                         Sync beenden
                     </button>
@@ -17,6 +17,10 @@
                     </router-link>
                 </div>
             </div>
+            <next-org-command :organizations="organizations" :platformId="platformId"
+                              :numberOfOrganizations="numberOfOrganizations" :maxTime="maxTime"
+                              url="/admin/api/networkingPlatform/orgExportedToNp"
+                              @addOrg="org => $emit('addOrg', org)"></next-org-command>
         </div>
 
         <modal-dialog v-if="showWarningDialog">
@@ -41,10 +45,11 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
+    import NextOrgCommand from './NextOrgCommand.vue';
 
     export default {
-        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId'],
-        components: {ModalDialog},
+        props: ['organizations', 'numberOfOrganizations', 'nameNp', 'platformId', 'maxTime'],
+        components: {ModalDialog, NextOrgCommand},
         data: function () {
             return {showWarningDialog: false, orgToDeny: null};
         },
@@ -63,6 +68,20 @@
                     }
                 }).then(() => {
                     this.$emit('moveToDeny', this.orgToDeny);
+                }).catch(e => {
+                    console.log(e);
+                })
+            },
+            getNext: function () {
+                HTTP.get(`/admin/api/networkingPlatform/orgExportedByNp`, {
+                    params: {
+                        platformId: this.platformId,
+                        skip: this.organizations.length,
+                        limit: 2,
+                        maxTime: this.maxTime
+                    }
+                }).then((resp) => {
+                    this.$emit('addOrg', resp.data.org);
                 }).catch(e => {
                     console.log(e);
                 })
