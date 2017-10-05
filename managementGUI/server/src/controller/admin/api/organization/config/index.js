@@ -3,7 +3,7 @@
 let auth = requireLib('auth');
 let controllerErrors = require('server-lib').controllerErrors;
 let validation = require('server-lib').jsonValidation;
-let config = requireModel('admin/organization/config');
+let config = requireModel('admin/organization/config/config');
 let logger = require('server-lib').logging.getLogger(__filename);
 
 let schemaGetConfig = {

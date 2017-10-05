@@ -33,7 +33,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/adminConfig',
+            return requestHandler.put('/admin/api/organization/config/admin',
                 {
                     organizationId: '2',
                     admins: ['user@irgendwo.ch', 'user2@irgendwo.ch', 'user3@irgendwo.ch']
@@ -70,7 +70,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/adminConfig',
+            return requestHandler.put('/admin/api/organization/config/admin',
                 {
                     organizationId: '2',
                     admins: ['user@irgendwo.ch', 'user2@Irgendwo.ch', 'user3@IRGENDWO.ch']
@@ -107,7 +107,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/adminConfig',
+            return requestHandler.put('/admin/api/organization/config/admin',
                 {
                     organizationId: '2',
                     admins: ['user@irgendwo.ch']
@@ -134,7 +134,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/adminConfig',
+            return requestHandler.put('/admin/api/organization/config/admin',
                 {
                     organizationId: '2',
                     admins: []
@@ -148,7 +148,7 @@ describe('Integration Tests for adding and removing administrators of an organiz
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/adminConfig',
+            return requestHandler.put('/admin/api/organization/config/admin',
                 {
                     organizationId: '1',
                     admins: ['user@irgendwo.ch']

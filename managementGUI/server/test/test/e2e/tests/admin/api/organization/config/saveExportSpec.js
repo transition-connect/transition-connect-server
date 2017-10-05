@@ -52,7 +52,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '2', categories: ['10']},
@@ -111,7 +111,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '2', categories: ['10']},
@@ -163,7 +163,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '2', categories: ['15']}]
@@ -206,7 +206,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '3', categories: ['15', '14']}]
@@ -256,7 +256,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '2', categories: ['10']}]
@@ -306,7 +306,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: []
                 });
@@ -329,7 +329,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: []
                 });
@@ -351,7 +351,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '1', categories: ['7']}]
@@ -369,7 +369,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
                     {platformId: '2', categories: []}]
@@ -383,7 +383,7 @@ describe('Integration Tests for saving export config of an organization', functi
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
         }).then(function () {
-            return requestHandler.put('/admin/api/organization/exportConfig',
+            return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '1', nps: [
                     {platformId: '1', categories: ['1']}]

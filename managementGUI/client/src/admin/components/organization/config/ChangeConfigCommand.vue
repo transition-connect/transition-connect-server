@@ -33,11 +33,11 @@
                 let commands = [];
                 if (JSON.stringify(this.nps) !== JSON.stringify(this.previousNps)) {
                     let npsMessage = getExportMessage(this.nps);
-                    commands.push(HTTP.put(`/admin/api/organization/exportConfig`,
+                    commands.push(HTTP.put(`/admin/api/organization/config/export`,
                         {params: {organizationId: this.organizationId, nps: npsMessage}}));
                 }
                 if (JSON.stringify(this.admins) !== JSON.stringify(this.previousAdmins)) {
-                    commands.push(HTTP.put(`/admin/api/organization/adminConfig`,
+                    commands.push(HTTP.put(`/admin/api/organization/config/admin`,
                         {params: {organizationId: this.organizationId, admins: this.admins}}));
                 }
                 if(commands.length > 0) {
