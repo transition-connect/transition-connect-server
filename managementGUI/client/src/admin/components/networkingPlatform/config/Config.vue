@@ -18,7 +18,7 @@
                                :previous-config="configOriginal.np.config"
                                :admins="config.np.administrators"
                                :previous-admins="configOriginal.np.administrators"
-                               :organizationId="$route.params.id"
+                               :platformId="$route.params.id"
                                @updateSuccess="updateSuccess">
         </change-config-command>
 

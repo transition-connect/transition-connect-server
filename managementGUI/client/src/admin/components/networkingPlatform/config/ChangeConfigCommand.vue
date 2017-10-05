@@ -28,17 +28,22 @@
         },
         methods: {
             changeExportConfig: function () {
-                /*let commands = [];
+                let commands = [];
                 if (JSON.stringify(this.config) !== JSON.stringify(this.previousConfig)) {
-                    let npsMessage = getExportMessage(this.nps);
-                    commands.push(HTTP.put(`/admin/api/organization/exportConfig`,
-                        {params: {organizationId: this.organizationId, nps: npsMessage}}));
+                    commands.push(HTTP.put(`/admin/api/networkingPlatform/config/general`,
+                        {
+                            params: {
+                                platformId: this.platformId, description: this.config.description,
+                                link: this.config.link,
+                                manuallyAcceptOrganization: this.config.manuallyAcceptOrganization,
+                            }
+                        }));
                 }
                 if (JSON.stringify(this.admins) !== JSON.stringify(this.previousAdmins)) {
-                    commands.push(HTTP.put(`/admin/api/organization/adminConfig`,
-                        {params: {organizationId: this.organizationId, admins: this.admins}}));
+                    commands.push(HTTP.put(`/admin/api/networkingPlatform/config/admin`,
+                        {params: {platformId: this.platformId, admins: this.admins}}));
                 }
-                if(commands.length > 0) {
+                if (commands.length > 0) {
                     Promise.all(commands).then(() => {
                         this.showLoading = false;
                         this.$emit('updateSuccess');
@@ -47,7 +52,7 @@
                         this.showLoading = false;
                         this.configUpdateFailed = true;
                     })
-                }*/
+                }
             }
         }
     }
