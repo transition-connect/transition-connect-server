@@ -1,10 +1,12 @@
 <template>
     <div class="init-organisation">
         <div class="action-title">
-            '<span class="org-name">{{actionData.organizationName}}</span>' wurde noch nicht konfiguriert
+            <router-link :to="{name: 'orgConfig', params: {id: actionData.organizationId}}">
+                {{actionData.organizationName}}
+            </router-link> wurde noch nicht konfiguriert
         </div>
         <div class="todo-commands">
-            <button type="button" class="btn btn-warning"
+            <button type="button" class="btn btn-default"
                     v-on:click="$router.push({name: 'orgConfig', params: {id: actionData.organizationId}})">
                 Konfigurieren
             </button>
