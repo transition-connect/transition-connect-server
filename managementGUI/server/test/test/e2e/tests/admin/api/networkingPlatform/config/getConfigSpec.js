@@ -37,10 +37,10 @@ describe('Integration Tests for getting the configuration of an networking platf
         }).then(function (res) {
             res.status.should.equal(200);
 
-            res.body.np.name.should.equals('Elyoos');
-            res.body.np.description.should.equals('description');
-            res.body.np.link.should.equals('www.link.org');
-            res.body.np.manuallyAcceptOrganization.should.equals(true);
+            res.body.np.config.name.should.equals('Elyoos');
+            res.body.np.config.description.should.equals('description');
+            res.body.np.config.link.should.equals('www.link.org');
+            res.body.np.config.manuallyAcceptOrganization.should.equals(true);
             res.body.np.administrators.length.should.equals(2);
             res.body.np.administrators[0].should.equals('user3@irgendwo.ch');
             res.body.np.administrators[1].should.equals('user@irgendwo.ch');

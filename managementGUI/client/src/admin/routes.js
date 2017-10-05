@@ -2,6 +2,7 @@ import Home from './components/home/Home.vue';
 import OrganizationConfig from './components/organization/config/Config.vue';
 import OrganizationDetail from './components/organization/detail/Detail.vue';
 import NetworkingPlatformDetail from './components/networkingPlatform/detail/Detail.vue';
+import NetworkingPlatformConfig from './components/networkingPlatform/config/Config.vue';
 
 export default [
     {
@@ -15,11 +16,6 @@ export default [
         component: OrganizationConfig
     },
     {
-        path: '/networking-platform/config/:id',
-        name: 'npConfig',
-        component: OrganizationConfig
-    },
-    {
         path: '/organization/detail/:id',
         name: 'orgDetail',
         component: OrganizationDetail
@@ -28,5 +24,10 @@ export default [
         path: '/networking-platform/detail/:id',
         name: 'npDetail',
         component: NetworkingPlatformDetail
+    },
+    {
+        path: '/networking-platform/config/:id',
+        name: 'npConfig',
+        component: NetworkingPlatformConfig
     }
 ];

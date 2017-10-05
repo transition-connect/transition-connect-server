@@ -1,23 +1,23 @@
 <template>
-    <div id="tc-config-organization">
-        <div id="tc-container">
-            <div id="org-config-header">
-                <div id="org-name">Konfiguration der Organisation
-                    <router-link :to="{name: 'orgDetail', params: {id: $route.params.id}}">
-                        '{{config.organization.name}}'
+    <div id="tc-config-np">
+        <div id="tc-container" v-if="configLoaded">
+            <div id="np-config-header">
+                <div id="np-name">Konfiguration der Vernetzungsplatform
+                    <router-link :to="{name: 'npDetail', params: {id: $route.params.id}}">
+                        '{{config.np.config.name}}'
                     </router-link>
                 </div>
             </div>
-            <administrator :admins="config.organization.administrators"
+            <administrator :admins="config.np.administrators"
                            @changed="configChanged"></administrator>
-            <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
-                                        :np="networkingPlatform" @changed="configChanged">
-            </networking-platform-config>
+            <general-config :config="config.np.config" @changed="configChanged"></general-config>
         </div>
-        <change-config-command v-if="showConfigChanged" :nps="config.networkingPlatforms"
-                               :previous-nps="configOriginal.networkingPlatforms"
-                               :admins="config.organization.administrators"
-                               :previous-admins="configOriginal.organization.administrators"
+
+        <change-config-command v-if="showConfigChanged" :config="config.np.config"
+                               :has-errors="hasErrors"
+                               :previous-config="configOriginal.np.config"
+                               :admins="config.np.administrators"
+                               :previous-admins="configOriginal.np.administrators"
                                :organizationId="$route.params.id"
                                @updateSuccess="updateSuccess">
         </change-config-command>
@@ -46,36 +46,42 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
-    import Administrator from './../../config/Administrators.vue';
-    import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
-    import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
+    import Administrator from './../../config/Administrators.vue';
+    import ChangeConfigCommand from './ChangeConfigCommand.vue';
+    import GeneralConfig from './GeneralConfig.vue';
 
     export default {
-        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, Snackbar},
+        components: {ModalDialog, Snackbar, Administrator, ChangeConfigCommand, GeneralConfig},
         data: function () {
-            return {config: {organization: {}}, showConfigChanged: false, showWarningDialog: false, nextRoute: null};
+            return {
+                config: {np: {config: {}}}, showConfigChanged: false, hasErrors: true,
+                showWarningDialog: false, nextRoute: null, configLoaded: false
+            };
         },
         created: function () {
-            HTTP.get(`/admin/api/organization/config`,
-                {params: {organizationId: this.$route.params.id, language: 'DE'}}).then((resp) => {
+            HTTP.get(`/admin/api/networkingPlatform/config`,
+                {params: {platformId: this.$route.params.id}}).then((resp) => {
                 this.config = resp.data;
                 this.configOriginal = JSON.parse(JSON.stringify(resp.data));
+                this.configLoaded = true;
             }).catch(e => {
                 this.$emit('showNotification', true);
+                this.configLoaded = true;
                 console.log(e);
             })
         },
         methods: {
-            configChanged: function () {
-                this.showConfigChanged = JSON.stringify(this.config.networkingPlatforms)
-                    !== JSON.stringify(this.configOriginal.networkingPlatforms) ||
-                    JSON.stringify(this.config.organization.administrators)
-                    !== JSON.stringify(this.configOriginal.organization.administrators);
+            configChanged: function (newHasErrors) {
+                this.hasErrors = newHasErrors;
+                this.showConfigChanged = JSON.stringify(this.config.np.config)
+                    !== JSON.stringify(this.configOriginal.np.config) ||
+                    JSON.stringify(this.config.np.administrators)
+                    !== JSON.stringify(this.configOriginal.np.administrators);
             },
             updateSuccess: function () {
                 this.showConfigChanged = false;
-                this.$router.push({name: 'orgDetail', params: {id: this.$route.params.id}})
+                this.$router.push({name: 'npDetail', params: {id: this.$route.params.id}})
             },
             navigateToNext: function () {
                 this.nextRoute();
@@ -99,7 +105,7 @@
 <style lang="scss">
     @import "../../../../style/variable";
 
-    #tc-config-organization {
+    #tc-config-np {
         width: 100%;
         padding-top: 104px;
         #tc-container {
@@ -107,10 +113,10 @@
             padding-bottom: 90px;
             width: 100%;
             max-width: $application-width;
-            #org-config-header {
+            #np-config-header {
                 margin-bottom: 18px;
                 border-bottom: 1px solid $divider;
-                #org-name {
+                #np-name {
                     font-size: 20px;
                     font-weight: 500;
                     padding-bottom: 6px;

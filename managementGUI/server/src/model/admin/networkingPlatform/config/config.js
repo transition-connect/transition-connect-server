@@ -11,8 +11,8 @@ let getConfig = function (adminId, platformId, req) {
              (np:NetworkingPlatform {platformId: {platformId}})<-[:IS_ADMIN]-(admin:Admin)`)
             .with(`rules, np, admin`)
             .orderBy(`admin.email`)
-            .return(`np.name AS name, np.description AS description, np.link AS link,
-                     rules.manuallyAcceptOrganization AS manuallyAcceptOrganization, 
+            .return(`{name: np.name, description: np.description, link: np.link,
+                     manuallyAcceptOrganization: rules.manuallyAcceptOrganization} AS config, 
                      COLLECT(admin.email) AS administrators`)
             .end({platformId: platformId})
             .send().then(function (resp) {

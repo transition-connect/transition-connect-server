@@ -65,7 +65,7 @@
 </script>
 
 <style lang="scss">
-    @import "../../../../style/variable";
+    @import "../../../style/variable";
 
     #tc-config-admin {
         padding-bottom: 8px;
