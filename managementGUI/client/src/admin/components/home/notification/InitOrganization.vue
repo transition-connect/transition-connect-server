@@ -5,7 +5,7 @@
                 {{actionData.organizationName}}
             </router-link> wurde noch nicht konfiguriert
         </div>
-        <div class="todo-commands">
+        <div class="notification-commands">
             <button type="button" class="btn btn-default"
                     v-on:click="$router.push({name: 'orgConfig', params: {id: actionData.organizationId}})">
                 Konfigurieren
@@ -39,7 +39,7 @@
                 text-decoration: underline;
             }
         }
-        .todo-commands {
+        .notification-commands {
             display: table-cell;
             vertical-align: middle;
             text-align: right;

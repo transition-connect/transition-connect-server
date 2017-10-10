@@ -5,7 +5,7 @@ let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
 
-describe('Getting todo for an networking platform to accepting an new organization', function () {
+describe('Getting notifications for an networking platform to accepting an new organization', function () {
 
     let startTime;
 
@@ -26,7 +26,7 @@ describe('Getting todo for an networking platform to accepting an new organizati
         return requestHandler.logout();
     });
 
-    it('Todo request export', function () {
+    it('Notification request export', function () {
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -35,13 +35,13 @@ describe('Getting todo for an networking platform to accepting an new organizati
         }).then(function (res) {
             res.status.should.equal(200);
 
-            res.body.todo.length.should.equals(1);
+            res.body.notification.length.should.equals(1);
 
-            res.body.todo[0].action.should.equals('EXPORT_REQUEST');
-            res.body.todo[0].actionData.organizationName.should.equals('organization1Name');
-            res.body.todo[0].actionData.organizationId.should.equals('1');
-            res.body.todo[0].actionData.nameNetworkingPlatform.should.equals('Elyoos2');
-            res.body.todo[0].actionData.platformId.should.equals('2');
+            res.body.notification[0].action.should.equals('EXPORT_REQUEST');
+            res.body.notification[0].actionData.organizationName.should.equals('organization1Name');
+            res.body.notification[0].actionData.organizationId.should.equals('1');
+            res.body.notification[0].actionData.nameNetworkingPlatform.should.equals('Elyoos2');
+            res.body.notification[0].actionData.platformId.should.equals('2');
         });
     });
 });

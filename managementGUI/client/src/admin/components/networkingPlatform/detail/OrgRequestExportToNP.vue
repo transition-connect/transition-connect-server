@@ -6,11 +6,11 @@
         <div class="org-container">
             <div v-for="org in organizations" class="org-row">
                 <div class="org-commands">
-                    <button type="button" class="btn btn-default todo-button"
+                    <button type="button" class="btn btn-default"
                             v-on:click="sendExportRequestStatus(org, false)">
                         Ablehnen
                     </button>
-                    <button type="button" class="btn btn-primary todo-button"
+                    <button type="button" class="btn btn-primary"
                             v-on:click="sendExportRequestStatus(org, true)">
                         Akzeptieren
                     </button>

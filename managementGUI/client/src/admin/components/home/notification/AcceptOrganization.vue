@@ -10,12 +10,12 @@
             </router-link>
             synchronisiert werden
         </div>
-        <div class="todo-commands">
-            <button type="button" class="btn btn-default todo-button"
+        <div class="notification-commands">
+            <button type="button" class="btn btn-default notification-button"
                     v-on:click="sendExportRequestStatus(false)">
                 Ablehnen
             </button>
-            <button type="button" class="btn btn-primary todo-button"
+            <button type="button" class="btn btn-primary notification-button"
                     v-on:click="sendExportRequestStatus(true)">
                 Akzeptieren
             </button>
@@ -75,13 +75,13 @@
                 font-weight: 500;
             }
         }
-        .todo-commands {
+        .notification-commands {
             display: table-cell;
             vertical-align: middle;
             text-align: right;
             width: 200px;
             margin-top: 8px;
-            .todo-button {
+            .notification-button {
                 min-width: 75px;
             }
         }

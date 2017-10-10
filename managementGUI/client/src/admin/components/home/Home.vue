@@ -2,9 +2,10 @@
     <div id="tc-home">
         <div id="tc-home-container">
             <div class="panel panel-default">
-                <div class="panel-heading">Todo's</div>
+                <div class="panel-heading">Benachrichtigungen</div>
                 <div class="panel-body">
-                    <todo-element v-for="todo in overviewData.todo" :todo="todo" @remove="removeTodo(todo)"></todo-element>
+                    <notification v-for="notification in overviewData.notification" :notification="notification"
+                                  @remove="removeNotification(notification)"></notification>
                 </div>
             </div>
             <div class="panel panel-default" v-show="overviewData.nps.length > 0">
@@ -33,10 +34,10 @@
     import Snackbar from './../../../utils/components/Snackbar.vue';
     import OrganizationElement from './OrganizationElement.vue';
     import NetworkingPlatformElement from './NetworkPlatformElement.vue';
-    import TodoElement from './todo/TodoElement.vue';
+    import Notification from './notification/Notification.vue';
 
     export default {
-        components: {Snackbar, OrganizationElement, NetworkingPlatformElement, TodoElement},
+        components: {Snackbar, OrganizationElement, NetworkingPlatformElement, Notification},
         data: function () {
             return {overviewData: {organization: {}, nps: {}}};
         },
@@ -49,9 +50,10 @@
             })
         },
         methods: {
-            removeTodo: function (todo) {
-                this.overviewData.todo.splice(
-                    this.overviewData.todo.findIndex((todoElement) => todoElement === todo), 1);
+            removeNotification: function (notification) {
+                this.overviewData.notification.splice(
+                    this.overviewData.notification.findIndex(
+                        (notificationToCompare) => notificationToCompare === notification), 1);
             }
         }
     }

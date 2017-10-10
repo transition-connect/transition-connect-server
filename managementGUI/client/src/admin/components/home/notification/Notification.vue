@@ -1,7 +1,7 @@
 <template>
-    <div class="todo-container">
-        <init-organization v-show="todo.action === 'INIT_ORGANISATION'" :action-data="todo.actionData"></init-organization>
-        <accept-organization v-show="todo.action === 'EXPORT_REQUEST'" :action-data="todo.actionData"
+    <div class="notification-container">
+        <init-organization v-show="notification.action === 'INIT_ORGANISATION'" :action-data="notification.actionData"></init-organization>
+        <accept-organization v-show="notification.action === 'EXPORT_REQUEST'" :action-data="notification.actionData"
                              @remove="$emit('remove')"></accept-organization>
     </div>
 </template>
@@ -11,7 +11,7 @@
     import InitOrganization from './InitOrganization.vue';
 
     export default {
-        props: ['todo'],
+        props: ['notification'],
         components: {AcceptOrganization, InitOrganization}
     }
 </script>
@@ -19,7 +19,7 @@
 <style lang="scss">
     @import "../../../../style/variable";
 
-    .todo-container {
+    .notification-container {
         min-height: 50px;
         width: 100%;
         margin-bottom: 6px;

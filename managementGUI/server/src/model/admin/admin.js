@@ -1,7 +1,7 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
-let todo = require('./todo');
+let notification = require('./notification');
 
 let getOrganizations = function (adminId) {
     return db.cypher().match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization)
@@ -14,15 +14,18 @@ let getOrganizations = function (adminId) {
 
 let getDashboard = function (adminId) {
     let commands = [
-        todo.getInitOrganisationTodo(adminId),
-        todo.getAcceptOrgTodo(adminId),
+        notification.getInitOrganisationNotification(adminId),
+        notification.getAcceptOrgNotification(adminId),
         getOrganizations(adminId)];
     return db.cypher().match(`(np:NetworkingPlatform)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})`)
         .return(`np.name AS name, np.platformId AS platformId`)
         .orderBy(`name`)
         .end({adminId: adminId})
         .send(commands).then(function (resp) {
-            return {todo: todo.getTodoResponse(resp[0], resp[1]), organization: resp[2], nps: resp[3]};
+            return {
+                notification: notification.getNotificationResponse(resp[0],
+                    resp[1]), organization: resp[2], nps: resp[3]
+            };
         });
 };
 

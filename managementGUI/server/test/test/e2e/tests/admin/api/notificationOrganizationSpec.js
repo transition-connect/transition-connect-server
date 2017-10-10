@@ -5,7 +5,7 @@ let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
 
-describe('Getting todo lists for an Administrator of an Organisation', function () {
+describe('Getting notifications for an Administrator of an Organisation', function () {
 
     let startTime;
 
@@ -23,7 +23,7 @@ describe('Getting todo lists for an Administrator of an Organisation', function 
         return requestHandler.logout();
     });
 
-    it('Todo init organisation configuration', function () {
+    it('Notification init organisation configuration', function () {
 
         dbDsl.createOrganization('1', {networkingPlatformId: '1', adminIds: ['2'], created: 500});
         dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 501});
@@ -36,12 +36,12 @@ describe('Getting todo lists for an Administrator of an Organisation', function 
         }).then(function (res) {
             res.status.should.equal(200);
 
-            res.body.todo.length.should.equals(1);
+            res.body.notification.length.should.equals(1);
 
-            res.body.todo[0].action.should.equals('INIT_ORGANISATION');
-            res.body.todo[0].actionData.organizationName.should.equals('organization2Name');
-            res.body.todo[0].actionData.organizationId.should.equals('2');
-            res.body.todo[0].actionData.nameNetworkingPlatform.should.equals('Elyoos');
+            res.body.notification[0].action.should.equals('INIT_ORGANISATION');
+            res.body.notification[0].actionData.organizationName.should.equals('organization2Name');
+            res.body.notification[0].actionData.organizationId.should.equals('2');
+            res.body.notification[0].actionData.nameNetworkingPlatform.should.equals('Elyoos');
         });
     });
 });

@@ -1,6 +1,6 @@
 <template>
     <div class="next-org-container" v-if="numberOfOrganizations > organizations.length">
-        <button type="button" class="btn btn-default todo-button"
+        <button type="button" class="btn btn-default"
                 v-on:click="getNext()">
             Mehr Anzeigen
         </button>
