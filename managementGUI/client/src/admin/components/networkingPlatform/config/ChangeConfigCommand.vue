@@ -3,7 +3,7 @@
         <div id="tc-commands">
             <button type="button" id="change-config-button" class="btn btn-warning"
                     v-on:click="changeExportConfig" :disabled="showLoading || this.hasErrors">
-                Konfiguration ändern
+                Konfiguration speichern
             </button>
             <loader id="config-change-loader" v-show="showLoading"></loader>
             <div id="config-upload-failed" v-show="configUpdateFailed">

@@ -4,7 +4,7 @@
             <router-link :to="{name: 'orgDetail', params: {id: actionData.organizationId}}">
                 {{actionData.organizationName}}
             </router-link>
-            möchte mit
+            möchte nach
             <router-link :to="{name: 'npDetail', params: {id: actionData.platformId}}">
                 {{actionData.nameNetworkingPlatform}}
             </router-link>
