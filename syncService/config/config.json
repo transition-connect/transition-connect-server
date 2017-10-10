@@ -52,32 +52,6 @@
         ]
       }
     },
-    "appsec": {
-      "enabled": true,
-      "priority": 90,
-      "module": {
-        "name": "lusca",
-        "arguments": [
-          {
-            "csrf": false,
-            "xframe": "SAMEORIGIN",
-            "xssProtection": true,
-            "nosniff": true
-          }
-        ]
-      }
-    },
-    "router": {
-      "priority": 100,
-      "module": {
-        "name": "express-enrouten",
-        "arguments": [
-          {
-            "directory": "path:./src/controller"
-          }
-        ]
-      }
-    },
     "errorHandling": {
       "enabled": true,
       "priority": 1000,

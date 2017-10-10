@@ -4,8 +4,12 @@ if (!process.env.BASE_DIR) {
     process.env.BASE_DIR = __dirname;
 }
 
-global.requireModel = function (name) {
-    return require(`${__dirname}/src/model/${name}`);
+global.requireAdapter = function (name) {
+    return require(`${__dirname}/src/adapter/${name}`);
+};
+
+global.requireConnectionHandler = function (name) {
+    return require(`${__dirname}/src/connectionHandler/${name}`);
 };
 
 let promise = require('bluebird');
