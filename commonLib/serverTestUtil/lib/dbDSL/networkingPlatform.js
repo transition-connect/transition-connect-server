@@ -7,7 +7,7 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
     data.name = data.name || `nP${networkingPlatformId}Name`;
     data.description = data.description || `description${networkingPlatformId}`;
     data.link = data.link || `www.nplink${networkingPlatformId}.org`;
-    data.adminId = data.adminIds || [`1`];
+    data.adminIds = data.adminIds || [`1`];
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(admin:Admin)`)
         .where(`admin.adminId IN {adminIds}`)
@@ -19,16 +19,26 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
         }).getCommand());
 };
 
+let createNetworkingPlatformAdapterConfig = function (networkingPlatformId, data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
+        .merge(`(np)-[:EXPORT_CONFIG]->(:ExportConfig {adapterType: {adapterType}, npApiUrl: {npApiUrl}})`)
+        .end({
+            platformId: networkingPlatformId, adapterType: data.adapterType, npApiUrl: data.npApiUrl
+        }).getCommand());
+};
+
 let createNetworkingPlatformExportRules = function (networkingPlatformId, data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
-        .create(`(np)-[:EXPORT_RULES]->(:ExportRules {manuallyAcceptOrganization: {manuallyAcceptOrganization}})`)
+        .merge(`(np)-[:EXPORT_RULES]->(:ExportRules {manuallyAcceptOrganization: {manuallyAcceptOrganization}})`)
         .end({
             platformId: networkingPlatformId, manuallyAcceptOrganization: data.manuallyAcceptOrganization
         }).getCommand());
 };
 
 let mapNetworkingPlatformToCategory = function (mappingId, data) {
+    data.similarCategoryIds = data.similarCategoryIds || [];
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
         .createUnique(`(np)-[:CATEGORY]->(mapper:SimilarCategoryMapper {mapperId: {mappingId}})`)
@@ -47,6 +57,7 @@ let mapNetworkingPlatformToCategory = function (mappingId, data) {
 
 module.exports = {
     createNetworkingPlatform,
+    createNetworkingPlatformAdapterConfig,
     createNetworkingPlatformExportRules,
     mapNetworkingPlatformToCategory
 };

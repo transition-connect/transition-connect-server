@@ -7,5 +7,5 @@ let generateUUID = function () {
 };
 
 module.exports = {
-    generateUUID: generateUUID
+    generateUUID
 };

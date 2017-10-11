@@ -20,6 +20,7 @@ module.exports = {
     createAdmin: admin.createAdmin,
     createCategory: category.createCategory,
     createNetworkingPlatform: networkingPlatform.createNetworkingPlatform,
+    createNetworkingPlatformAdapterConfig: networkingPlatform.createNetworkingPlatformAdapterConfig,
     createNetworkingPlatformExportRules: networkingPlatform.createNetworkingPlatformExportRules,
     mapNetworkingPlatformToCategory: networkingPlatform.mapNetworkingPlatformToCategory,
     createOrganization: organization.createOrganization,

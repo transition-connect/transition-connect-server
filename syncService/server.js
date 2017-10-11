@@ -5,11 +5,18 @@ if (!process.env.BASE_DIR) {
 }
 
 global.requireAdapter = function (name) {
+    name = name || '';
     return require(`${__dirname}/src/adapter/${name}`);
 };
 
 global.requireConnectionHandler = function (name) {
+    name = name || '';
     return require(`${__dirname}/src/connectionHandler/${name}`);
+};
+
+global.requireSyncLogic = function (name) {
+    name = name || '';
+    return require(`${__dirname}/src/syncLogic/${name}`);
 };
 
 let promise = require('bluebird');
