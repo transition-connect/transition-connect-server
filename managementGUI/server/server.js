@@ -48,7 +48,7 @@ app.on('start', function () {
 });
 
 app.on('exit', function () {
-    requireDb().closeDriver();
+    require('server-lib').neo4j.closeDriver();
 });
 
 module.exports = app;
