@@ -20,11 +20,14 @@ let createNetworkingPlatform = function (networkingPlatformId, data) {
 };
 
 let createNetworkingPlatformAdapterConfig = function (networkingPlatformId, data) {
+    data.lastSync = data.lastSync || null;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
-        .merge(`(np)-[:EXPORT_CONFIG]->(:ExportConfig {adapterType: {adapterType}, npApiUrl: {npApiUrl}})`)
+        .createUnique(`(np)-[:EXPORT_CONFIG]->(:ExportConfig {adapterType: {adapterType}, npApiUrl: {npApiUrl}, 
+                lastSync: {lastSync}})`)
         .end({
-            platformId: networkingPlatformId, adapterType: data.adapterType, npApiUrl: data.npApiUrl
+            platformId: networkingPlatformId, adapterType: data.adapterType, npApiUrl: data.npApiUrl,
+            lastSync: data.lastSync
         }).getCommand());
 };
 
