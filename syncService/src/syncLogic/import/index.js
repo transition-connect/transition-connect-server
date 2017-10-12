@@ -30,7 +30,19 @@ let createNotExistingOrganizations = function (organizations, platformId) {
         .end({organizations: organizations, platformId: platformId, now: time.getNowUtcTimestamp()});
 };
 
-let createdCategoryAssigner = function (organizations, platformId) {
+let modifyChangedOrganizations = function (organizations, platformId) {
+    return db.cypher().unwind(`{organizations} AS organization`)
+        .match(`(:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->
+                (orgDatabase:Organization {organizationIdOnExternalNP: organization.id})`)
+        .where(`orgDatabase.name <> organization.name OR orgDatabase.description <> organization.description OR
+                orgDatabase.slogan <> organization.slogan OR orgDatabase.website <> organization.website`)
+        .addCommand(` SET orgDatabase.name = organization.name, orgDatabase.description = organization.description, 
+                     orgDatabase.slogan = organization.slogan, orgDatabase.website = organization.website, 
+                     orgDatabase.modified = {now}`)
+        .end({organizations: organizations, platformId: platformId, now: time.getNowUtcTimestamp()});
+};
+
+let createCategoryAssigner = function (organizations, platformId) {
     return db.cypher().unwind(`{organizations} AS organization`)
         .match(`(orgDatabase:Organization {organizationIdOnExternalNP: organization.id})<-[:CREATED]-
                 (np:NetworkingPlatform {platformId: {platformId}})`)
@@ -49,9 +61,10 @@ let importOrganizations = async function (organizations, platformId) {
 
     addUuid(organizations);
     let commands = [
+        modifyChangedOrganizations(organizations, platformId).getCommand(),
         createNotExistingOrganizations(organizations, platformId).getCommand()
     ];
-    await createdCategoryAssigner(organizations, platformId).send(commands);
+    await createCategoryAssigner(organizations, platformId).send(commands);
 
 };
 
