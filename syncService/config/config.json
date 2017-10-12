@@ -6,6 +6,9 @@
   "databaseConfig": {
     "host": "bolt://localhost:7689"
   },
+  "timerConfig": {
+    "interval": 10
+  },
   "emailConfig": {
     "host": "localhost",
     "port": 6379,

@@ -20,6 +20,7 @@ let startSync = async function () {
         await exportOrg.exportNewOrganizations(npConfig);
         await exportOrg.exportModifiedOrganizations(npConfig);
     }
+    logger.info(`Synchronisation finished`);
 };
 
 module.exports = {
