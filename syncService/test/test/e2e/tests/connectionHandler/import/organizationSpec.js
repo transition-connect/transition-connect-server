@@ -10,6 +10,9 @@ describe('Testing the import of organizations from external networking platform'
 
     let startTime;
 
+    //Error testing
+    //Imported category existing in tc
+
     beforeEach(async function () {
         startTime = Math.floor(moment.utc().valueOf() / 1000);
         await dbDsl.init();
