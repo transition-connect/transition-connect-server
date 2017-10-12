@@ -186,6 +186,56 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].categories[0].should.equals('3');
     });
 
+    it('Import existing organization which is not modified', async function () {
+
+        dbDsl.createOrganization('10', {
+            networkingPlatformId: '1', adminIds: ['2'], created: 500,
+            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
+            website: 'www.link.org'
+        });
+        dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
+
+        nock(`https://localhost.org`)
+            .get('/organization').query({skip: 0})
+            .reply(200, {
+                hasNext: false,
+                organizations: [{
+                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                }]
+            });
+
+        nock(`https://localhost2.org`)
+            .get('/organization').query({skip: 0, lastSync: 700})
+            .reply(200);
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
+            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
+            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
+            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .return(`np, org, admins, collect(category.categoryId) AS categories`)
+            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
+
+        resp.length.should.equals(1);
+        resp[0].np.platformId.should.equals('1');
+        resp[0].org.organizationIdOnExternalNP.should.equals('1');
+        resp[0].org.organizationId.should.equals('10');
+        resp[0].org.name.should.equals('organization1');
+        resp[0].org.description.should.equals('description');
+        resp[0].org.slogan.should.equals('slogan');
+        resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.created.should.equals(500);
+        resp[0].org.modified.should.equals(500);
+        resp[0].admins.length.should.equals(1);
+        resp[0].admins[0].should.equals('user2@irgendwo.ch');
+        resp[0].categories.length.should.equals(2);
+        resp[0].categories[0].should.equals('1');
+        resp[0].categories[1].should.equals('2');
+    });
+
     it('Import modified organization (name changed)', async function () {
 
         dbDsl.createOrganization('10', {
