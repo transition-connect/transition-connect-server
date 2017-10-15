@@ -168,12 +168,12 @@ let Cypher = function (driver) {
         return chainedQuery;
     };
 
-    this.send = function (statementsToSend) {
+    this.send = async function (statementsToSend) {
         if (!statementsToSend || !(statementsToSend instanceof Array)) {
             statementsToSend = [];
         }
         statementsToSend.push(this.getCommand());
-        return communication.send(statementsToSend, driver);
+        return await communication.send(statementsToSend, driver);
     };
 };
 
