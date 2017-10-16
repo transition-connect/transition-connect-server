@@ -7,18 +7,12 @@ let importOrganizations = function (url, lastSync, skip) {
     return request(options);
 };
 
-let exportNewOrganizations = function (orgsToExport, url) {
-    let options = {method: 'POST', url: `${url}/organization`, json: {organizations: orgsToExport}};
-    return request(options);
-};
-
-let exportModifiedOrganizations = function (orgsToExport, url) {
+let exportOrganizations = function (orgsToExport, url) {
     let options = {method: 'PUT', url: `${url}/organization`, json: {organizations: orgsToExport}};
     return request(options);
 };
 
 module.exports = {
     importOrganizations,
-    exportNewOrganizations,
-    exportModifiedOrganizations
+    exportOrganizations
 };

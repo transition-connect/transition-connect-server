@@ -16,7 +16,7 @@ let exportNewOrganizations = async function (npConfig) {
                  org.website AS website, org.slogan AS slogan, COLLECT(category.categoryId) AS categories`)
         .end({platformId: npConfig.np.platformId}).send();
     if (orgsToExport.length > 0) {
-        await adapter.exportNewOrganizations(orgsToExport, npConfig.config.adapterType,
+        await adapter.exportOrganizations(orgsToExport, npConfig.config.adapterType,
             npConfig.config.npApiUrl);
     }
 
@@ -38,13 +38,17 @@ let exportModifiedOrganizations = async function (npConfig) {
                  org.website AS website, org.slogan AS slogan, COLLECT(category.categoryId) AS categories`)
         .end({platformId: npConfig.np.platformId}).send();
     if (orgsToExport.length > 0) {
-        await adapter.exportModifiedOrganizations(orgsToExport, npConfig.config.adapterType,
+        await adapter.exportOrganizations(orgsToExport, npConfig.config.adapterType,
             npConfig.config.npApiUrl);
     }
 
 };
 
+let exportOrganizations = async function (npConfig) {
+    await exportNewOrganizations(npConfig);
+    await exportModifiedOrganizations(npConfig);
+};
+
 module.exports = {
-    exportNewOrganizations,
-    exportModifiedOrganizations
+    exportOrganizations
 };

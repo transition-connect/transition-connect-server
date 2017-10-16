@@ -17,8 +17,7 @@ let startSync = async function () {
         await importOrg.importOrganizations(npConfig);
     }
     for (let npConfig of npConfigs) {
-        await exportOrg.exportNewOrganizations(npConfig);
-        await exportOrg.exportModifiedOrganizations(npConfig);
+        await exportOrg.exportOrganizations(npConfig);
     }
     logger.info(`Synchronisation finished`);
 };

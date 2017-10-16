@@ -52,7 +52,7 @@ describe('Testing the export of organizations to an external networking platform
             .reply(200);
 
         let scope = nock(`https://localhost.org`)
-            .post('/organization', {
+            .put('/organization', {
                 organizations: [{
                     uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
                     categories: ['1', '2']
