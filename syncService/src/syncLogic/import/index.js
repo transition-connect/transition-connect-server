@@ -3,10 +3,13 @@
 let db = require('server-lib').neo4j;
 let uuid = require('server-lib').uuid;
 let time = require('server-lib').time;
+let logger = require('server-lib').logging.getLogger(__filename);
 
-let addUuid = function (organizations) {
+let addMandatoryProperties = function (organizations) {
     for (let organization of organizations) {
         organization.uuid = uuid.generateUUID();
+        organization.website = organization.website || '';
+        organization.slogan = organization.slogan || '';
         organization.adminsWithUuid = [];
         for (let admin of organization.administrators) {
             organization.adminsWithUuid.push({email: admin, uuid: uuid.generateUUID()});
@@ -52,20 +55,26 @@ let createCategoryAssigner = function (organizations, platformId) {
         .delete(`relCategory`)
         .with(`organization, assigner`)
         .match(`(category:Category)`)
-        .where(`category.categoryId IN organization.categories`)
+        .where(`category.idOnPlatform IN organization.categories`)
         .merge(`(assigner)-[:ASSIGNED]->(category)`)
         .end({organizations: organizations, platformId: platformId});
 };
 
+let logImportedOrg = function (organizations) {
+    for (let organization of organizations) {
+        logger.info(`${organization.name} successfully imported`);
+    }
+};
+
 let importOrganizations = async function (organizations, platformId) {
 
-    addUuid(organizations);
+    addMandatoryProperties(organizations);
     let commands = [
         modifyChangedOrganizations(organizations, platformId).getCommand(),
         createNotExistingOrganizations(organizations, platformId).getCommand()
     ];
     await createCategoryAssigner(organizations, platformId).send(commands);
-
+    logImportedOrg(organizations);
 };
 
 module.exports = {

@@ -2,12 +2,17 @@
 
 let connectionHandler = requireConnectionHandler('connectionHandler');
 let dbDsl = require('server-test-util').dbDSL;
+let db = require('server-test-util').db;
+let moment = require('moment');
 let nock = require('nock');
 
 describe('Testing the export of organizations to an external networking platform', function () {
 
+    let startTime;
+
     beforeEach(async function () {
         await dbDsl.init();
+        startTime = Math.floor(moment.utc().valueOf() / 1000);
         dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
         dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
 
@@ -55,7 +60,7 @@ describe('Testing the export of organizations to an external networking platform
             .put('/organization', {
                 organizations: [{
                     uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2']
+                    language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
                 }]
             }).reply(201);
 
@@ -63,6 +68,12 @@ describe('Testing the export of organizations to an external networking platform
         await connectionHandler.startSync();
 
         scope.isDone().should.equals(true);
+        let resp = await db.cypher().match(`(:Organization {organizationId: '1'})-[export:EXPORT]->(:NetworkingPlatform {platformId: '1'})`)
+            .return(`export.lastExportTimestamp AS lastExportTimestamp`)
+            .end().send();
+
+        resp.length.should.equals(1);
+        resp[0].lastExportTimestamp.should.at.least(startTime);
     });
 
     it('Update already exported organization because organization data has changed', async function () {
@@ -86,7 +97,7 @@ describe('Testing the export of organizations to an external networking platform
             .put('/organization', {
                 organizations: [{
                     uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2']
+                    language: 'de' ,categories: ['idOnPlatform1', 'idOnPlatform2']
                 }]
             }).reply(201);
 
@@ -94,6 +105,12 @@ describe('Testing the export of organizations to an external networking platform
         await connectionHandler.startSync();
 
         scope.isDone().should.equals(true);
+        let resp = await db.cypher().match(`(:Organization {organizationId: '1'})-[export:EXPORT]->(:NetworkingPlatform {platformId: '1'})`)
+            .return(`export.lastExportTimestamp AS lastExportTimestamp`)
+            .end().send();
+
+        resp.length.should.equals(1);
+        resp[0].lastExportTimestamp.should.at.least(startTime);
     });
 
     it('Update already exported organization because export categories has changed', async function () {
@@ -117,7 +134,7 @@ describe('Testing the export of organizations to an external networking platform
             .put('/organization', {
                 organizations: [{
                     uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2']
+                    language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
                 }]
             }).reply(201);
 
@@ -125,5 +142,11 @@ describe('Testing the export of organizations to an external networking platform
         await connectionHandler.startSync();
 
         scope.isDone().should.equals(true);
+        let resp = await db.cypher().match(`(:Organization {organizationId: '1'})-[export:EXPORT]->(:NetworkingPlatform {platformId: '1'})`)
+            .return(`export.lastExportTimestamp AS lastExportTimestamp`)
+            .end().send();
+
+        resp.length.should.equals(1);
+        resp[0].lastExportTimestamp.should.at.least(startTime);
     });
 });

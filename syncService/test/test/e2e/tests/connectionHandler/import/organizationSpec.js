@@ -40,6 +40,53 @@ describe('Testing the import of organizations from external networking platform'
         nock.cleanAll();
     });
 
+    it('Import new organizations with only mandatory fields', async function () {
+
+        nock(`https://localhost.org`)
+            .get('/organization').query({skip: 0})
+            .reply(200, {
+                hasNext: false,
+                organizations: [{
+                    id: '1', name: 'organization1', description: 'description',
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                }]
+            });
+
+        nock(`https://localhost2.org`)
+            .get('/organization').query({skip: 0, lastSync: 700})
+            .reply(200, {
+                hasNext: false,
+                organizations: []
+            });
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
+            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
+            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
+            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .return(`np, org, admins, collect(category.categoryId) AS categories`)
+            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
+
+        resp.length.should.equals(1);
+        resp[0].np.platformId.should.equals('1');
+        resp[0].org.organizationIdOnExternalNP.should.equals('1');
+        resp[0].org.organizationId.should.exist;
+        resp[0].org.name.should.equals('organization1');
+        resp[0].org.description.should.equals('description');
+        resp[0].org.slogan.should.equals('');
+        resp[0].org.website.should.equals('');
+        resp[0].org.created.should.at.least(startTime);
+        resp[0].org.modified.should.at.least(startTime);
+        resp[0].admins.length.should.equals(2);
+        resp[0].admins[0].should.equals('user2@irgendwo.ch');
+        resp[0].admins[1].should.equals('user3@irgendwo.ch');
+        resp[0].categories.length.should.equals(2);
+        resp[0].categories[0].should.equals('1');
+        resp[0].categories[1].should.equals('2');
+    });
+
     it('Import new organizations', async function () {
 
         nock(`https://localhost.org`)
@@ -48,10 +95,10 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }, {
                     id: '2', name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
-                    categories: ['3'], administrators: ['user@irgendwo.ch']
+                    categories: ['idOnPlatform3'], administrators: ['user@irgendwo.ch']
                 }]
             });
 
@@ -61,7 +108,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization3', description: 'description3', slogan: 'slogan3', website: 'www.link3.org',
-                    categories: ['4'], administrators: ['user2@irgendwo.ch']
+                    categories: ['idOnPlatform4'], administrators: ['user2@irgendwo.ch']
                 }]
             });
 
@@ -129,7 +176,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: true,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -139,7 +186,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '2', name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
-                    categories: ['3'], administrators: ['user@irgendwo.ch']
+                    categories: ['idOnPlatform3'], administrators: ['user@irgendwo.ch']
                 }]
             });
 
@@ -204,7 +251,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -254,7 +301,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -304,7 +351,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description1', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -354,7 +401,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan1', website: 'www.link.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -404,7 +451,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link2.org',
-                    categories: ['1', '2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 
@@ -454,7 +501,7 @@ describe('Testing the import of organizations from external networking platform'
                 hasNext: false,
                 organizations: [{
                     id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['1'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                    categories: ['idOnPlatform1'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
                 }]
             });
 

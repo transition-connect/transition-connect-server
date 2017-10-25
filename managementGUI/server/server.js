@@ -23,7 +23,7 @@ let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
 let options = require('./src/lib/spec')(app);
 let logger = require('server-lib').logging.getLogger(__filename);
-let port = process.env.PORT || 8080;
+let port = process.env.PORT || 8086;
 
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
     app.enable('trust proxy');
