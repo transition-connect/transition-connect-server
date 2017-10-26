@@ -2,14 +2,15 @@
     <div id="tc-config-organization">
         <div id="tc-container">
             <div id="org-config-header">
-                <div id="org-name">Konfiguration der Organisation
+                <h1 id="org-name">Konfiguration der Organisation
                     <router-link :to="{name: 'orgDetail', params: {id: $route.params.id}}">
                         '{{config.organization.name}}'
                     </router-link>
-                </div>
+                </h1>
             </div>
             <administrator :admins="config.organization.administrators"
                            @changed="configChanged"></administrator>
+            <h2 id="sync-title">Mit Vernetzungsplattformen synchronisieren</h2>
             <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
                                         :np="networkingPlatform" @changed="configChanged">
             </networking-platform-config>
@@ -108,13 +109,20 @@
             width: 100%;
             max-width: $application-width;
             #org-config-header {
-                margin-bottom: 18px;
-                border-bottom: 1px solid $divider;
+                margin-bottom: 28px;
                 #org-name {
+                    margin-top: 8px;
                     font-size: 20px;
                     font-weight: 500;
                     padding-bottom: 6px;
                 }
+            }
+            #sync-title {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 18px;
+                padding-bottom: 6px;
+                border-bottom: 1px $divider solid;
             }
         }
     }

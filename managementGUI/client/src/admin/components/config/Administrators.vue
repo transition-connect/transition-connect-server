@@ -1,6 +1,6 @@
 <template>
     <div id="tc-config-admin">
-        <div class="tc-admin-title">{{getAdministrator}}</div>
+        <h2 class="tc-admin-title">{{getAdministrator}}</h2>
         <div class="tc-admin-container" v-for="admin in admins">
             <div class="icon-circle" :class="{'icon-circle-disabled': admins.length === 1}"
                  v-on:click="removeAdministrator(admin)">
@@ -70,11 +70,12 @@
     #tc-config-admin {
         padding-bottom: 8px;
         margin-bottom: 18px;
-        border-bottom: 1px $divider solid;
         .tc-admin-title {
             font-size: 16px;
             font-weight: 500;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px $divider solid;
         }
         .tc-admin-container {
             margin-bottom: 6px;

@@ -80,7 +80,6 @@
         .np-config-header {
             padding-bottom: 8px;
             margin-bottom: 8px;
-            border-bottom: 1px solid $divider;
             .sync-toggle-container {
                 margin-bottom: 12px;
             }
