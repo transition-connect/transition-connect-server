@@ -37,7 +37,7 @@
     "es6-promise": "4.1.1",
     "innersvg-polyfill": "0.0.2",
     "moment": "2.18.1",
-    "vee-validate": "2.0.0-rc.7",
+    "vee-validate": "2.0.0-rc.19",
     "vue": "2.4.4",
     "vue-router": "2.7.0",
     "vue-svgicon": "1.1.10",
