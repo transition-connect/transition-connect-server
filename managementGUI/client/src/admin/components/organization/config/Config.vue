@@ -10,7 +10,9 @@
             </div>
             <administrator :admins="config.organization.administrators"
                            @changed="configChanged"></administrator>
-            <h2 id="sync-title">Mit Vernetzungsplattformen synchronisieren</h2>
+            <h2 class="sub-title">Website für Veranstaltungsimport</h2>
+            <event-website></event-website>
+            <h2 class="sub-title">Mit Vernetzungsplattformen synchronisieren</h2>
             <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
                                         :np="networkingPlatform" @changed="configChanged">
             </networking-platform-config>
@@ -50,10 +52,11 @@
     import Administrator from './../../config/Administrators.vue';
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
+    import EventWebsite from './EventWebsite.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
 
     export default {
-        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, Snackbar},
+        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, EventWebsite, Snackbar},
         data: function () {
             return {config: {organization: {}}, showConfigChanged: false, showWarningDialog: false, nextRoute: null};
         },
@@ -117,7 +120,7 @@
                     padding-bottom: 6px;
                 }
             }
-            #sync-title {
+            .sub-title {
                 font-size: 16px;
                 font-weight: 500;
                 margin-bottom: 18px;
