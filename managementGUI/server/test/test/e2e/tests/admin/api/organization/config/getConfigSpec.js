@@ -3,14 +3,10 @@
 let dbDsl = require('server-test-util').dbDSL;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
-let moment = require('moment');
 
 describe('Integration Tests for getting the configuration of an organization', function () {
 
-    let startTime;
-
     beforeEach(function () {
-        startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
@@ -34,7 +30,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             dbDsl.mapNetworkingPlatformToCategory('8', {npId: '5', usedCategoryId: '15', similarCategoryIds: []});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
-            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], created: 502});
+            dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], eventsImportConfiguration: 'www.test.org', created: 502});
 
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1', '6']});
             dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
@@ -61,6 +57,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.status.should.equal(200);
 
             res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.eventsImportConfiguration.should.equals('www.test.org');
             res.body.organization.administrators.length.should.equals(2);
             res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
             res.body.organization.administrators[1].should.equals('user@irgendwo.ch');

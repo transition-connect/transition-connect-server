@@ -8,7 +8,8 @@ let getOrganizationCommand = function (organizationId) {
         .optionalMatch(`(org)<-[:IS_ADMIN]-(admin:Admin)`)
         .with(`org, admin`)
         .orderBy(`admin.email`)
-        .return(`org.name AS name, COLLECT(admin.email) AS administrators`)
+        .return(`org.name AS name, org.eventsImportConfiguration AS eventsImportConfiguration,
+                 COLLECT(admin.email) AS administrators`)
         .end({organizationId: organizationId}).getCommand();
 };
 
