@@ -54,7 +54,6 @@ const getters = {
 
 const actions = {
     getConfiguration({commit}, organizationId) {
-
         HTTP.get(`/admin/api/organization/config`,
             {params: {organizationId: organizationId, language: 'DE'}}).then((resp) => {
             commit(types.SET_ORG_CONFIG, {config: resp.data});
@@ -87,7 +86,7 @@ const mutations = {
         state.successfullyUpdated = false;
     },
     [types.UPDATE_SYNC_STATE_TO_NP](state, {isExported, np}) {
-        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId = np.platformId);
+        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId === np.platformId);
         npToChange.isExported = isExported;
         state.successfullyUpdated = false;
     },

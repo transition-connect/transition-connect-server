@@ -3,7 +3,7 @@
         <div class="np-config-header">
             <div class="sync-toggle-container">
                 <toggle :on="np.isDenied ? 'Nein': 'Ja'" off="Nein" size="normal"
-                        :onstyle="getOnStyle" :disabled="np.isDenied"
+                        :onstyle="getOnStyle" :disabled="np.isDenied" :reload="reload"
                         :offstyle="!np.isExported ? 'danger': 'warning'" :state="np.isExported"
                         height="32px" width="80px" @changed="syncChanged"></toggle>
                 <span class="np-name">Synchronisieren mit {{np.name}}</span>
@@ -30,12 +30,13 @@
     import Toggle from './../../../../utils/components/Toggle.vue';
     import * as types from '../../../store/mutation-types';
     import NpCategory from './NetworkingPlattformCategory.vue';
+    import {mapGetters} from 'vuex';
 
     export default {
         components: {Toggle, NpCategory},
         props: ['np'],
         data: function () {
-            return {config: {}, categorySelected: true};
+            return {config: {}, categorySelected: true, reload: false};
         },
         watch: {
             np: {
@@ -48,6 +49,16 @@
                     }
                 },
                 deep: true
+            },
+            successfullyUpdated: {
+                handler: function (successfully) {
+                    if (successfully) {
+                        this.reload = true;
+                        this.$nextTick(function () {
+                            this.reload = false;
+                        });
+                    }
+                }
             }
         },
         methods: {
@@ -62,7 +73,10 @@
                     return 'danger'
                 }
                 return this.np.isExported ? 'success' : 'warning'
-            }
+            },
+            ...mapGetters({
+                successfullyUpdated: 'successfullyUpdated'
+            })
         }
     }
 </script>
