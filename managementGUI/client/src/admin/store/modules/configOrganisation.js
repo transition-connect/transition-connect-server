@@ -13,16 +13,32 @@ const state = {
     isLoaded: false
 };
 
+let networkingPlatformHasChanged = function (networkingPlatforms, actualNetworkingPlatforms) {
+    let hasChanged = false;
+    for (let i = 0; i < networkingPlatforms.length; i++) {
+        if (networkingPlatforms[i].isExported) {
+            if (!equal(networkingPlatforms[i], actualNetworkingPlatforms[i])) {
+                hasChanged = true;
+            }
+        } else {
+            if (networkingPlatforms[i].isExported !== actualNetworkingPlatforms[i].isExported) {
+                hasChanged = true;
+            }
+        }
+    }
+    return hasChanged;
+};
+
 const getters = {
     hasChanged: state => {
         return !equal(state.config.organization.administrators,
             state.configActual.organization.administrators) ||
-            !equal(state.config.networkingPlatforms, state.configActual.networkingPlatforms) ||
+            networkingPlatformHasChanged(state.config.networkingPlatforms, state.configActual.networkingPlatforms) ||
             state.eventsImportConfiguration !==
             state.eventsImportConfigurationActual;
     },
     networkingPlatformsChanged: state => {
-        return !equal(state.config.networkingPlatforms, state.configActual.networkingPlatforms);
+        return networkingPlatformHasChanged(state.config.networkingPlatforms, state.configActual.networkingPlatforms);
     },
     administratorsChanged: state => {
         return !equal(state.config.organization.administrators, state.configActual.organization.administrators);
