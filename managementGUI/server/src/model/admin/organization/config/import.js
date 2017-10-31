@@ -6,6 +6,7 @@ let exceptions = require('server-lib').exceptions;
 let request = require('request-promise');
 
 const ERROR_NO_ICAL_RESPONSE = 1;
+const ERROR_NO_RESPONSE = 2;
 
 let checkIsIcal = function (ical) {
     if (typeof(ical) === "string") {
@@ -32,7 +33,7 @@ let saveImportEventUrl = async function (adminId, organizationId, url, req) {
         }
         await saveUrl(organizationId, url);
     } catch (error) {
-        return exceptions.getInvalidOperation(`Url ${url} request error`, logger, req);
+        return exceptions.getInvalidOperation(`Url ${url} request error`, logger, req, ERROR_NO_RESPONSE);
     }
 };
 

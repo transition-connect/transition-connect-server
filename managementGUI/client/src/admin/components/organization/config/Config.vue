@@ -64,7 +64,8 @@
                 getOrgName: 'getOrgName',
                 getNetworkingPlatforms: 'getNetworkingPlatforms',
                 getOrgAdministrators: 'getOrgAdministrators',
-                isLoaded: 'isLoaded'
+                isLoaded: 'isLoaded',
+                configChanged: 'hasChanged'
             })
         },
         methods: {
@@ -77,7 +78,7 @@
             }
         },
         beforeRouteLeave: function (to, from, next) {
-            if (this.configChanged()) {
+            if (this.configChanged) {
                 this.showWarningDialog = true;
                 this.nextRoute = next;
             } else {

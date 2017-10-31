@@ -9,8 +9,11 @@
             <div id="config-update-successful" v-show="successfullyUpdated">
                 Konfiguration erfolgreich geändert
             </div>
-            <div id="config-upload-failed" v-show="configUpdateFailed">
+            <div class="config-upload-failed" v-show="configUpdateFailed">
                 Fehler: Konfiguration konnte nicht gespeichert werden
+            </div>
+            <div class="config-upload-failed" v-show="invalidEventImportUrl">
+                Fehler: Url für Veranstaltungsimport ist nicht gültig
             </div>
             <div id="invalid-config" v-show="!isValidConfig">
                 Konfiguration ist noch nicht vollständig
@@ -25,17 +28,19 @@
     import {getExportMessage} from './exportConfigHandler';
     import * as types from '../../../store/mutation-types';
     import equal from 'deep-equal';
-    import { mapGetters } from 'vuex'
+    import {mapGetters} from 'vuex'
 
     export default {
         components: {Loader},
         props: ['organizationId'],
         data: function () {
-            return {showLoading: false, configUpdateFailed: false};
+            return {showLoading: false, configUpdateFailed: false, invalidEventImportUrl: false};
         },
         methods: {
             changeExportConfig: function () {
                 let commands = [];
+                this.invalidEventImportUrl = false;
+                this.configUpdateFailed = false;
                 if (this.networkingPlatformsChanged) {
                     let npsMessage = getExportMessage(this.getNetworkingPlatforms);
                     commands.push(HTTP.put(`/admin/api/organization/config/export`,
@@ -45,6 +50,10 @@
                     commands.push(HTTP.put(`/admin/api/organization/config/admin`,
                         {params: {organizationId: this.organizationId, admins: this.getOrgAdministrators}}));
                 }
+                if (this.eventsImportConfigurationChanged) {
+                    commands.push(HTTP.put(`/admin/api/organization/config/websiteEventImport`,
+                        {params: {organizationId: this.organizationId, url: this.eventUrl}}));
+                }
                 if (commands.length > 0) {
                     Promise.all(commands).then(() => {
                         this.showLoading = false;
@@ -52,7 +61,13 @@
                     }).catch(e => {
                         console.log(e);
                         this.showLoading = false;
-                        this.configUpdateFailed = true;
+                        if (e.response.data && e.response.data.errorCode &&
+                            (e.response.data.errorCode === 1 || e.response.data.errorCode === 2)) {
+                            this.invalidEventImportUrl = true;
+                            this.$store.commit(types.UPDATE_IMPORT_EVENT_URL_FAILED)
+                        } else {
+                            this.configUpdateFailed = true;
+                        }
                     })
                 }
             }
@@ -63,8 +78,10 @@
                 isValidConfig: 'isValidConfig',
                 networkingPlatformsChanged: 'networkingPlatformsChanged',
                 administratorsChanged: 'administratorsChanged',
+                eventsImportConfigurationChanged: 'eventsImportConfigurationChanged',
                 getNetworkingPlatforms: 'getNetworkingPlatforms',
                 getOrgAdministrators: 'getOrgAdministrators',
+                eventUrl: 'getEventsImportConfiguration',
                 successfullyUpdated: 'successfullyUpdated'
             })
         }
@@ -88,7 +105,7 @@
                 position: relative;
                 top: 8px;
             }
-            #config-upload-failed {
+            .config-upload-failed {
                 display: inline-block;
                 font-weight: 500;
                 color: $error;

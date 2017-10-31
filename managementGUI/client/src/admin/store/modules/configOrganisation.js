@@ -9,6 +9,7 @@ const state = {
     eventsImportConfigurationIsValid: true,
     eventsImportConfiguration: '',
     eventsImportConfigurationActual: '',
+    eventsImportConfigurationFailed: false,
     successfullyUpdated: false,
     isLoaded: false
 };
@@ -40,16 +41,16 @@ const getters = {
     networkingPlatformsChanged: state => {
         return networkingPlatformHasChanged(state.config.networkingPlatforms, state.configActual.networkingPlatforms);
     },
-    administratorsChanged: state => {
-        return !equal(state.config.organization.administrators, state.configActual.organization.administrators);
-    },
+    eventsImportConfigurationChanged: state => state.eventsImportConfiguration !== state.eventsImportConfigurationActual,
+    administratorsChanged: state => state.config.organization.name,
     getOrgName: state => state.config.organization.name,
     getNetworkingPlatforms: state => state.config.networkingPlatforms,
     getOrgAdministrators: state => state.config.organization.administrators,
-    getEventsImportConfiguration: state => state.config.organization.eventsImportConfiguration,
+    getEventsImportConfiguration: state => state.eventsImportConfiguration,
     isLoaded: state => state.isLoaded,
     isValidConfig: state => configCheck(state.config.networkingPlatforms) && state.eventsImportConfigurationIsValid,
-    successfullyUpdated: state => state.successfullyUpdated
+    successfullyUpdated: state => state.successfullyUpdated,
+    eventsImportConfigurationFailed: state => state.eventsImportConfigurationFailed
 };
 
 const actions = {
@@ -100,7 +101,14 @@ const mutations = {
     },
     [types.UPDATE_CONFIG_COMMIT](state) {
         state.configActual = JSON.parse(JSON.stringify(state.config));
+        state.eventsImportConfigurationActual = state.eventsImportConfiguration;
         state.successfullyUpdated = true;
+        state.eventsImportConfigurationFailed = false;
+    },
+    [types.UPDATE_IMPORT_EVENT_URL_FAILED](state) {
+        state.configActual = JSON.parse(JSON.stringify(state.config));
+        state.successfullyUpdated = false;
+        state.eventsImportConfigurationFailed = true;
     }
 };
 
