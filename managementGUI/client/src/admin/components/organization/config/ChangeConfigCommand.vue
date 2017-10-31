@@ -7,13 +7,13 @@
             </button>
             <loader id="config-change-loader" v-show="showLoading"></loader>
             <div id="config-update-successful" v-show="successfullyUpdated">
-                Konfiguration erfolgreich geändert
+                Konfiguration erfolgreich gespeichert
             </div>
             <div class="config-upload-failed" v-show="configUpdateFailed">
                 Fehler: Konfiguration konnte nicht gespeichert werden
             </div>
             <div class="config-upload-failed" v-show="invalidEventImportUrl">
-                Fehler: Url für Veranstaltungsimport ist nicht gültig
+                Url für Veranstaltungsimport ist nicht gültig
             </div>
             <div id="invalid-config" v-show="!isValidConfig">
                 Konfiguration ist noch nicht vollständig
