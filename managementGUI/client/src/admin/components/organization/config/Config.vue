@@ -1,5 +1,5 @@
 <template>
-    <div id="tc-config-organization">
+    <div id="tc-config-organization" v-if="isLoaded">
         <div id="tc-container">
             <div id="org-config-header">
                 <h1 id="org-name">Konfiguration der Organisation
@@ -7,7 +7,7 @@
                         {{getOrgName}}
                     </router-link>
                 </h1>
-                <change-config-command v-if="isLoaded" :organizationId="$route.params.id">
+                <change-config-command :organizationId="$route.params.id">
                 </change-config-command>
             </div>
             <administrator :admins="getOrgAdministrators" add-command="ADD_ADMIN_TO_ORG_CONFIG"

@@ -55,7 +55,7 @@ const getters = {
 
 const actions = {
     getConfiguration({commit}, organizationId) {
-        commit(types.RESET_CONFIG);
+        commit(types.RESET_ORG_CONFIG);
         HTTP.get(`/admin/api/organization/config`,
             {params: {organizationId: organizationId, language: 'DE'}}).then((resp) => {
             commit(types.SET_ORG_CONFIG, {config: resp.data});
@@ -67,8 +67,8 @@ const actions = {
 
 const mutations = {
     [types.RESET_ORG_CONFIG](state) {
-        state.config = {config: {}, administrators: []};
-        state.configActual = {config: {}, administrators: []};
+        state.config = {networkingPlatforms: [], organization: {}};
+        state.configActual = {networkingPlatforms: [], organization: {}};
         state.isLoaded = false;
     },
     [types.SET_ORG_CONFIG](state, {config}) {
