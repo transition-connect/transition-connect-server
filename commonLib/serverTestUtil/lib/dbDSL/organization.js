@@ -9,6 +9,7 @@ let createOrganization = function (organizationId, data) {
     data.website = data.website || `www.link${organizationId}.org`;
     data.slogan = data.slogan || `best${organizationId}Org`;
     data.language = data.language || `de`;
+    data.eventsImportConfiguration = data.eventsImportConfiguration || null;
     data.organizationIdOnExternalNP = data.organizationIdOnExternalNP || `externalId${organizationId}`;
     data.modified = data.modified || data.created;
     data.lastConfigUpdate = data.lastConfigUpdate || null;
@@ -17,7 +18,8 @@ let createOrganization = function (organizationId, data) {
         .createUnique(`(np)-[:CREATED]->(org:Organization {organizationId: {organizationId}, name: {name}, 
                        description: {description}, slogan: {slogan}, website: {website}, language: {language},
                        created: {created}, modified: {modified}, lastConfigUpdate: {lastConfigUpdate},
-                       organizationIdOnExternalNP: {organizationIdOnExternalNP}})`)
+                       organizationIdOnExternalNP: {organizationIdOnExternalNP}, 
+                       eventsImportConfiguration: {eventsImportConfiguration}})`)
         .with(`org`)
         .match(`(admin:Admin)`)
         .where(`admin.adminId IN {adminIds}`)
@@ -26,7 +28,8 @@ let createOrganization = function (organizationId, data) {
             organizationId: organizationId, platformId: data.networkingPlatformId,
             name: data.name, adminIds: data.adminIds, created: data.created, modified: data.modified,
             lastConfigUpdate: data.lastConfigUpdate, organizationIdOnExternalNP: data.organizationIdOnExternalNP,
-            description: data.description, website: data.website, slogan: data.slogan, language: data.language
+            description: data.description, website: data.website, slogan: data.slogan, language: data.language,
+            eventsImportConfiguration: data.eventsImportConfiguration
         }).getCommand());
 };
 

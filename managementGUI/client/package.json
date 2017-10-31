@@ -10,8 +10,8 @@
     "watchify": "concurrently \"npm run watchify-public\" \"npm run watchify-admin\"",
     "test": "karma start karma.conf.js",
     "generate-icons": "vsvg -s ./static/svg/icons -t ./src/icons",
-    "build-public": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude es6-promise --exclude moment --exclude babel-polyfill --exclude vue-svgicon --exclude innersvg-polyfill -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
-    "build-admin": "cross-env NODE_ENV=production browserify --exclude vue --exclude vee-validate --exclude vue-router --exclude vuex  --exclude axios --exclude es6-promise --exclude moment --exclude babel-polyfill --exclude vue-svgicon --exclude innersvg-polyfill -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
+    "build-public": "cross-env NODE_ENV=production browserify -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/public.css ] -e src/public/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/public.min.js",
+    "build-admin": "cross-env NODE_ENV=production browserify -g envify -p [ vueify/plugins/extract-css -o ../server/static/styles/admin.css ] -e src/admin/main.js | uglifyjs -c warnings=false -m > ../server/static/lib/dist/admin.min.js"
   },
   "browserify": {
     "transform": [
@@ -29,6 +29,7 @@
     "moment": "moment/min/moment-with-locales.js",
     "babel-polyfill": "babel-polyfill/dist/polyfill.min.js",
     "vue-svgicon": "vue-svgicon/dist/index.js",
+    "deep-equal": "deep-equal/index.js",
     "innersvg-polyfill": "innersvg-polyfill/innersvg.js"
   },
   "dependencies": {
@@ -37,6 +38,7 @@
     "es6-promise": "4.1.1",
     "innersvg-polyfill": "0.0.2",
     "moment": "2.18.1",
+    "deep-equal": "1.0.1",
     "vee-validate": "2.0.0-rc.19",
     "vue": "2.4.4",
     "vue-router": "2.7.0",

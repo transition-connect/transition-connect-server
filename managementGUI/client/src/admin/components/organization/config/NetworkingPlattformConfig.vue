@@ -21,22 +21,18 @@
             <div class="category-config-warning" v-show="!categorySelected">
                 Mindestens eine Kategorie muss ausgewählt werden
             </div>
-            <div v-for="category in np.categories">
-                <div class="checkbox">
-                    <label><input type="checkbox" v-model="category.isSelected">
-                        <span>{{category.name}}</span>
-                    </label>
-                </div>
-            </div>
+            <np-category v-for="category in np.categories" :category="category" :np="np"></np-category>
         </div>
     </div>
 </template>
 
 <script>
     import Toggle from './../../../../utils/components/Toggle.vue';
+    import * as types from '../../../store/mutation-types';
+    import NpCategory from './NetworkingPlattformCategory.vue';
 
     export default {
-        components: {Toggle},
+        components: {Toggle, NpCategory},
         props: ['np'],
         data: function () {
             return {config: {}, categorySelected: true};
@@ -50,23 +46,22 @@
                             this.categorySelected = true;
                         }
                     }
-                    this.$emit('changed');
                 },
                 deep: true
             }
         },
         methods: {
-            syncChanged: function (newState) {
-                this.np.isExported = newState;
-                this.$emit('changed');
+            syncChanged: function (isExported) {
+                this.$store.commit(types.UPDATE_SYNC_STATE_TO_NP,
+                    {isExported: isExported, np: this.np})
             }
         },
         computed: {
             getOnStyle: function () {
-                if(this.np.isDenied) {
+                if (this.np.isDenied) {
                     return 'danger'
                 }
-                return this.np.isExported ? 'success': 'warning'
+                return this.np.isExported ? 'success' : 'warning'
             }
         }
     }

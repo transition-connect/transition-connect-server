@@ -8,6 +8,7 @@ import es6Promise from 'es6-promise';
 import "babel-polyfill";
 import App from './App.vue';
 import routes from './routes';
+import store from './store';
 
 import '../icons/index';
 
@@ -22,5 +23,6 @@ moment.locale('de');
 new Vue({
     router: new VueRouter({routes}),
     el: '#admin-app',
+    store,
     render: (h) => h(App)
 });

@@ -4,26 +4,20 @@
             <div id="org-config-header">
                 <h1 id="org-name">Konfiguration der Organisation
                     <router-link :to="{name: 'orgDetail', params: {id: $route.params.id}}">
-                        '{{config.organization.name}}'
+                        {{getOrgName}}
                     </router-link>
                 </h1>
+                <change-config-command v-if="isLoaded" :organizationId="$route.params.id">
+                </change-config-command>
             </div>
-            <administrator :admins="config.organization.administrators"
-                           @changed="configChanged"></administrator>
+            <administrator :admins="getOrgAdministrators"></administrator>
             <h2 class="sub-title">Website für Veranstaltungsimport</h2>
             <event-website></event-website>
             <h2 class="sub-title">Mit Vernetzungsplattformen synchronisieren</h2>
-            <networking-platform-config v-for="networkingPlatform in config.networkingPlatforms"
-                                        :np="networkingPlatform" @changed="configChanged">
+            <networking-platform-config v-for="networkingPlatform in getNetworkingPlatforms"
+                                        :np="networkingPlatform">
             </networking-platform-config>
         </div>
-        <change-config-command v-if="showConfigChanged" :nps="config.networkingPlatforms"
-                               :previous-nps="configOriginal.networkingPlatforms"
-                               :admins="config.organization.administrators"
-                               :previous-admins="configOriginal.organization.administrators"
-                               :organizationId="$route.params.id"
-                               @updateSuccess="updateSuccess">
-        </change-config-command>
 
         <snackbar type="error">
             <div slot="text">Ein Fehler ist aufgetreten.</div>
@@ -54,33 +48,26 @@
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import EventWebsite from './EventWebsite.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
+    import equal from 'deep-equal';
+    import { mapGetters } from 'vuex';
 
     export default {
         components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, EventWebsite, Snackbar},
         data: function () {
-            return {config: {organization: {}}, showConfigChanged: false, showWarningDialog: false, nextRoute: null};
+            return {config: {organization: {eventsImportConfiguration: ''}}, showWarningDialog: false, nextRoute: null};
         },
         created: function () {
-            HTTP.get(`/admin/api/organization/config`,
-                {params: {organizationId: this.$route.params.id, language: 'DE'}}).then((resp) => {
-                this.config = resp.data;
-                this.configOriginal = JSON.parse(JSON.stringify(resp.data));
-            }).catch(e => {
-                this.$emit('showNotification', true);
-                console.log(e);
+            this.$store.dispatch('getConfiguration', this.$route.params.id);
+        },
+        computed: {
+            ...mapGetters({
+                getOrgName: 'getOrgName',
+                getNetworkingPlatforms: 'getNetworkingPlatforms',
+                getOrgAdministrators: 'getOrgAdministrators',
+                isLoaded: 'isLoaded'
             })
         },
         methods: {
-            configChanged: function () {
-                this.showConfigChanged = JSON.stringify(this.config.networkingPlatforms)
-                    !== JSON.stringify(this.configOriginal.networkingPlatforms) ||
-                    JSON.stringify(this.config.organization.administrators)
-                    !== JSON.stringify(this.configOriginal.organization.administrators);
-            },
-            updateSuccess: function () {
-                this.showConfigChanged = false;
-                this.$router.push({name: 'orgDetail', params: {id: this.$route.params.id}})
-            },
             navigateToNext: function () {
                 this.nextRoute();
             },
@@ -90,7 +77,7 @@
             }
         },
         beforeRouteLeave: function (to, from, next) {
-            if (this.showConfigChanged) {
+            if (this.configChanged()) {
                 this.showWarningDialog = true;
                 this.nextRoute = next;
             } else {

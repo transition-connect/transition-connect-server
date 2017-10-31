@@ -1,5 +1,5 @@
 <template>
-    <div id="tc-commands-config-container">
+    <div id="tc-commands-np-config-container">
         <div id="tc-commands">
             <button type="button" id="change-config-button" class="btn btn-warning"
                     v-on:click="changeExportConfig" :disabled="showLoading || this.hasErrors">
@@ -61,7 +61,7 @@
 <style lang="scss">
     @import "../../../../style/variable";
 
-    #tc-commands-config-container {
+    #tc-commands-np-config-container {
         position: fixed;
         bottom: 0;
         right: 0;

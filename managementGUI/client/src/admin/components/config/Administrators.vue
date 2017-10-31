@@ -26,6 +26,8 @@
 </template>
 
 <script>
+    import * as types from '../../store/mutation-types';
+
     export default {
         props: ['admins'],
         data: function () {
@@ -34,15 +36,13 @@
         methods: {
             addAdministrator: function () {
                 if (!this.checkEMailExists(this.email)) {
-                    this.admins.push(this.email);
-                    this.$emit('changed');
+                    this.$store.commit(types.ADD_ADMIN_TO_ORG_CONFIG, {email: this.email});
                 }
                 this.email = '';
             },
             removeAdministrator: function (adminToRemove) {
                 if (this.admins && this.admins.length > 1) {
-                    this.admins.splice(this.admins.findIndex((admin) => admin === adminToRemove), 1);
-                    this.$emit('changed');
+                    this.$store.commit(types.REMOVE_ADMIN_FROM_ORG_CONFIG, {email: adminToRemove});
                 }
             },
             checkEMailExists: function (email) {
