@@ -1,11 +1,14 @@
 <template>
     <div id="tc-commands-np-config-container">
         <div id="tc-commands">
-            <button type="button" id="change-config-button" class="btn btn-warning"
-                    v-on:click="changeExportConfig" :disabled="showLoading || this.hasErrors">
+            <button type="button" id="change-config-button" class="btn btn-primary"
+                    v-on:click="changeExportConfig" :disabled="showLoading || !hasChanged">
                 Konfiguration speichern
             </button>
             <loader id="config-change-loader" v-show="showLoading"></loader>
+            <div id="config-update-successful" v-show="successfullyUpdated">
+                Konfiguration erfolgreich gespeichert
+            </div>
             <div id="config-upload-failed" v-show="configUpdateFailed">
                 Fehler: Konfiguration konnte nicht gespeichert werden
             </div>
@@ -19,34 +22,47 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import Loader from './../../../../utils/components/Loader.vue';
+    import * as types from '../../../store/mutation-types';
+    import {mapGetters} from 'vuex'
 
     export default {
         components: {Loader},
-        props: ['config', 'previousConfig', 'admins', 'previousAdmins', 'platformId', 'hasErrors'],
+        props: ['platformId'],
         data: function () {
             return {showLoading: false, configUpdateFailed: false};
+        },
+        computed: {
+            ...mapGetters({
+                hasChanged: 'npHasChanged',
+                npGeneralConfigChanged: 'npGeneralConfigChanged',
+                npAdministratorsChanged: 'npAdministratorsChanged',
+                npGeneralConfig: 'npGeneralConfig',
+                npAdministrators: 'npAdministrators',
+                successfullyUpdated: 'npConfigSuccessfullyUpdated'
+            })
         },
         methods: {
             changeExportConfig: function () {
                 let commands = [];
-                if (JSON.stringify(this.config) !== JSON.stringify(this.previousConfig)) {
+                if (this.npGeneralConfigChanged) {
                     commands.push(HTTP.put(`/admin/api/networkingPlatform/config/general`,
                         {
                             params: {
-                                platformId: this.platformId, description: this.config.description,
-                                link: this.config.link,
-                                manuallyAcceptOrganization: this.config.manuallyAcceptOrganization,
+                                platformId: this.platformId, description: this.npGeneralConfig.description,
+                                link: this.npGeneralConfig.link,
+                                manuallyAcceptOrganization: this.npGeneralConfig.manuallyAcceptOrganization,
                             }
                         }));
                 }
-                if (JSON.stringify(this.admins) !== JSON.stringify(this.previousAdmins)) {
+                if (this.npAdministratorsChanged) {
                     commands.push(HTTP.put(`/admin/api/networkingPlatform/config/admin`,
-                        {params: {platformId: this.platformId, admins: this.admins}}));
+                        {params: {platformId: this.platformId, admins: this.npAdministrators}}));
                 }
                 if (commands.length > 0) {
+                    this.showLoading = true;
                     Promise.all(commands).then(() => {
                         this.showLoading = false;
-                        this.$emit('updateSuccess');
+                        this.$store.commit(types.UPDATE_NP_CONFIG_COMMIT)
                     }).catch(e => {
                         console.log(e);
                         this.showLoading = false;
@@ -62,18 +78,8 @@
     @import "../../../../style/variable";
 
     #tc-commands-np-config-container {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        height: 72px;
-        z-index: 1000;
-        background-color: #e5e5e5;
-        border-top: 1px $divider solid;
         #tc-commands {
-            margin: 0 auto;
             width: 100%;
-            padding-top: 19px;
             max-width: $application-width;
             #change-config-button {
                 display: inline-block;
@@ -92,6 +98,11 @@
                 display: inline-block;
                 font-weight: 500;
                 color: $warning;
+            }
+            #config-update-successful {
+                display: inline-block;
+                font-weight: 500;
+                color: $success;
             }
         }
     }

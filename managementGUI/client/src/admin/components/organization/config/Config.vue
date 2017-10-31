@@ -10,7 +10,8 @@
                 <change-config-command v-if="isLoaded" :organizationId="$route.params.id">
                 </change-config-command>
             </div>
-            <administrator :admins="getOrgAdministrators"></administrator>
+            <administrator :admins="getOrgAdministrators" add-command="ADD_ADMIN_TO_ORG_CONFIG"
+            remove-command="REMOVE_ADMIN_FROM_ORG_CONFIG"></administrator>
             <h2 class="sub-title">Website für Veranstaltungsimport</h2>
             <event-website></event-website>
             <h2 class="sub-title">Mit Vernetzungsplattformen synchronisieren</h2>

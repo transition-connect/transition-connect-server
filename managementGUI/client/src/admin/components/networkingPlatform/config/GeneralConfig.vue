@@ -17,14 +17,14 @@
             </div>
             <div class="form-group" :class="{'has-error': errors.has('inputDescription')}">
                 <label for="inputDescription">Beschreibung</label>
-                <textarea class="form-control" id="inputDescription" v-model="config.description"
+                <textarea class="form-control" id="inputDescription" v-model="description"
                           name="inputDescription" rows="5" v-validate="'required|max: 700'">
                 </textarea>
                 <p class="text-danger" v-show="errors.has('inputDescription')">Beschreibung wird benötigt und darf nicht länger als 700 Zeichen sein.</p>
             </div>
             <div class="form-group">
                 <label for="inputWebsite">Website</label>
-                <input type="url" class="form-control" id="inputWebsite" v-model="config.link"
+                <input type="url" class="form-control" id="inputWebsite" v-model="website"
                        name="inputWebsite" v-validate="'required|url'">
                 <p class="text-danger" v-show="errors.has('inputWebsite')">Keine gültige URL</p>
             </div>
@@ -34,6 +34,8 @@
 
 <script>
     import Toggle from './../../../../utils/components/Toggle.vue';
+    import * as types from '../../../store/mutation-types';
+    import { mapGetters } from 'vuex';
 
     export default {
         props: ['config'],
@@ -41,20 +43,29 @@
         data: function () {
             return {};
         },
-        watch: {
-            config: {
-                handler: function () {
-                    this.$validator.validateAll().then(() => {
-                        this.$emit('changed', this.errors.errors.length > 0);
-                    });
+        computed: {
+            description: {
+                get() {
+                    return this.config.description;
                 },
-                deep: true
+                set(description) {
+                    this.$store.commit(types.CHANGE_NP_DESCRIPTION,
+                        {description: description, valid: this.errors.has('inputDescription')})
+                }
+            },
+            website: {
+                get() {
+                    return this.config.link;
+                },
+                set(website) {
+                    this.$store.commit(types.CHANGE_NP_WEBSITE,
+                        {website: website, valid: this.errors.has('inputWebsite')})
+                }
             }
         },
         methods: {
             manuallyAcceptOrganizationChanged: function (newState) {
-                this.config.manuallyAcceptOrganization = newState;
-                this.$emit('changed', this.errors.errors.length > 0);
+                this.$store.commit(types.CHANGE_NP_MANUALLY_ACCEPT_ORG, newState)
             }
         }
     }

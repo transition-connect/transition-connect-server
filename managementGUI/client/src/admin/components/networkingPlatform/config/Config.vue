@@ -1,26 +1,19 @@
 <template>
     <div id="tc-config-np">
-        <div id="tc-container" v-if="configLoaded">
+        <div id="tc-container" v-if="npConfigIsLoaded">
             <div id="np-config-header">
-                <div id="np-name">Konfiguration der Vernetzungsplatform
+                <h1 id="np-name">Konfiguration der Vernetzungsplatform
                     <router-link :to="{name: 'npDetail', params: {id: $route.params.id}}">
-                        '{{config.np.config.name}}'
+                        {{npName}}
                     </router-link>
-                </div>
+                </h1>
+                <change-config-command :platformId="$route.params.id"></change-config-command>
             </div>
-            <administrator :admins="config.np.administrators"
-                           @changed="configChanged"></administrator>
-            <general-config :config="config.np.config" @changed="configChanged"></general-config>
+            <administrator :admins="npAdministrators" add-command="ADD_ADMIN_TO_NP_CONFIG"
+                           remove-command="REMOVE_ADMIN_FROM_NP_CONFIG"></administrator>
+            <h2 class="sub-title">Allgemeine Einstellungen</h2>
+            <general-config :config="npGeneralConfig"></general-config>
         </div>
-
-        <change-config-command v-if="showConfigChanged" :config="config.np.config"
-                               :has-errors="hasErrors"
-                               :previous-config="configOriginal.np.config"
-                               :admins="config.np.administrators"
-                               :previous-admins="configOriginal.np.administrators"
-                               :platformId="$route.params.id"
-                               @updateSuccess="updateSuccess">
-        </change-config-command>
 
         <snackbar type="error">
             <div slot="text">Ein Fehler ist aufgetreten.</div>
@@ -44,45 +37,33 @@
 </template>
 
 <script>
-    import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
     import Administrator from './../../config/Administrators.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import GeneralConfig from './GeneralConfig.vue';
+    import { mapGetters } from 'vuex';
 
     export default {
         components: {ModalDialog, Snackbar, Administrator, ChangeConfigCommand, GeneralConfig},
         data: function () {
             return {
-                config: {np: {config: {}}}, showConfigChanged: false, hasErrors: true,
-                showWarningDialog: false, nextRoute: null, configLoaded: false
+                showWarningDialog: false, nextRoute: null
             };
         },
         created: function () {
-            HTTP.get(`/admin/api/networkingPlatform/config`,
-                {params: {platformId: this.$route.params.id}}).then((resp) => {
-                this.config = resp.data;
-                this.configOriginal = JSON.parse(JSON.stringify(resp.data));
-                this.configLoaded = true;
-            }).catch(e => {
-                this.$emit('showNotification', true);
-                this.configLoaded = true;
-                console.log(e);
+            this.$store.dispatch('getNpConfiguration', this.$route.params.id);
+        },
+        computed: {
+            ...mapGetters({
+                npConfigIsLoaded: 'npConfigIsLoaded',
+                npName: 'npName',
+                npAdministrators: 'npAdministrators',
+                npGeneralConfig: 'npGeneralConfig',
+                hasChanged: 'npHasChanged',
             })
         },
         methods: {
-            configChanged: function (newHasErrors) {
-                this.hasErrors = newHasErrors;
-                this.showConfigChanged = JSON.stringify(this.config.np.config)
-                    !== JSON.stringify(this.configOriginal.np.config) ||
-                    JSON.stringify(this.config.np.administrators)
-                    !== JSON.stringify(this.configOriginal.np.administrators);
-            },
-            updateSuccess: function () {
-                this.showConfigChanged = false;
-                this.$router.push({name: 'npDetail', params: {id: this.$route.params.id}})
-            },
             navigateToNext: function () {
                 this.nextRoute();
             },
@@ -92,7 +73,7 @@
             }
         },
         beforeRouteLeave: function (to, from, next) {
-            if (this.showConfigChanged) {
+            if (this.hasChanged) {
                 this.showWarningDialog = true;
                 this.nextRoute = next;
             } else {
@@ -114,13 +95,19 @@
             width: 100%;
             max-width: $application-width;
             #np-config-header {
-                margin-bottom: 18px;
-                border-bottom: 1px solid $divider;
+                margin-bottom: 28px;
                 #np-name {
                     font-size: 20px;
                     font-weight: 500;
                     padding-bottom: 6px;
                 }
+            }
+            .sub-title {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 18px;
+                padding-bottom: 6px;
+                border-bottom: 1px $divider solid;
             }
         }
     }

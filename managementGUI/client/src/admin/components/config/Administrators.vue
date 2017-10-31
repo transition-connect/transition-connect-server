@@ -29,20 +29,20 @@
     import * as types from '../../store/mutation-types';
 
     export default {
-        props: ['admins'],
+        props: ['admins', 'addCommand', 'removeCommand'],
         data: function () {
             return {email: ''}
         },
         methods: {
             addAdministrator: function () {
                 if (!this.checkEMailExists(this.email)) {
-                    this.$store.commit(types.ADD_ADMIN_TO_ORG_CONFIG, {email: this.email});
+                    this.$store.commit(this.addCommand, {email: this.email});
                 }
                 this.email = '';
             },
             removeAdministrator: function (adminToRemove) {
                 if (this.admins && this.admins.length > 1) {
-                    this.$store.commit(types.REMOVE_ADMIN_FROM_ORG_CONFIG, {email: adminToRemove});
+                    this.$store.commit(this.removeCommand, {email: adminToRemove});
                 }
             },
             checkEMailExists: function (email) {
