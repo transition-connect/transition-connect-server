@@ -1,6 +1,7 @@
 <template>
     <div id="tc-config-np">
         <div id="tc-container" v-if="npConfigIsLoaded">
+            <breadcrumb :breadcrumbs="[{name: 'Vernetzungsplatform'}, {name: 'Konfiguration'}]"></breadcrumb>
             <div id="np-config-header">
                 <h1 id="np-name">Konfiguration der Vernetzungsplatform
                     <router-link :to="{name: 'npDetail', params: {id: $route.params.id}}">
@@ -39,13 +40,14 @@
 <script>
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
+    import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Administrator from './../../config/Administrators.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import GeneralConfig from './GeneralConfig.vue';
-    import { mapGetters } from 'vuex';
+    import {mapGetters} from 'vuex';
 
     export default {
-        components: {ModalDialog, Snackbar, Administrator, ChangeConfigCommand, GeneralConfig},
+        components: {ModalDialog, Snackbar, Breadcrumb, Administrator, ChangeConfigCommand, GeneralConfig},
         data: function () {
             return {
                 showWarningDialog: false, nextRoute: null
@@ -97,6 +99,7 @@
             #np-config-header {
                 margin-bottom: 28px;
                 #np-name {
+                    margin-top: 32px;
                     font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;

@@ -1,6 +1,7 @@
 <template>
     <div id="tc-detail-organization">
         <div id="tc-container" v-show="organizationLoaded">
+            <breadcrumb :breadcrumbs="[{name: 'Organisation'}, {name: 'Übersicht'}]"></breadcrumb>
             <div id="tc-detail-header">
                 <h1 id="org-name">{{detail.organization.name}}</h1>
                 <div v-if="detail.organization.isAdmin">
@@ -32,12 +33,13 @@
 
 <script>
     import {HTTP} from './../../../../utils/http-common';
+    import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Info from './Info.vue';
     import Sync from './Sync.vue';
     import moment from 'moment';
 
     export default {
-        components: {Info, Sync},
+        components: {Breadcrumb, Info, Sync},
         data: function () {
             return {detail: {organization: {}}, organizationLoaded: false};
         },
@@ -92,6 +94,7 @@
                     font-weight: 500;
                 }
                 #org-name {
+                    margin-top: 32px;
                     font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;

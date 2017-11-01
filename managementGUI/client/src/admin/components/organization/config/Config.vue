@@ -1,6 +1,7 @@
 <template>
     <div id="tc-config-organization" v-if="isLoaded">
         <div id="tc-container">
+            <breadcrumb :breadcrumbs="[{name: 'Organisation'}, {name: 'Konfiguration'}]"></breadcrumb>
             <div id="org-config-header">
                 <h1 id="org-name">Konfiguration der Organisation
                     <router-link :to="{name: 'orgDetail', params: {id: $route.params.id}}">
@@ -11,7 +12,7 @@
                 </change-config-command>
             </div>
             <administrator :admins="getOrgAdministrators" add-command="ADD_ADMIN_TO_ORG_CONFIG"
-            remove-command="REMOVE_ADMIN_FROM_ORG_CONFIG"></administrator>
+                           remove-command="REMOVE_ADMIN_FROM_ORG_CONFIG"></administrator>
             <h2 class="sub-title">Website für Veranstaltungsimport</h2>
             <event-website></event-website>
             <h2 class="sub-title">Mit Vernetzungsplattformen synchronisieren</h2>
@@ -44,16 +45,20 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import ModalDialog from './../../../../utils/components/ModalDialog.vue';
+    import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Administrator from './../../config/Administrators.vue';
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import EventWebsite from './EventWebsite.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
     import equal from 'deep-equal';
-    import { mapGetters } from 'vuex';
+    import {mapGetters} from 'vuex';
 
     export default {
-        components: {ModalDialog, Administrator, NetworkingPlatformConfig, ChangeConfigCommand, EventWebsite, Snackbar},
+        components: {
+            ModalDialog, Breadcrumb, Administrator, NetworkingPlatformConfig,
+            ChangeConfigCommand, EventWebsite, Snackbar
+        },
         data: function () {
             return {config: {organization: {eventsImportConfiguration: ''}}, showWarningDialog: false, nextRoute: null};
         },
@@ -103,7 +108,7 @@
             #org-config-header {
                 margin-bottom: 28px;
                 #org-name {
-                    margin-top: 8px;
+                    margin-top: 32px;
                     font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;

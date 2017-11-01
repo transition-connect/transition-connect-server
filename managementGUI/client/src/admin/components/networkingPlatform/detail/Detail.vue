@@ -1,6 +1,7 @@
 <template>
     <div id="tc-detail-np">
         <div id="tc-container" v-if="npLoaded">
+            <breadcrumb :breadcrumbs="[{name: 'Vernetzungsplatform'}, {name: 'Übersicht'}]"></breadcrumb>
             <div id="tc-detail-header">
                 <h1 id="np-name">{{detail.np.name}}</h1>
                 <button type="button" class="btn btn-default"
@@ -51,6 +52,7 @@
 <script>
     import {HTTP} from './../../../../utils/http-common';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
+    import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Info from './Info.vue';
     import OrgCreatedByNp from './OrgCreatedByNP.vue';
     import OrgExportDenied from './OrgExportDenied.vue';
@@ -59,7 +61,7 @@
     import moment from 'moment';
 
     export default {
-        components: {Snackbar, Info, OrgCreatedByNp, OrgExportDenied, OrgRequestExportToNp, OrgExportedToNp},
+        components: {Snackbar, Breadcrumb, Info, OrgCreatedByNp, OrgExportDenied, OrgRequestExportToNp, OrgExportedToNp},
         data: function () {
             return {detail: {np: {}}, npLoaded: false};
         },
@@ -99,6 +101,7 @@
             #tc-detail-header {
                 margin-bottom: 12px;
                 #np-name {
+                    margin-top: 32px;
                     font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;
