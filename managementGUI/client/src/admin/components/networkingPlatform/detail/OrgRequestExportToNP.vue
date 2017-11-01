@@ -1,7 +1,8 @@
 <template>
     <div id="tc-np-org-export-requested" v-if="numberOfOrganizations > 0">
-        <div class="org-export-requested-title">
-            {{numberOfOrganizations}} Organisationen wollen mit {{nameNp}} synchronisiert werden
+        <h2 class="sub-title">Wollen mit {{nameNp}} synchronisiert werden</h2>
+        <div class="org-export-requested-info">
+            {{numberOfOrganizations}} Organisationen
         </div>
         <div class="org-container">
             <div v-for="org in organizations" class="org-row">
@@ -70,9 +71,10 @@
     #tc-np-org-export-requested {
         margin: 12px 0 24px 0;
 
-        .org-export-requested-title {
-            font-size: 20px;
+        .org-export-requested-info {
+            font-size: 14px;
             font-weight: 500;
+            color: $secondary-text;
             margin-bottom: 18px;
         }
         .org-container {

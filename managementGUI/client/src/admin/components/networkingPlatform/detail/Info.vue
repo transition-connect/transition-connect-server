@@ -1,10 +1,7 @@
 <template>
     <div id="tc-detail-info">
+        <h2 class="sub-title">Allgemeine Infos</h2>
         <div id="np-detail-info-container">
-            <div class="np-detail-row">
-                <div class="np-detail-title">Vernetzungsplattform</div>
-                <div class="np-detail-text">{{np.name}}</div>
-            </div>
             <div class="np-detail-row">
                 <div class="np-detail-title">Website</div>
                 <div class="np-detail-text">
@@ -39,7 +36,6 @@
     #tc-detail-info {
         #np-detail-info-container {
             display: table;
-            border-bottom: 1px solid $divider;
             padding-bottom: 12px;
             .np-detail-row {
                 display: table-row;

@@ -1,7 +1,8 @@
 <template>
     <div id="tc-np-org-exported" v-if="numberOfOrganizations > 0">
-        <div class="org-exported-title">
-            {{numberOfOrganizations}} Organisationen werden mit {{nameNp}} synchronisiert
+        <h2 class="sub-title">Werden mit {{nameNp}} synchronisiert</h2>
+        <div class="org-exported-info">
+            {{numberOfOrganizations}} Organisationen
         </div>
         <div class="org-container">
             <div v-for="org in organizations" class="org-row">
@@ -102,9 +103,10 @@
 
     #tc-np-org-exported {
         margin: 12px 0 24px 0;
-        .org-exported-title {
-            font-size: 20px;
+        .org-exported-info {
+            font-size: 14px;
             font-weight: 500;
+            color: $secondary-text;
             margin-bottom: 18px;
         }
         .org-container {

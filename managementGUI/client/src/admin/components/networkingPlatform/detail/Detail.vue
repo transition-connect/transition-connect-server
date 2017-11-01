@@ -2,6 +2,7 @@
     <div id="tc-detail-np">
         <div id="tc-container" v-if="npLoaded">
             <div id="tc-detail-header">
+                <h1 id="np-name">{{detail.np.name}}</h1>
                 <button type="button" class="btn btn-default"
                         v-on:click="$router.push({name: 'npConfig', params: {id: $route.params.id}})">
                     Konfigurieren
@@ -97,6 +98,19 @@
             max-width: $application-width;
             #tc-detail-header {
                 margin-bottom: 12px;
+                #np-name {
+                    font-size: 20px;
+                    font-weight: 500;
+                    padding-bottom: 6px;
+                    color: #337ab7;;
+                }
+            }
+            .sub-title {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 8px;
+                padding-bottom: 6px;
+                border-bottom: 1px $divider solid;
             }
         }
     }

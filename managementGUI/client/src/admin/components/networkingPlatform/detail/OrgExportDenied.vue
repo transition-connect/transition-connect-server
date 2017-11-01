@@ -1,7 +1,8 @@
 <template>
     <div id="org-exported-denied" v-if="numberOfOrganizations > 0">
-        <div class="org-denied-title">
-            {{numberOfOrganizations}} von {{nameNp}} abgelehnte Organisationen
+        <h2 class="sub-title">Abgelehnte Organisationen</h2>
+        <div class="org-denied-info">
+            {{numberOfOrganizations}} Organisationen
         </div>
         <div class="org-container">
             <div v-for="org in organizations" class="org-row">
@@ -87,9 +88,10 @@
 
     #org-exported-denied {
         margin: 12px 0 24px 0;
-        .org-denied-title {
-            font-size: 20px;
+        .org-denied-info {
+            font-size: 14px;
             font-weight: 500;
+            color: $secondary-text;
             margin-bottom: 18px;
         }
         .org-container {

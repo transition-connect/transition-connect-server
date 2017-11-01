@@ -1,6 +1,7 @@
 <template>
     <div id="tc-np-org-created" v-if="numberOfOrganizations > 0">
-        <div class="org-created-title">{{numberOfOrganizations}} von {{nameNp}} erstellte Organisationen</div>
+        <h2 class="sub-title">Von {{nameNp}} erstellte Organisationen</h2>
+        <div class="org-created-info">{{numberOfOrganizations}} Organisationen</div>
         <div v-for="org in organizations" class="org-container">
             <router-link :to="{name: 'orgDetail', params: {id: org.organizationId}}" class="org-name">
                 {{org.name}}
@@ -35,9 +36,10 @@
 
     #tc-np-org-created {
         margin: 12px 0 24px 0;
-        .org-created-title {
-            font-size: 20px;
+        .org-created-info {
+            font-size: 14px;
             font-weight: 500;
+            color: $secondary-text;
             margin-bottom: 18px;
         }
         .org-container {
