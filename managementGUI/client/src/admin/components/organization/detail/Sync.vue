@@ -73,9 +73,9 @@
     @import "../../../../style/variable";
 
     #tc-detail-export-container {
-        margin-top: 24px;
+        margin-top: 28px;
         .export-header {
-            margin-bottom: 12px;
+            margin-bottom: 24px;
             .export-subtitle {
                 font-size: 14px;
                 margin-bottom: 6px;

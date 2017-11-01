@@ -101,8 +101,8 @@
             .sub-title {
                 font-size: 16px;
                 font-weight: 500;
-                margin-bottom: 18px;
                 padding-bottom: 6px;
+                margin-bottom: 6px;
                 border-bottom: 1px $divider solid;
             }
         }
