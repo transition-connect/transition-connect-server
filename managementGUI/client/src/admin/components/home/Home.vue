@@ -6,6 +6,9 @@
                 <div class="panel-body">
                     <notification v-for="notification in overviewData.notification" :notification="notification"
                                   @remove="removeNotification(notification)"></notification>
+                    <div id="no-notification-info" v-show="dataLoaded && overviewData.notification.length === 0">
+                        Keine Benachrichtigungen
+                    </div>
                 </div>
             </div>
             <div class="panel panel-default" v-show="overviewData.nps.length > 0">
@@ -39,11 +42,12 @@
     export default {
         components: {Snackbar, OrganizationElement, NetworkingPlatformElement, Notification},
         data: function () {
-            return {overviewData: {organization: {}, nps: {}}};
+            return {overviewData: {organization: {}, nps: {}}, dataLoaded: false};
         },
         created: function () {
             HTTP.get(`/admin/api`).then((resp) => {
                 this.overviewData = resp.data;
+                this.dataLoaded = true;
             }).catch(e => {
                 this.$emit('showNotification', true);
                 console.log(e);
@@ -69,6 +73,10 @@
             margin: 0 auto;
             width: 100%;
             max-width: $application-width;
+            #no-notification-info {
+                font-size: 14px;
+                color: $secondary-text;
+            }
         }
     }
 </style>
