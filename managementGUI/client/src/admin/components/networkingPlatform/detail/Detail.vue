@@ -99,7 +99,7 @@
             #tc-detail-header {
                 margin-bottom: 12px;
                 #np-name {
-                    font-size: 20px;
+                    font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;
                     color: #337ab7;;

@@ -92,7 +92,7 @@
                     font-weight: 500;
                 }
                 #org-name {
-                    font-size: 20px;
+                    font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;
                     color: #337ab7;;
