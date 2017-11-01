@@ -1,10 +1,7 @@
 <template>
     <div id="tc-detail-info">
+        <h2 class="sub-title">Allgemeine Infos</h2>
         <div id="org-detail-info-container">
-            <div class="org-detail-row">
-                <div class="org-detail-title">Organisation/Projekt</div>
-                <div class="org-detail-text">{{organization.name}}</div>
-            </div>
             <div class="org-detail-row">
                 <div class="org-detail-title">Slogan</div>
                 <div class="org-detail-text">{{organization.slogan}}</div>
@@ -52,7 +49,6 @@
     #tc-detail-info {
         #org-detail-info-container {
             display: table;
-            border-bottom: 1px solid $divider;
             padding-bottom: 12px;
             .org-detail-row {
                 display: table-row;

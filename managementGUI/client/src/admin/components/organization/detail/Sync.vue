@@ -1,7 +1,8 @@
 <template>
     <div id="tc-detail-export-container">
+        <h2 class="sub-title">Sychronisation</h2>
         <div class="export-header">
-            <div id="export-title">Mit {{numberOfExported + 1}} {{platformDescription}} synchronisiert</div>
+            <div class="export-subtitle">{{numberOfExported + 1}} {{platformDescription}} synchronisiert</div>
             <div class="export-subtitle" v-if="numberOfPendingExport > 0">{{numberOfPendingExport}} {{pendingExportDescription}} gestartet</div>
             <div class="export-subtitle" v-if="numberOfRequestExport > 0">{{numberOfRequestExport}} {{requestExportDescription}} auf Freigabe</div>
         </div>
@@ -75,11 +76,6 @@
         margin-top: 24px;
         .export-header {
             margin-bottom: 12px;
-            #export-title {
-                margin-bottom: 6px;
-                font-size: 20px;
-                font-weight: 500;
-            }
             .export-subtitle {
                 font-size: 14px;
                 margin-bottom: 6px;

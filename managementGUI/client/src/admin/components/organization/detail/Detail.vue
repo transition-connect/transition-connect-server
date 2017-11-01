@@ -2,6 +2,7 @@
     <div id="tc-detail-organization">
         <div id="tc-container" v-show="organizationLoaded">
             <div id="tc-detail-header">
+                <h1 id="org-name">{{detail.organization.name}}</h1>
                 <div v-if="detail.organization.isAdmin">
                     <button type="button" class="btn btn-default"
                             v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
@@ -90,6 +91,19 @@
                     display: inline-block;
                     font-weight: 500;
                 }
+                #org-name {
+                    font-size: 20px;
+                    font-weight: 500;
+                    padding-bottom: 6px;
+                    color: #337ab7;;
+                }
+            }
+            .sub-title {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 18px;
+                padding-bottom: 6px;
+                border-bottom: 1px $divider solid;
             }
         }
     }
