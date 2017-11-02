@@ -3,14 +3,10 @@
 let dbDsl = require('server-test-util').dbDSL;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
-let moment = require('moment');
 
 describe('Integration Tests for getting details of an organization', function () {
 
-    let startTime;
-
     beforeEach(function () {
-        startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
@@ -42,11 +38,15 @@ describe('Integration Tests for getting details of an organization', function ()
         return requestHandler.logout();
     });
 
-    it('Getting details of organization (Export status NOT_EXPORTED and EXPORTED)', function () {
+    it('Getting details of organization with Website Events (Export status NOT_EXPORTED and EXPORTED)', function () {
 
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '2', created: 500, lastExportTimestamp: 504});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '3', created: 501});
+
+        dbDsl.createWebsiteEvent('1', {organizationId: '2', startDate: 500, endDate: 600});
+        dbDsl.createWebsiteEvent('2', {organizationId: '2', startDate: 502, endDate: 602});
+        dbDsl.createWebsiteEvent('3', {organizationId: '1', startDate: 501, endDate: 601});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -70,8 +70,22 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
             res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
 
-            res.body.exportedNetworkingPlatforms.length.should.equals(2);
+            res.body.events.length.should.equals(2);
+            res.body.events[0].uid.should.equals('2');
+            res.body.events[0].summary.should.equals('event2Summary');
+            res.body.events[0].description.should.equals('event2Description');
+            res.body.events[0].location.should.equals('event2Location');
+            res.body.events[0].startDate.should.equals(502);
+            res.body.events[0].endDate.should.equals(602);
 
+            res.body.events[1].uid.should.equals('1');
+            res.body.events[1].summary.should.equals('event1Summary');
+            res.body.events[1].description.should.equals('event1Description');
+            res.body.events[1].location.should.equals('event1Location');
+            res.body.events[1].startDate.should.equals(500);
+            res.body.events[1].endDate.should.equals(600);
+
+            res.body.exportedNetworkingPlatforms.length.should.equals(2);
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');
             res.body.exportedNetworkingPlatforms[0].platformId.should.equals('3');
             res.body.exportedNetworkingPlatforms[0].description.should.equals('description3');

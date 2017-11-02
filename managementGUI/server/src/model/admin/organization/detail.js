@@ -64,11 +64,20 @@ let getOrganizationCommand = function (adminId, organizationId, language) {
         .end({adminId: adminId, organizationId: organizationId, language: language}).getCommand();
 };
 
+let getEventsCommand = function (organizationId) {
+    return db.cypher().match(`(:Organization {organizationId: {organizationId}})-[:WEBSITE_EVENT]->(event:Event)`)
+        .return(`event.uid AS uid, event.summary AS summary, event.description AS description, 
+                 event.location AS location, event.startDate AS startDate, event.endDate AS endDate`)
+        .orderBy(`event.endDate DESC`)
+        .end({organizationId: organizationId}).getCommand();
+};
+
 let getDetails = function (adminId, organizationId, language, req) {
 
     return checkAllowedToGetDetail(adminId, organizationId, req).then(function () {
         let commands = [];
         commands.push(getOrganizationCommand(adminId, organizationId, language));
+        commands.push(getEventsCommand(organizationId));
 
         return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST|EXPORT_DENIED]
                                    -(org:Organization {organizationId: {organizationId}})`)
@@ -86,8 +95,8 @@ let getDetails = function (adminId, organizationId, language, req) {
             .orderBy(`export.created DESC, np.name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
-                setStatus(resp[1], resp[0][0].modified);
-                return {organization: resp[0][0], exportedNetworkingPlatforms: resp[1]};
+                setStatus(resp[2], resp[0][0].modified);
+                return {organization: resp[0][0], events: resp[1], exportedNetworkingPlatforms: resp[2]};
             });
     });
 };

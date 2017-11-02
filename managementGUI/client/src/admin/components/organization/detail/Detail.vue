@@ -25,6 +25,7 @@
                 </div>
             </div>
             <info :organization="detail.organization"></info>
+            <events :events="detail.events"></events>
             <sync :nps="detail.exportedNetworkingPlatforms"
                   :organization="detail.organization"></sync>
         </div>
@@ -35,13 +36,14 @@
     import {HTTP} from './../../../../utils/http-common';
     import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Info from './Info.vue';
+    import Events from './Events.vue';
     import Sync from './Sync.vue';
     import moment from 'moment';
 
     export default {
-        components: {Breadcrumb, Info, Sync},
+        components: {Breadcrumb, Info, Events, Sync},
         data: function () {
-            return {detail: {organization: {}}, organizationLoaded: false};
+            return {detail: {organization: {}, events: []}, organizationLoaded: false};
         },
         created: function () {
             HTTP.get(`/admin/api/organization/detail`,
