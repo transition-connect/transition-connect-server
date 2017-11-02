@@ -1,6 +1,7 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
+let moment = require('moment');
 let iCalDateParser = require('ical-date-parser');
 let logger = require('server-lib').logging.getLogger(__filename);
 
@@ -35,7 +36,7 @@ let parseDate = function (vEvent, property, valueProperty, isMandatory) {
         result = result + 'T000000Z';
     }
     result = result.replace('\r', '');
-    return iCalDateParser(result).getTime();
+    return moment.utc(iCalDateParser(result)).valueOf() / 1000;
 };
 
 let setEventProperties = function (event, vEvent) {

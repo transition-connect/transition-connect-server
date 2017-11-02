@@ -79,8 +79,8 @@ describe('Integration Tests for importing events from a website in iCal format',
         resp[0].event.description.should.equals('Hat was mit TC zu tun');
         resp[0].event.summary.should.equals('Event1 Test');
         resp[0].event.location.should.equals('Irgendwo in Zürich');
-        resp[0].event.startDate.should.equals(1509089400000);
-        resp[0].event.endDate.should.equals(1509093000000);
+        resp[0].event.startDate.should.equals(1509089400);
+        resp[0].event.endDate.should.equals(1509093000);
         resp[0].event.iCal.should.equals(`BEGIN:VEVENT
                 DTSTART:20171027T073000Z
                 DTEND:20171027T083000Z
@@ -99,8 +99,8 @@ describe('Integration Tests for importing events from a website in iCal format',
         resp[1].event.description.should.equals('Hat auch was mit TC zu tun');
         resp[1].event.summary.should.equals('Event2 Test');
         resp[1].event.location.should.equals('Irgendwo in Urdorf');
-        resp[1].event.startDate.should.equals(1510790400000);
-        resp[1].event.endDate.should.equals(1510876800000);
+        resp[1].event.startDate.should.equals(1510790400);
+        resp[1].event.endDate.should.equals(1510876800);
         resp[1].event.iCal.should.equals(`BEGIN:VEVENT
                 DTSTART;VALUE=DATE:20171116
                 DTEND;VALUE=DATE:20171117
