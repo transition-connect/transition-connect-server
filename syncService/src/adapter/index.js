@@ -11,7 +11,11 @@ let importOrganizations = async function importOrganizations(adapterType, url, l
     let adapter = _.find(adapters, adapter => adapter.adapterType === adapterType),
         result = null;
     if (adapter && adapter.adapter) {
-        result = await adapter.adapter.importOrganizations(url, lastUpdateTimestamp, skip);
+        try {
+            result = await adapter.adapter.importOrganizations(url, lastUpdateTimestamp, skip);
+        } catch (error) {
+            logger.error(`Connection to ${url} failed`, error);
+        }
     } else {
         logger.error(`${adapterType} for ${url} not found`);
     }
@@ -23,7 +27,11 @@ let exportOrganizations = async function importOrganizations(orgsToExport, adapt
     let adapter = _.find(adapters, adapter => adapter.adapterType === adapterType),
         result = null;
     if (adapter && adapter.adapter) {
-        result = await adapter.adapter.exportOrganizations(orgsToExport, url, lastUpdateTimestamp, skip);
+        try {
+            result = await adapter.adapter.exportOrganizations(orgsToExport, url, lastUpdateTimestamp, skip);
+        } catch (error) {
+            logger.error(`Connection to ${url} failed`, error);
+        }
     } else {
         logger.error(`${adapterType} for ${url} not found`);
     }
