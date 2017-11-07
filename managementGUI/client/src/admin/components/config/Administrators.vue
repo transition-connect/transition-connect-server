@@ -13,7 +13,7 @@
                 <div class="form-group" :class="{'has-error': errors.has('email') && email !== ''}">
                     <div class="input-group">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" v-on:click="addAdministrator"
+                            <button class="btn btn-primary" type="button" v-on:click="addAdministrator"
                                     :disabled="errors.has('email') || email === '' || !email">Hinzufügen</button>
                         </span>
                         <input v-model="email" v-validate="'required|email'" type="text" name="email"
