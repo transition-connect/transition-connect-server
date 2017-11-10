@@ -71,7 +71,7 @@
         padding-bottom: 8px;
         margin-bottom: 18px;
         .tc-admin-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 500;
             margin-bottom: 12px;
             padding-bottom: 6px;

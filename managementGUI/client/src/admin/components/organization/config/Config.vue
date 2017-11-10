@@ -15,7 +15,12 @@
                            remove-command="REMOVE_ADMIN_FROM_ORG_CONFIG"></administrator>
             <h2 class="sub-title">Website für Veranstaltungsimport</h2>
             <event-website></event-website>
-            <h2 class="sub-title">Mit Vernetzungsplattformen synchronisieren</h2>
+            <!--<h2 class="sub-title">Synchronisationsregeln für Veranstaltungen</h2>-->
+            <!--<event-export-rules></event-export-rules>-->
+           <!-- <event-export-rule v-for="eventExportRule in getExportEventRules"
+                                        :export-rule="eventExportRule">
+            </event-export-rule>-->
+            <h2 class="sub-title">Synchronisationsregeln</h2>
             <networking-platform-config v-for="networkingPlatform in getNetworkingPlatforms"
                                         :np="networkingPlatform">
             </networking-platform-config>
@@ -60,7 +65,7 @@
             ChangeConfigCommand, EventWebsite, Snackbar
         },
         data: function () {
-            return {config: {organization: {eventsImportConfiguration: ''}}, showWarningDialog: false, nextRoute: null};
+            return {showWarningDialog: false, nextRoute: null};
         },
         created: function () {
             this.$store.dispatch('getConfiguration', this.$route.params.id);
@@ -68,6 +73,7 @@
         computed: {
             ...mapGetters({
                 getOrgName: 'getOrgName',
+                getExportEventRules: 'getExportEventRules',
                 getNetworkingPlatforms: 'getNetworkingPlatforms',
                 getOrgAdministrators: 'getOrgAdministrators',
                 isLoaded: 'isLoaded',
@@ -115,7 +121,7 @@
                 }
             }
             .sub-title {
-                font-size: 16px;
+                font-size: 18px;
                 font-weight: 500;
                 margin-bottom: 18px;
                 padding-bottom: 6px;

@@ -100,11 +100,11 @@
                     font-size: 24px;
                     font-weight: 500;
                     padding-bottom: 6px;
-                    color: #337ab7;;
+                    color: #337ab7;
                 }
             }
             .sub-title {
-                font-size: 16px;
+                font-size: 18px;
                 font-weight: 500;
                 padding-bottom: 6px;
                 margin-bottom: 6px;
