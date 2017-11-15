@@ -40,7 +40,7 @@
     "moment": "2.18.1",
     "deep-equal": "1.0.1",
     "vee-validate": "2.0.0-rc.19",
-    "vue": "2.4.4",
+    "vue": "2.5.3",
     "vue-router": "2.7.0",
     "vue-svgicon": "1.1.10",
     "vuex": "2.3.1"
