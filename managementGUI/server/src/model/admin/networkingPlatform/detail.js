@@ -3,10 +3,10 @@
 let db = require('server-lib').neo4j;
 let security = require(`./secuity`);
 let time = require('server-lib').time;
-let orgCreatedByNp = require('./orgCreatedByNP');
-let orgExportedToNp = require('./orgExportedToNP');
-let orgExportRequestToNp = require('./orgExportRequestToNP');
-let orgDeniedExportToNp = require('./orgDeniedExportToNP');
+let orgCreatedByNp = require('./orgCreatedByNp');
+let orgExportedToNp = require('./orgExportedToNp');
+let orgExportRequestToNp = require('./orgExportRequestToNp');
+let orgDeniedExportToNp = require('./orgDeniedExportToNp');
 
 
 let getNetworkingPlatformInfo = function (platformId, language) {
