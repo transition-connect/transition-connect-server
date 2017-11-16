@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 let dbDsl = require('server-test-util').dbDSL;
@@ -61,3 +62,4 @@ describe('Integration Tests for getting selected categories by a networking plat
         });
     });
 });
+*/
