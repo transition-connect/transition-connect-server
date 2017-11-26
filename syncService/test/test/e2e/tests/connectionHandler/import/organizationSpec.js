@@ -43,26 +43,34 @@ describe('Testing the import of organizations from external networking platform'
     it('Import new organizations with only mandatory fields', async function () {
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
+            .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
+                organizations: [{id: '1', timestamp: 500}]
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation').query({skip: 1})
+            .reply(200, {
+                organizations: []
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/1')
+            .reply(200, {
+                name: 'organization1', description: 'description',
+                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
             });
 
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
+            .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                hasNext: false,
                 organizations: []
             });
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
         let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
@@ -77,6 +85,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.description.should.equals('description');
         resp[0].org.slogan.should.equals('');
         resp[0].org.website.should.equals('');
+        resp[0].org.modifiedOnNp.should.equals(500);
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
@@ -90,32 +99,52 @@ describe('Testing the import of organizations from external networking platform'
     it('Import new organizations', async function () {
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
+            .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }, {
-                    id: '2', name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
-                    categories: ['idOnPlatform3'], administrators: ['user@irgendwo.ch']
-                }]
+                organizations: [{id: '1', timestamp: 500}, {id: '2', timestamp: 501}]
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation').query({skip: 2})
+            .reply(200, {
+                organizations: []
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/1')
+            .reply(200, {
+                name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/2')
+            .reply(200, {
+                name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
+                categories: ['idOnPlatform3'], admins: ['user@irgendwo.ch']
             });
 
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
+            .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization3', description: 'description3', slogan: 'slogan3', website: 'www.link3.org',
-                    categories: ['idOnPlatform4'], administrators: ['user2@irgendwo.ch']
-                }]
+                organizations: [{id: '1', timestamp: 600}]
+            });
+
+        nock(`https://localhost2.org`)
+            .get('/api/v1/organisation').query({skip: 1})
+            .reply(200, {organizations: []});
+
+        nock(`https://localhost2.org`)
+            .get('/api/v1/organisation/1')
+            .reply(200, {
+                name: 'organization3', description: 'description3', slogan: 'slogan3', website: 'www.link3.org',
+                categories: ['idOnPlatform4'], admins: ['user2@irgendwo.ch']
             });
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
         let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
@@ -130,6 +159,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.description.should.equals('description');
         resp[0].org.slogan.should.equals('slogan');
         resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.modifiedOnNp.should.equals(500);
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
@@ -146,6 +176,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].org.description.should.equals('description2');
         resp[1].org.slogan.should.equals('slogan2');
         resp[1].org.website.should.equals('www.link2.org');
+        resp[1].org.modifiedOnNp.should.equals(501);
         resp[1].org.created.should.at.least(startTime);
         resp[1].org.modified.should.at.least(startTime);
         resp[1].admins.length.should.equals(1);
@@ -160,6 +191,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[2].org.description.should.equals('description3');
         resp[2].org.slogan.should.equals('slogan3');
         resp[2].org.website.should.equals('www.link3.org');
+        resp[2].org.modifiedOnNp.should.equals(600);
         resp[2].org.created.should.at.least(startTime);
         resp[2].org.modified.should.at.least(startTime);
         resp[2].admins.length.should.equals(1);
@@ -171,33 +203,43 @@ describe('Testing the import of organizations from external networking platform'
     it('Handling load of next organizations', async function () {
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
+            .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                hasNext: true,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
+                organizations: [{id: '1', timestamp: 500}]
             });
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 1})
+            .get('/api/v1/organisation').query({skip: 1})
             .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '2', name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
-                    categories: ['idOnPlatform3'], administrators: ['user@irgendwo.ch']
-                }]
+                organizations: [{id: '2', timestamp: 501}]
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation').query({skip: 2})
+            .reply(200, {organizations: []});
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/1')
+            .reply(200, {
+                name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+            });
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/2')
+            .reply(200, {
+                name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
+                categories: ['idOnPlatform3'], admins: ['user@irgendwo.ch']
             });
 
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
         let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
@@ -212,6 +254,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.description.should.equals('description');
         resp[0].org.slogan.should.equals('slogan');
         resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.modifiedOnNp.should.equals(500);
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
@@ -228,6 +271,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].org.description.should.equals('description2');
         resp[1].org.slogan.should.equals('slogan2');
         resp[1].org.website.should.equals('www.link2.org');
+        resp[1].org.modifiedOnNp.should.equals(501);
         resp[1].org.created.should.at.least(startTime);
         resp[1].org.modified.should.at.least(startTime);
         resp[1].admins.length.should.equals(1);
@@ -236,83 +280,38 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].categories[0].should.equals('3');
     });
 
-    it('Import existing organization which is not modified', async function () {
+    it('Import modified organization', async function () {
 
         dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
+            networkingPlatformId: '1', adminIds: ['2'], created: 500, modifiedOnNp: 700,
+            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description1', slogan: 'slogan1',
+            website: 'www.link.org1'
         });
         dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
-            });
-
-        nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
-
-        await dbDsl.sendToDb();
-        await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
-            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
-            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
-            .return(`np, org, admins, collect(category.categoryId) AS categories`)
-            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
-
-        resp.length.should.equals(1);
-        resp[0].np.platformId.should.equals('1');
-        resp[0].org.organizationIdOnExternalNP.should.equals('1');
-        resp[0].org.organizationId.should.equals('10');
-        resp[0].org.name.should.equals('organization1');
-        resp[0].org.description.should.equals('description');
-        resp[0].org.slogan.should.equals('slogan');
-        resp[0].org.website.should.equals('www.link.org');
-        resp[0].org.created.should.equals(500);
-        resp[0].org.modified.should.equals(500);
-        resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].categories.length.should.equals(2);
-        resp[0].categories[0].should.equals('1');
-        resp[0].categories[1].should.equals('2');
-    });
-
-    it('Import modified organization (name changed)', async function () {
-
-        dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
-        });
-        dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: [{id: '1', timestamp: 701}]});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
+            .get('/api/v1/organisation').query({skip: 1})
+            .reply(200, {organizations: []});
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation/1')
             .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
+                name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                categories: ['idOnPlatform3', 'idOnPlatform4'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
             });
 
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
         let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
@@ -327,42 +326,41 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.description.should.equals('description');
         resp[0].org.slogan.should.equals('slogan');
         resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.modifiedOnNp.should.equals(701);
         resp[0].org.created.should.equals(500);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(1);
         resp[0].admins[0].should.equals('user2@irgendwo.ch');
         resp[0].categories.length.should.equals(2);
-        resp[0].categories[0].should.equals('1');
-        resp[0].categories[1].should.equals('2');
+        resp[0].categories[0].should.equals('3');
+        resp[0].categories[1].should.equals('4');
     });
 
-    it('Import modified organization (description changed)', async function () {
+    it('Do not import not modified organization', async function () {
 
         dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
+            networkingPlatformId: '1', adminIds: ['2'], created: 500, modifiedOnNp: 701,
+            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description1', slogan: 'slogan1',
+            website: 'www.link.org1'
         });
         dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description1', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
-            });
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: [{id: '1', timestamp: 701}]});
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/organisation').query({skip: 1})
+            .reply(200, {organizations: []});
 
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
         let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
+            .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
@@ -375,163 +373,15 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.organizationId.should.equals('10');
         resp[0].org.name.should.equals('organization1');
         resp[0].org.description.should.equals('description1');
-        resp[0].org.slogan.should.equals('slogan');
-        resp[0].org.website.should.equals('www.link.org');
-        resp[0].org.created.should.equals(500);
-        resp[0].org.modified.should.at.least(startTime);
-        resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].categories.length.should.equals(2);
-        resp[0].categories[0].should.equals('1');
-        resp[0].categories[1].should.equals('2');
-    });
-
-    it('Import modified organization (slogan changed)', async function () {
-
-        dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
-        });
-        dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
-
-        nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan1', website: 'www.link.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
-            });
-
-        nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
-
-        await dbDsl.sendToDb();
-        await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
-            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
-            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
-            .return(`np, org, admins, collect(category.categoryId) AS categories`)
-            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
-
-        resp.length.should.equals(1);
-        resp[0].np.platformId.should.equals('1');
-        resp[0].org.organizationIdOnExternalNP.should.equals('1');
-        resp[0].org.organizationId.should.equals('10');
-        resp[0].org.name.should.equals('organization1');
-        resp[0].org.description.should.equals('description');
         resp[0].org.slogan.should.equals('slogan1');
-        resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.website.should.equals('www.link.org1');
+        resp[0].org.modifiedOnNp.should.equals(701);
         resp[0].org.created.should.equals(500);
-        resp[0].org.modified.should.at.least(startTime);
+        resp[0].org.modified.should.at.least(500);
         resp[0].admins.length.should.equals(1);
         resp[0].admins[0].should.equals('user2@irgendwo.ch');
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
-    });
-
-    it('Import modified organization (website changed)', async function () {
-
-        dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
-        });
-        dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
-
-        nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link2.org',
-                    categories: ['idOnPlatform1', 'idOnPlatform2'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
-            });
-
-        nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
-
-        await dbDsl.sendToDb();
-        await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
-            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
-            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
-            .return(`np, org, admins, collect(category.categoryId) AS categories`)
-            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
-
-        resp.length.should.equals(1);
-        resp[0].np.platformId.should.equals('1');
-        resp[0].org.organizationIdOnExternalNP.should.equals('1');
-        resp[0].org.organizationId.should.equals('10');
-        resp[0].org.name.should.equals('organization1');
-        resp[0].org.description.should.equals('description');
-        resp[0].org.slogan.should.equals('slogan');
-        resp[0].org.website.should.equals('www.link2.org');
-        resp[0].org.created.should.equals(500);
-        resp[0].org.modified.should.at.least(startTime);
-        resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].categories.length.should.equals(2);
-        resp[0].categories[0].should.equals('1');
-        resp[0].categories[1].should.equals('2');
-    });
-
-    it('Import modified organization (categories changed)', async function () {
-
-        dbDsl.createOrganization('10', {
-            networkingPlatformId: '1', adminIds: ['2'], created: 500,
-            organizationIdOnExternalNP: '1', name: 'organization1', description: 'description', slogan: 'slogan',
-            website: 'www.link.org'
-        });
-        dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
-
-        nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200, {
-                hasNext: false,
-                organizations: [{
-                    id: '1', name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    categories: ['idOnPlatform1'], administrators: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
-                }]
-            });
-
-        nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
-
-        await dbDsl.sendToDb();
-        await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
-            .with(`np, org, admin`).orderBy(`admin.adminId`)
-            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
-            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
-            .return(`np, org, admins, collect(category.categoryId) AS categories`)
-            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
-
-        resp.length.should.equals(1);
-        resp[0].np.platformId.should.equals('1');
-        resp[0].org.organizationIdOnExternalNP.should.equals('1');
-        resp[0].org.organizationId.should.equals('10');
-        resp[0].org.name.should.equals('organization1');
-        resp[0].org.description.should.equals('description');
-        resp[0].org.slogan.should.equals('slogan');
-        resp[0].org.website.should.equals('www.link.org');
-        resp[0].org.created.should.equals(500);
-        resp[0].org.modified.should.equals(500);
-        resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].categories.length.should.equals(1);
-        resp[0].categories[0].should.equals('1');
     });
 });

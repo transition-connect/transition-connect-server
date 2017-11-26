@@ -11,13 +11,14 @@ let createOrganization = function (organizationId, data) {
     data.language = data.language || `de`;
     data.eventsImportConfiguration = data.eventsImportConfiguration || null;
     data.organizationIdOnExternalNP = data.organizationIdOnExternalNP || `externalId${organizationId}`;
+    data.modifiedOnNp = data.modifiedOnNp || data.created;
     data.modified = data.modified || data.created;
     data.lastConfigUpdate = data.lastConfigUpdate || null;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
         .createUnique(`(np)-[:CREATED]->(org:Organization {organizationId: {organizationId}, name: {name}, 
                        description: {description}, slogan: {slogan}, website: {website}, language: {language},
-                       created: {created}, modified: {modified}, lastConfigUpdate: {lastConfigUpdate},
+                       created: {created}, modified: {modified}, modifiedOnNp: {modifiedOnNp}, lastConfigUpdate: {lastConfigUpdate},
                        organizationIdOnExternalNP: {organizationIdOnExternalNP}, 
                        eventsImportConfiguration: {eventsImportConfiguration}})`)
         .with(`org`)
@@ -26,7 +27,7 @@ let createOrganization = function (organizationId, data) {
         .createUnique(`(admin)-[:IS_ADMIN]->(org)`)
         .end({
             organizationId: organizationId, platformId: data.networkingPlatformId,
-            name: data.name, adminIds: data.adminIds, created: data.created, modified: data.modified,
+            name: data.name, adminIds: data.adminIds, created: data.created, modified: data.modified, modifiedOnNp: data.modifiedOnNp,
             lastConfigUpdate: data.lastConfigUpdate, organizationIdOnExternalNP: data.organizationIdOnExternalNP,
             description: data.description, website: data.website, slogan: data.slogan, language: data.language,
             eventsImportConfiguration: data.eventsImportConfiguration

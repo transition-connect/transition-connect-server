@@ -1,7 +1,7 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
-let adapter = requireAdapter();
+let adapter = requireAdapter('networkingPlatform/index');
 let time = require('server-lib').time;
 let logger = require('server-lib').logging.getLogger(__filename);
 
