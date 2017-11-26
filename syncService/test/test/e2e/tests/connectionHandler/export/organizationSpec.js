@@ -50,11 +50,11 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1'});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         let scope = nock(`https://localhost.org`)
             .put('/organization', {
@@ -87,11 +87,11 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1', lastExportTimestamp: 700});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         let scope = nock(`https://localhost.org`)
             .put('/organization', {
@@ -124,11 +124,11 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1', lastExportTimestamp: 700});
 
         nock(`https://localhost.org`)
-            .get('/organization').query({skip: 0})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
         nock(`https://localhost2.org`)
-            .get('/organization').query({skip: 0, lastSync: 700})
-            .reply(200);
+            .get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organizations: []});
 
         let scope = nock(`https://localhost.org`)
             .put('/organization', {
