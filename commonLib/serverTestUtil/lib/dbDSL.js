@@ -28,5 +28,6 @@ module.exports = {
     exportOrgToNp: organization.exportOrgToNp,
     exportRequestOrgToNp: organization.exportRequestOrgToNp,
     exportDenyOrgToNp: organization.exportDenyOrgToNp,
+    createNpEvent: organizationEvent.createNpEvent,
     createWebsiteEvent: organizationEvent.createWebsiteEvent
 };

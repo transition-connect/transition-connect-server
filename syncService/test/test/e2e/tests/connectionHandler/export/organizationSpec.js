@@ -31,6 +31,13 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.mapNetworkingPlatformToCategory('4', {npId: '1', usedCategoryId: '3'});
         dbDsl.mapNetworkingPlatformToCategory('5', {npId: '2', usedCategoryId: '4'});
         dbDsl.mapNetworkingPlatformToCategory('6', {npId: '2', usedCategoryId: '5'});
+
+        nock(`https://localhost.org`)
+            .get('/api/v1/event').query({skip: 0})
+            .reply(200, {events: []});
+        nock(`https://localhost2.org`)
+            .get('/api/v1/event').query({skip: 0})
+            .reply(200, {events: []});
     });
 
     afterEach(function () {

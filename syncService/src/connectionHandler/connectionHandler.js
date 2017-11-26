@@ -3,6 +3,7 @@
 let db = require('server-lib').neo4j;
 let exportOrg = require(`./exportOrg`);
 let importOrg = require(`./importOrg`);
+let importNpEvents = require(`./importNpEvents`);
 let importWebsiteEvents = require(`./importWebsiteEvents`);
 let logger = require('server-lib').logging.getLogger(__filename);
 
@@ -23,6 +24,7 @@ let startSync = async function () {
     let npConfigs = await getNpWithExportConfig();
     for (let npConfig of npConfigs) {
         await importOrg.importOrganizations(npConfig);
+        await importNpEvents.importEvents(npConfig);
     }
     let importOrgConfigs = await getOrgWebsiteEvent();
     for (let importOrgConfig of importOrgConfigs) {

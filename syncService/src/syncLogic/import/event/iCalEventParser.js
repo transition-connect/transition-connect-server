@@ -1,6 +1,5 @@
 'use strict';
 
-let db = require('server-lib').neo4j;
 let moment = require('moment');
 let iCalDateParser = require('ical-date-parser');
 let logger = require('server-lib').logging.getLogger(__filename);
@@ -48,7 +47,7 @@ let setEventProperties = function (event, vEvent) {
     event.endDate = parseDate(vEvent, END_DATE_EVENT, END_DATE_VALUE_EVENT, true);
 };
 
-let getEvents = function (iCal) {
+let parseEvents = function (iCal) {
     let events = [], startIndex = 0, endIndex = 0;
     do {
         startIndex = iCal.indexOf(BEGIN_EVENT, startIndex);
@@ -65,23 +64,6 @@ let getEvents = function (iCal) {
     return events;
 };
 
-let saveEventsToDb = async function (events, organizationId) {
-    return await db.cypher().unwind(`{events} AS event`)
-        .match(`(org:Organization {organizationId: {organizationId}})`)
-        .merge(`(eventDb:Event {uid: event.uid})`)
-        .addCommand(` SET eventDb.iCal = event.iCal, eventDb.description = event.description,
-                      eventDb.summary = event.summary, eventDb.location = event.location,
-                      eventDb.startDate = event.startDate, eventDb.endDate = event.endDate`)
-        .merge(`(org)-[:WEBSITE_EVENT]->(eventDb)`)
-        .end({events: events, organizationId: organizationId}).send();
-};
-
-let importICalEvents = async function (iCal, organizationId) {
-    let events = getEvents(iCal);
-    logger.info(`For org ${organizationId} -> ${events.length} events imported from website`);
-    await saveEventsToDb(events, organizationId);
-};
-
 module.exports = {
-    importICalEvents
+    parseEvents
 };
