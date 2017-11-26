@@ -114,7 +114,14 @@ describe('Testing the import of organizations from external networking platform'
             .get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
+                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch'],
+                locations: [{
+                    address: 'address', description: 'descriptionLocation',
+                    geo: {latitude: 32.422422, longitude: -122.08585}
+                }, {
+                    address: 'address2', description: 'descriptionLocation2',
+                    geo: {latitude: 32.422423, longitude: -122.08586}
+                }]
             });
 
         nock(`https://localhost.org`)
@@ -148,7 +155,9 @@ describe('Testing the import of organizations from external networking platform'
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
             .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
-            .return(`np, org, admins, collect(category.categoryId) AS categories`)
+            .optionalMatch(`(org)-[:HAS]->(location:Location)`)
+            .with(`np, org, admins, category, location`).orderBy(`location.address`)
+            .return(`np, org, admins, collect(DISTINCT category.categoryId) AS categories, collect(DISTINCT location) AS locations`)
             .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
 
         resp.length.should.equals(3);
@@ -168,6 +177,15 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
+        resp[0].locations.length.should.equals(2);
+        resp[0].locations[0].address.should.equals('address');
+        resp[0].locations[0].description.should.equals('descriptionLocation');
+        resp[0].locations[0].latitude.should.equals(32.422422);
+        resp[0].locations[0].longitude.should.equals(-122.08585);
+        resp[0].locations[1].address.should.equals('address2');
+        resp[0].locations[1].description.should.equals('descriptionLocation2');
+        resp[0].locations[1].latitude.should.equals(32.422423);
+        resp[0].locations[1].longitude.should.equals(-122.08586);
 
         resp[1].np.platformId.should.equals('1');
         resp[1].org.organizationIdOnExternalNP.should.equals('2');
@@ -183,6 +201,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].admins[0].should.equals('user@irgendwo.ch');
         resp[1].categories.length.should.equals(1);
         resp[1].categories[0].should.equals('3');
+        resp[1].locations.length.should.equals(0);
 
         resp[2].np.platformId.should.equals('2');
         resp[2].org.organizationIdOnExternalNP.should.equals('1');
@@ -198,6 +217,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[2].admins[0].should.equals('user2@irgendwo.ch');
         resp[2].categories.length.should.equals(1);
         resp[2].categories[0].should.equals('4');
+        resp[2].locations.length.should.equals(0);
     });
 
     it('Handling load of next organizations', async function () {

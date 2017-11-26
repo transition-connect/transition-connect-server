@@ -10,6 +10,7 @@ let addMandatoryProperties = function (organization) {
     organization.website = organization.website || '';
     organization.slogan = organization.slogan || '';
     organization.adminsWithUuid = [];
+    organization.locations = organization.locations || [];
     for (let admin of organization.admins) {
         organization.adminsWithUuid.push({email: admin, uuid: uuid.generateUUID()});
     }
@@ -48,6 +49,20 @@ let modifyChangedOrganization = function (id, timestamp, organization, platformI
         .end({id: id, platformId: platformId});
 };
 
+let addLocations = function (id, organization, platformId) {
+    return db.cypher().match(`(:NetworkingPlatform {platformId: {platformId}})
+                -[:CREATED]->(org:Organization {organizationIdOnExternalNP: {id}})`)
+        .optionalMatch(`(org)-[rel:HAS]->(location:Location)`)
+        .delete(`rel, location`)
+        .with(`DISTINCT org`)
+        .unwind(`{locations} AS location`)
+        .merge(`(org)-[:HAS]->(:Location {address: location.address, description: location.description,
+                                          latitude: location.geo.latitude, longitude: location.geo.longitude})`)
+        .end({
+            id: id, platformId: platformId, locations: organization.locations
+        });
+};
+
 let createCategoryAssigner = function (id, organization, platformId) {
     return db.cypher().match(`(orgDatabase:Organization {organizationIdOnExternalNP: {id}})<-[:CREATED]-
                 (np:NetworkingPlatform {platformId: {platformId}})`)
@@ -79,7 +94,8 @@ let importOrganization = async function (id, timestamp, organization, platformId
     addMandatoryProperties(organization);
     let commands = [
         modifyChangedOrganization(id, timestamp, organization, platformId).getCommand(),
-        createNotExistingOrganization(id, timestamp, organization, platformId).getCommand()
+        createNotExistingOrganization(id, timestamp, organization, platformId).getCommand(),
+        addLocations(id, organization, platformId).getCommand()
     ];
     let result = await createCategoryAssigner(id, organization, platformId).send(commands);
     importOrganizationPostActions(result[1], result[0], organization.name);
