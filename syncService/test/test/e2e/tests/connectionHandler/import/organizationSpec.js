@@ -28,12 +28,8 @@ describe('Testing the import of organizations from external networking platform'
 
         dbDsl.createCategory(6);
 
-        dbDsl.mapNetworkingPlatformToCategory('1', {npId: '1', usedCategoryId: '0'});
-        dbDsl.mapNetworkingPlatformToCategory('2', {npId: '1', usedCategoryId: '1'});
-        dbDsl.mapNetworkingPlatformToCategory('3', {npId: '1', usedCategoryId: '2'});
-        dbDsl.mapNetworkingPlatformToCategory('4', {npId: '1', usedCategoryId: '3'});
-        dbDsl.mapNetworkingPlatformToCategory('5', {npId: '2', usedCategoryId: '4'});
-        dbDsl.mapNetworkingPlatformToCategory('6', {npId: '2', usedCategoryId: '5'});
+        dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['0', '1', '2', '3']});
+        dbDsl.mapNetworkingPlatformToCategory('2', {categoryIds: ['4', '5']});
 
         nock(`https://localhost.org`)
             .get('/api/v1/event').query({skip: 0})

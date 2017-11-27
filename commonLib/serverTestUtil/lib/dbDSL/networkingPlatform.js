@@ -40,21 +40,15 @@ let createNetworkingPlatformExportRules = function (networkingPlatformId, data) 
         }).getCommand());
 };
 
-let mapNetworkingPlatformToCategory = function (mappingId, data) {
-    data.similarCategoryIds = data.similarCategoryIds || [];
+let mapNetworkingPlatformToCategory = function (platformId, data) {
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
-        .createUnique(`(np)-[:CATEGORY]->(mapper:SimilarCategoryMapper {mapperId: {mappingId}})`)
-        .with(`mapper`)
-        .match(`(usedCategory:Category {categoryId: {usedCategoryId}})`)
-        .createUnique(`(mapper)-[:USED_CATEGORY]->(usedCategory)`)
-        .with(`mapper`)
-        .match(`(similarCategory:Category)`)
-        .where(`similarCategory.categoryId IN {similarCategoryIds}`)
-        .createUnique(`(mapper)-[:SIMILAR_CATEGORY]->(similarCategory)`)
+        .with(`np`)
+        .match(`(category:Category)`)
+        .where(`category.categoryId IN {categoryIds}`)
+        .merge(`(np)-[:ORG_CATEGORY]->(category)`)
         .end({
-            mappingId: mappingId, platformId: data.npId, usedCategoryId: data.usedCategoryId,
-            similarCategoryIds: data.similarCategoryIds
+            platformId: platformId, categoryIds: data.categoryIds
         }).getCommand());
 };
 

@@ -11,8 +11,8 @@ let orgDeniedExportToNp = require('./orgDeniedExportToNp');
 
 let getNetworkingPlatformInfo = function (platformId, language) {
     return db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})`)
-        .optionalMatch(`(np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(:Category)
-                             -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
+        .optionalMatch(`(np)-[:ORG_CATEGORY]->(:Category)
+                        -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
         .where(`TYPE(categoryLanguage) = {language}`)
         .with(`np, categoryTranslated`)
         .orderBy(`categoryTranslated.name`)

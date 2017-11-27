@@ -22,7 +22,7 @@ let getConfig = function (adminId, organizationId, language, req) {
         return db.cypher().match(`(np:NetworkingPlatform)`)
             .where(`NOT (np)-[:CREATED]->(:Organization {organizationId: {organizationId}})`)
             .with(`np`)
-            .match(`(np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->
+            .match(`(np)-[:ORG_CATEGORY]->
                     (category:Category)-[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
             .where(`TYPE(categoryLanguage) = {language}`)
             .optionalMatch(`(:Organization {organizationId: {organizationId}})-[:ASSIGNED]->(assigner:CategoryAssigner)

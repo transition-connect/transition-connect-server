@@ -19,8 +19,8 @@ let checkCategoryForNPExists = function (adminId, nps, databaseNpsConfig, req) {
 
 let checkValidCategoryAssignment = function (adminId, nps, req) {
     return db.cypher().unwind(`{nps} AS np`)
-        .match(`(networkingPlatform:NetworkingPlatform {platformId: np.platformId})-[:CATEGORY]->
-                (:SimilarCategoryMapper)-[:USED_CATEGORY]->(usedCategory:Category)`)
+        .match(`(networkingPlatform:NetworkingPlatform {platformId: np.platformId})
+                 -[:ORG_CATEGORY]->(usedCategory:Category)`)
         .return(`networkingPlatform.platformId AS platformId, collect(usedCategory.categoryId) AS categories`)
         .end({nps: nps}).send()
         .then(function (resp) {

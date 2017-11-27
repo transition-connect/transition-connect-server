@@ -52,7 +52,7 @@ merge (category)-[:EN]->(:CategoryTranslated {name: 'Society'});
 //Set used categories for networking platform Elyoos
 match (np:NetworkingPlatform {platformId: '1'}), (category:Category)
 where category.categoryId IN ['1', '2', '3', '4', '5', '6', '7', '8']
-merge (np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(category);
+merge (np)-[:ORG_CATEGORY]->(category);
 
 //Create categories Transition Zürich
 create (category:Category {categoryId: '9'})-[:DE]->(:CategoryTranslated {name: 'Laden, Hofladen'})
@@ -73,7 +73,7 @@ merge (category)-[:EN]->(:CategoryTranslated {name: 'Economy and politics'});
 //Set used categories for networking platform Transition Zürich
 match (np:NetworkingPlatform {platformId: '2'}), (category:Category)
 where category.categoryId IN ['9', '10', '11', '12', '13', '14', '20']
-merge (np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(category);
+merge (np)-[:ORG_CATEGORY]->(category);
 
 //Create organizations for Transition Zürich
 match (admin:Admin {adminId: '2'})
@@ -106,7 +106,7 @@ merge (category)-[:EN]->(:CategoryTranslated {name: 'Nature'});
 //Set used categories for networking platform Gemeinsam Jetzt
 match (np:NetworkingPlatform {platformId: '3'}), (category:Category)
 where category.categoryId IN ['15', '16', '17', '18', '19']
-merge (np)-[:CATEGORY]->(:SimilarCategoryMapper)-[:USED_CATEGORY]->(category);
+merge (np)-[:ORG_CATEGORY]->(category);
 
 //Create organizations for Gemeinsam Jetzt
 match (admin:Admin {adminId: '2'})

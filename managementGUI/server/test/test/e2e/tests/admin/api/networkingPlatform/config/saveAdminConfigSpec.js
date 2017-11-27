@@ -4,14 +4,10 @@ let dbDsl = require('server-test-util').dbDSL;
 let db = require('server-test-util').db;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
-let moment = require('moment');
 
 describe('Integration Tests for adding and removing administrators of an networking platform', function () {
 
-    let startTime;
-
     beforeEach(function () {
-        startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});

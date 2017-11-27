@@ -3,9 +3,7 @@
 let connectionHandler = requireConnectionHandler('connectionHandler');
 let dbDsl = require('server-test-util').dbDSL;
 let db = require('server-test-util').db;
-let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
-let should = require('chai').should();
 let nock = require('nock');
 
 describe('Integration Tests for importing events from a website in iCal format', function () {

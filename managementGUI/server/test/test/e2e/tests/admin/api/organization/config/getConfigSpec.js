@@ -20,14 +20,11 @@ describe('Integration Tests for getting the configuration of an organization', f
 
             dbDsl.createCategory(16);
 
-            dbDsl.mapNetworkingPlatformToCategory('1', {npId: '1', usedCategoryId: '1', similarCategoryIds: ['3', '4', '5']});
-            dbDsl.mapNetworkingPlatformToCategory('2', {npId: '1', usedCategoryId: '6', similarCategoryIds: ['8']});
-            dbDsl.mapNetworkingPlatformToCategory('3', {npId: '1', usedCategoryId: '7', similarCategoryIds: ['9']});
-            dbDsl.mapNetworkingPlatformToCategory('4', {npId: '2', usedCategoryId: '10', similarCategoryIds: ['8']});
-            dbDsl.mapNetworkingPlatformToCategory('5', {npId: '2', usedCategoryId: '11', similarCategoryIds: ['12']});
-            dbDsl.mapNetworkingPlatformToCategory('6', {npId: '3', usedCategoryId: '13', similarCategoryIds: []});
-            dbDsl.mapNetworkingPlatformToCategory('7', {npId: '4', usedCategoryId: '14', similarCategoryIds: []});
-            dbDsl.mapNetworkingPlatformToCategory('8', {npId: '5', usedCategoryId: '15', similarCategoryIds: []});
+            dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['1', '6', '7']});
+            dbDsl.mapNetworkingPlatformToCategory('2', {categoryIds: ['10', '11']});
+            dbDsl.mapNetworkingPlatformToCategory('3', {categoryIds: ['13']});
+            dbDsl.mapNetworkingPlatformToCategory('4', {categoryIds: ['14']});
+            dbDsl.mapNetworkingPlatformToCategory('5', {categoryIds: ['15']});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
             dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1', '3'], eventsImportConfiguration: 'www.test.org', created: 502});

@@ -22,9 +22,7 @@ describe('Integration Tests for getting details of a networking platform', funct
 
             dbDsl.createCategory(10);
 
-            dbDsl.mapNetworkingPlatformToCategory('1', {npId: '1', usedCategoryId: '1', similarCategoryIds: ['3', '4', '5']});
-            dbDsl.mapNetworkingPlatformToCategory('2', {npId: '1', usedCategoryId: '6', similarCategoryIds: ['8']});
-            dbDsl.mapNetworkingPlatformToCategory('3', {npId: '1', usedCategoryId: '7', similarCategoryIds: ['9']});
+            dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['1', '6', '7']});
 
             dbDsl.createOrganization('1', {networkingPlatformId: '2', adminIds: ['2'], created: 500});
             dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['3'], created: 502});
