@@ -32,10 +32,10 @@ describe('Importing events from an external networking platform', function () {
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
     });
 
     afterEach(function () {

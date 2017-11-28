@@ -48,13 +48,13 @@ describe('Testing the import of organizations from external networking platform'
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                organizations: [{id: '1', timestamp: 500}]
+                organisations: [{id: '1', timestamp: 500}]
             });
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 1})
             .reply(200, {
-                organizations: []
+                organisations: []
             });
 
         nock(`https://localhost.org`)
@@ -67,7 +67,7 @@ describe('Testing the import of organizations from external networking platform'
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                organizations: []
+                organisations: []
             });
 
         await dbDsl.sendToDb();
@@ -104,13 +104,13 @@ describe('Testing the import of organizations from external networking platform'
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                organizations: [{id: '1', timestamp: 500}, {id: '2', timestamp: 501}]
+                organisations: [{id: '1', timestamp: 500}, {id: '2', timestamp: 501}]
             });
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 2})
             .reply(200, {
-                organizations: []
+                organisations: []
             });
 
         nock(`https://localhost.org`)
@@ -137,12 +137,12 @@ describe('Testing the import of organizations from external networking platform'
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                organizations: [{id: '1', timestamp: 600}]
+                organisations: [{id: '1', timestamp: 600}]
             });
 
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 1})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation/1')
@@ -228,18 +228,18 @@ describe('Testing the import of organizations from external networking platform'
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
-                organizations: [{id: '1', timestamp: 500}]
+                organisations: [{id: '1', timestamp: 500}]
             });
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 1})
             .reply(200, {
-                organizations: [{id: '2', timestamp: 501}]
+                organisations: [{id: '2', timestamp: 501}]
             });
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 2})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation/1')
@@ -257,7 +257,7 @@ describe('Testing the import of organizations from external networking platform'
 
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
@@ -314,11 +314,11 @@ describe('Testing the import of organizations from external networking platform'
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: [{id: '1', timestamp: 701}]});
+            .reply(200, {organisations: [{id: '1', timestamp: 701}]});
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 1})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation/1')
@@ -329,7 +329,7 @@ describe('Testing the import of organizations from external networking platform'
 
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
@@ -370,15 +370,15 @@ describe('Testing the import of organizations from external networking platform'
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: [{id: '1', timestamp: 701}]});
+            .reply(200, {organisations: [{id: '1', timestamp: 701}]});
 
         nock(`https://localhost.org`)
             .get('/api/v1/organisation').query({skip: 1})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         nock(`https://localhost2.org`)
             .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {organizations: []});
+            .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
