@@ -14,7 +14,7 @@ link: 'https://www.elyoos.org'})
 merge (np)<-[:IS_ADMIN]-(admin)
 create (exportRules:ExportRules {manuallyAcceptOrganization: false})
 merge (np)-[:EXPORT_RULES]->(exportRules)
-create (exportConfig:ExportConfig {adapterType: 'standardNp', npApiUrl: 'http://localhost:8084/api'})
+create (exportConfig:ExportConfig {adapterType: 'standardNp', npApiUrl: 'http://localhost:8084'})
 merge (np)-[:EXPORT_CONFIG]->(exportConfig);
 
 match (admin:Admin {adminId: '3'})
