@@ -7,7 +7,7 @@ let logger = require('server-lib').logging.getLogger(__filename);
 
 let importOrganization = async function (npConfig, id, timestamp) {
     try {
-        let organization = await adapter.importOrganisation(npConfig.config.npApiUrl, id);
+        let organization = await adapter.importOrganisation(npConfig.config.npApiUrl, id, npConfig.config.token);
         await importOrg.importOrganization(id, timestamp, organization, npConfig.np.platformId);
     } catch (error) {
         logger.error(`Import of organisation ${id} failed`);
@@ -20,7 +20,7 @@ let importOrganizations = async function (npConfig) {
     try {
         do {
             numberOfLoop++;
-            organizations = await adapter.getListOrganisations(npConfig.config.npApiUrl, skip);
+            organizations = await adapter.getListOrganisations(npConfig.config.npApiUrl, skip, npConfig.config.token);
             if (organizations && organizations.organisations && organizations.organisations.length > 0) {
                 let organizationsToImport = await difference.getOrgToImport(organizations.organisations, npConfig.np.platformId);
                 for (let org of organizationsToImport) {

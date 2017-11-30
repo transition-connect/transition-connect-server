@@ -36,7 +36,7 @@ let exportNewOrganizations = async function (npConfig) {
                  COLLECT(category.idOnPlatform) AS categories`)
         .end({platformId: npConfig.np.platformId}).send();
     if (orgsToExport.length > 0) {
-        await adapter.exportOrganizations(orgsToExport, npConfig.config.npApiUrl);
+        await adapter.exportOrganizations(orgsToExport, npConfig.config.npApiUrl, npConfig.config.token);
         await setExportTimestamp(orgsToExport, npConfig.np.platformId);
         logExportedOrg('New organization', orgsToExport);
     }
@@ -60,7 +60,7 @@ let exportModifiedOrganizations = async function (npConfig) {
                  COLLECT(category.idOnPlatform) AS categories`)
         .end({platformId: npConfig.np.platformId}).send();
     if (orgsToExport.length > 0) {
-        await adapter.exportOrganizations(orgsToExport, npConfig.config.npApiUrl);
+        await adapter.exportOrganizations(orgsToExport, npConfig.config.npApiUrl, npConfig.config.token);
         await setExportTimestamp(orgsToExport, npConfig.np.platformId);
         logExportedOrg('Modified organization', orgsToExport);
     }

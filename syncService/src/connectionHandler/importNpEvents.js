@@ -7,7 +7,7 @@ let logger = require('server-lib').logging.getLogger(__filename);
 
 let importEvent = async function (npConfig, uid, timestamp) {
     try {
-        let event = await adapter.importEvent(npConfig.config.npApiUrl, uid);
+        let event = await adapter.importEvent(npConfig.config.npApiUrl, uid, npConfig.config.token);
         await importEventToDb.importEvent(uid, timestamp, event.iCal, event.idOrg, npConfig.np.platformId);
     } catch (error) {
         logger.error(`Import of event ${uid} failed`);
@@ -20,7 +20,7 @@ let importEvents = async function (npConfig) {
     try {
         do {
             numberOfLoop++;
-            events = await adapter.getListEvents(npConfig.config.npApiUrl, skip);
+            events = await adapter.getListEvents(npConfig.config.npApiUrl, skip, npConfig.config.token);
             if (events && events.events && events.events.length > 0) {
                 let eventsToImport = await difference.getEventsToImport(events.events, npConfig.np.platformId);
                 for (let event of eventsToImport) {

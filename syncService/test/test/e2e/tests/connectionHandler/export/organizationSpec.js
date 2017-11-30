@@ -18,9 +18,9 @@ describe('Testing the export of organizations to an external networking platform
 
         dbDsl.createNetworkingPlatform('1', {adminIds: ['1']});
         dbDsl.createNetworkingPlatform('2', {adminIds: ['2']});
-        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org'});
+        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org', token: `1234`});
         dbDsl.createNetworkingPlatformAdapterConfig('2', {
-            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700
+            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700, token: `1234`
         });
 
         dbDsl.createCategory(6);
@@ -28,11 +28,13 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['0', '1', '2', '3']});
         dbDsl.mapNetworkingPlatformToCategory('2', {categoryIds: ['4', '5']});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
     });
 
@@ -52,20 +54,23 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.assignOrganizationToCategory({organizationId: '1', npId: '1', categories: ['1', '2'], lastConfigUpdate: 501});
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1'});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
 
-        let scope = nock(`https://localhost.org`)
-            .put('/organization', {
-                organizations: [{
-                    uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
-                }]
-            }).reply(201);
+        let scope = nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).put('/organization', {
+            organizations: [{
+                uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
+            }]
+        }).reply(201);
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
@@ -89,20 +94,23 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.assignOrganizationToCategory({organizationId: '1', npId: '1', categories: ['1', '2'], lastConfigUpdate: 501});
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1', lastExportTimestamp: 700});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
 
-        let scope = nock(`https://localhost.org`)
-            .put('/organization', {
-                organizations: [{
-                    uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    language: 'de' ,categories: ['idOnPlatform1', 'idOnPlatform2']
-                }]
-            }).reply(201);
+        let scope = nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).put('/organization', {
+            organizations: [{
+                uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
+            }]
+        }).reply(201);
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
@@ -126,20 +134,23 @@ describe('Testing the export of organizations to an external networking platform
         dbDsl.assignOrganizationToCategory({organizationId: '1', npId: '1', categories: ['1', '2'], lastConfigUpdate: 701});
         dbDsl.exportOrgToNp({organizationId: '1', npId: '1', lastExportTimestamp: 700});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organizations: []});
 
-        let scope = nock(`https://localhost.org`)
-            .put('/organization', {
-                organizations: [{
-                    uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
-                    language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
-                }]
-            }).reply(201);
+        let scope = nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).put('/organization', {
+            organizations: [{
+                uuid: '1', name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                language: 'de', categories: ['idOnPlatform1', 'idOnPlatform2']
+            }]
+        }).reply(201);
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();

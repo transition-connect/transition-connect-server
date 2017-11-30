@@ -24,10 +24,10 @@ let createNetworkingPlatformAdapterConfig = function (networkingPlatformId, data
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(np:NetworkingPlatform {platformId: {platformId}})`)
         .createUnique(`(np)-[:EXPORT_CONFIG]->(:ExportConfig {adapterType: {adapterType}, npApiUrl: {npApiUrl}, 
-                lastSync: {lastSync}})`)
+                lastSync: {lastSync}, token: {token}})`)
         .end({
             platformId: networkingPlatformId, adapterType: data.adapterType, npApiUrl: data.npApiUrl,
-            lastSync: data.lastSync
+            lastSync: data.lastSync, token: data.token
         }).getCommand());
 };
 

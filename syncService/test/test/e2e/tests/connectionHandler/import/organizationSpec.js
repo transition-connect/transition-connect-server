@@ -21,9 +21,9 @@ describe('Testing the import of organizations from external networking platform'
 
         dbDsl.createNetworkingPlatform('1', {adminIds: ['1']});
         dbDsl.createNetworkingPlatform('2', {adminIds: ['2']});
-        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org'});
+        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org', token: `1234`});
         dbDsl.createNetworkingPlatformAdapterConfig('2', {
-            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700
+            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700, token: `1234`
         });
 
         dbDsl.createCategory(6);
@@ -31,11 +31,13 @@ describe('Testing the import of organizations from external networking platform'
         dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['0', '1', '2', '3']});
         dbDsl.mapNetworkingPlatformToCategory('2', {categoryIds: ['4', '5']});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
     });
 
@@ -45,30 +47,30 @@ describe('Testing the import of organizations from external networking platform'
 
     it('Import new organizations with only mandatory fields', async function () {
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
                 organisations: [{id: '1', timestamp: 500}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 1})
-            .reply(200, {
-                organisations: []
-            });
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1})
+            .reply(200, {organisations: []});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/1')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization1', description: 'description',
                 categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
-            .reply(200, {
-                organisations: []
-            });
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
@@ -101,20 +103,23 @@ describe('Testing the import of organizations from external networking platform'
 
     it('Import new organizations', async function () {
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
                 organisations: [{id: '1', timestamp: 500}, {id: '2', timestamp: 501}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 2})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 2})
             .reply(200, {
                 organisations: []
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/1')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
                 categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch'],
@@ -127,25 +132,29 @@ describe('Testing the import of organizations from external networking platform'
                 }]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/2')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/2')
             .reply(200, {
                 name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
                 categories: ['idOnPlatform3'], admins: ['user@irgendwo.ch']
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
                 organisations: [{id: '1', timestamp: 600}]
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 1})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1})
             .reply(200, {organisations: []});
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation/1')
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization3', description: 'description3', slogan: 'slogan3', website: 'www.link3.org',
                 categories: ['idOnPlatform4'], admins: ['user2@irgendwo.ch']
@@ -225,38 +234,44 @@ describe('Testing the import of organizations from external networking platform'
 
     it('Handling load of next organizations', async function () {
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {
                 organisations: [{id: '1', timestamp: 500}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 1})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1})
             .reply(200, {
                 organisations: [{id: '2', timestamp: 501}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 2})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 2})
             .reply(200, {organisations: []});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/1')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
                 categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/2')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/2')
             .reply(200, {
                 name: 'organization2', description: 'description2', slogan: 'slogan2', website: 'www.link2.org',
                 categories: ['idOnPlatform3'], admins: ['user@irgendwo.ch']
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
@@ -312,23 +327,27 @@ describe('Testing the import of organizations from external networking platform'
         });
         dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: [{id: '1', timestamp: 701}]});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 1})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1})
             .reply(200, {organisations: []});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation/1')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
             .reply(200, {
                 name: 'organization', description: 'description', slogan: 'slogan', website: 'www.link.org',
                 categories: ['idOnPlatform3', 'idOnPlatform4'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch']
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
@@ -368,16 +387,19 @@ describe('Testing the import of organizations from external networking platform'
         });
         dbDsl.assignOrganizationToCategory({organizationId: '10', npId: '1', categories: ['1', '2']});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: [{id: '1', timestamp: 701}]});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 1})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1})
             .reply(200, {organisations: []});
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();

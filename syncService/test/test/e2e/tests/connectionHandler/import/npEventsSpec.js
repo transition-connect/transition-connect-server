@@ -14,9 +14,9 @@ describe('Importing events from an external networking platform', function () {
 
         dbDsl.createNetworkingPlatform('1', {adminIds: ['1']});
         dbDsl.createNetworkingPlatform('2', {adminIds: ['2']});
-        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org'});
+        dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org', token: `1234`});
         dbDsl.createNetworkingPlatformAdapterConfig('2', {
-            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700
+            adapterType: 'standardNp', npApiUrl: 'https://localhost2.org', lastSync: 700, token: `1234`
         });
 
         dbDsl.createCategory(6);
@@ -30,11 +30,13 @@ describe('Importing events from an external networking platform', function () {
             website: 'www.link.org1'
         });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: []});
-        nock(`https://localhost2.org`)
-            .get('/api/v1/organisation').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
             .reply(200, {organisations: []});
     });
 
@@ -44,18 +46,21 @@ describe('Importing events from an external networking platform', function () {
 
     it('Import new events', async function () {
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {
                 events: [{uid: '1@example.org', timestamp: 500}, {uid: '2@example.org', timestamp: 501}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 2})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 2})
             .reply(200, {events: []});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event/1@example.org')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event/1@example.org')
             .reply(200, {
                 idOrg: '1', timestamp: 500,
                 iCal: `BEGIN:VEVENT
@@ -71,8 +76,9 @@ describe('Importing events from an external networking platform', function () {
                        END:VEVENT`
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event/2@example.org')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event/2@example.org')
             .reply(200, {
                 idOrg: '1', timestamp: 501,
                 iCal: `BEGIN:VEVENT
@@ -88,8 +94,9 @@ describe('Importing events from an external networking platform', function () {
                        END:VEVENT`
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
 
         await dbDsl.sendToDb();
@@ -146,18 +153,21 @@ describe('Importing events from an external networking platform', function () {
 
         dbDsl.createNpEvent('1@example.org', {organizationId: '10', modifiedOnNp: 499});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {
                 events: [{uid: '1@example.org', timestamp: 500}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 1})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 1})
             .reply(200, {events: []});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event/1@example.org')
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event/1@example.org')
             .reply(200, {
                 idOrg: '1', timestamp: 500,
                 iCal: `BEGIN:VEVENT
@@ -173,8 +183,9 @@ describe('Importing events from an external networking platform', function () {
                        END:VEVENT`
             });
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
 
         await dbDsl.sendToDb();
@@ -210,18 +221,21 @@ describe('Importing events from an external networking platform', function () {
 
         dbDsl.createNpEvent('1@example.org', {organizationId: '10', modifiedOnNp: 500});
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {
                 events: [{uid: '1@example.org', timestamp: 500}]
             });
 
-        nock(`https://localhost.org`)
-            .get('/api/v1/event').query({skip: 1})
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 1})
             .reply(200, {events: []});
 
-        nock(`https://localhost2.org`)
-            .get('/api/v1/event').query({skip: 0})
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
             .reply(200, {events: []});
 
         await dbDsl.sendToDb();
