@@ -1,7 +1,6 @@
 MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r;
 
 //Create admins
-create (:Admin {adminId: '1', email: 'test@localhost.localdomain'});
 create (:Admin {adminId: '2', email: 'test2@localhost.localdomain'});
 create (:Admin {adminId: '3', email: 'test3@localhost.localdomain'});
 create (:Admin {adminId: '4', email: 'test4@localhost.localdomain'});

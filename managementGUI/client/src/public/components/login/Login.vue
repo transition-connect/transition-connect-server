@@ -23,6 +23,17 @@
         data: function () {
             return {showStepVerification: false, email: ''};
         },
+        created: function () {
+            let url = window.location.href;
+            if (url) {
+                let regex = new RegExp("[?&]" + "email" + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (results && results.length > 2) {
+                    this.email = decodeURIComponent(results[2].replace(/\+/g, " "));
+                    this.showStepVerification = true;
+                }
+            }
+        },
         methods: {
             showValidatePassword: function (email) {
                 this.showStepVerification = true;

@@ -107,15 +107,15 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
         should.not.exist(resp[0].admins[0].sendInvitation);
         resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
-        resp[0].admins[1].sendInvitation.should.equals(true);
+        should.not.exist(resp[0].admins[1].sendInvitation);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
-            email: 'user3@irgendwo.ch'
+            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });
 
@@ -206,7 +206,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
         should.not.exist(resp[0].admins[0].sendInvitation);
         resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
-        resp[0].admins[1].sendInvitation.should.equals(true);
+        should.not.exist(resp[0].admins[1].sendInvitation);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
@@ -256,8 +256,8 @@ describe('Testing the import of organizations from external networking platform'
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
-            email: 'user3@irgendwo.ch'
+            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });
 
@@ -329,7 +329,7 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
         should.not.exist(resp[0].admins[0].sendInvitation);
         resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
-        resp[0].admins[1].sendInvitation.should.equals(true);
+        should.not.exist(resp[0].admins[1].sendInvitation);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
@@ -352,8 +352,8 @@ describe('Testing the import of organizations from external networking platform'
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
-            email: 'user3@irgendwo.ch'
+            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });
 
