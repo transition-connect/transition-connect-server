@@ -18,8 +18,8 @@ let sendAdminCreated = async function (organizationId) {
 
     for (let emailToSend of resp) {
         eMailQueue.createImmediatelyJob('adminCreatedJob', {
-            link: `${domain.getDomain()}?email=${encodeURIComponent(emailToSend.email)}`, linkText: domain.getDomain(),
-            org: emailToSend.orgName, email: emailToSend.email, password: tempPassword
+            link: `${domain.getDomain()}?email=${encodeURIComponent(emailToSend.email)}&password=${tempPassword}`,
+            linkText: domain.getDomain(), org: emailToSend.orgName, email: emailToSend.email, password: tempPassword
         });
     }
 };

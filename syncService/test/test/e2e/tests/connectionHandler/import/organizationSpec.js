@@ -114,7 +114,8 @@ describe('Testing the import of organizations from external networking platform'
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            org: 'organization1', password: resp[0].admins[1].password,
+            link: `http://localhost:8086/?email=user3%40irgendwo.ch&password=${resp[0].admins[1].password}`,
             linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });
@@ -256,7 +257,8 @@ describe('Testing the import of organizations from external networking platform'
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            org: 'organization1', password: resp[0].admins[1].password,
+            link: `http://localhost:8086/?email=user3%40irgendwo.ch&password=${resp[0].admins[1].password}`,
             linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });
@@ -352,7 +354,8 @@ describe('Testing the import of organizations from external networking platform'
 
         expect(createJob.callCount).to.equals(1);
         expect(createJob.withArgs('adminCreatedJob', {
-            org: 'organization1', password: resp[0].admins[1].password, link: `http://localhost:8086/?email=user3%40irgendwo.ch`,
+            org: 'organization1', password: resp[0].admins[1].password,
+            link: `http://localhost:8086/?email=user3%40irgendwo.ch&password=${resp[0].admins[1].password}`,
             linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
         }).calledOnce).to.be.true;
     });

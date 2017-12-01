@@ -30,6 +30,17 @@
                 password: '', runningRequest: false, loginError: false
             }
         },
+        created: function () {
+            let url = window.location.href;
+            if (url) {
+                let regex = new RegExp("[?&]" + "password" + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (results && results.length > 2) {
+                    this.password = decodeURIComponent(results[2].replace(/\+/g, " "));
+                    this.sendPasswordVerification();
+                }
+            }
+        },
         methods: {
             sendPasswordVerification: function () {
                 console.log(this.mailAddress);
@@ -76,6 +87,7 @@
     .text-danger {
         margin-top: 6px;
     }
+
     #upload-loader {
         position: relative;
         display: inline-block;
