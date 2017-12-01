@@ -17,6 +17,7 @@ let importOrganization = async function (npConfig, id, timestamp) {
 let importOrganizations = async function (npConfig) {
     let organizations, skip = 0, numberOfLoop = 0;
     const MAX_NUMBER_OF_LOOP = 500;
+    logger.info(`Start organisation import from ${npConfig.config.npApiUrl}`);
     try {
         do {
             numberOfLoop++;

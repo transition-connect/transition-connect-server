@@ -17,6 +17,7 @@ let importEvent = async function (npConfig, uid, timestamp) {
 let importEvents = async function (npConfig) {
     let events, skip = 0, numberOfLoop = 0;
     const MAX_NUMBER_OF_LOOP = 500;
+    logger.info(`Start event import from ${npConfig.config.npApiUrl}`);
     try {
         do {
             numberOfLoop++;
