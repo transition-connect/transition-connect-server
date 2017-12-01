@@ -3,6 +3,7 @@
 let passport = require('passport');
 let logger = require('server-lib').logging.getLogger(__filename);
 let rateLimit = require('server-lib').limiteRate;
+let admin = requireLib('admin');
 
 let apiLimiter = rateLimit.getRate({
     windowMs: 10 * 60 * 1000, // 10 minutes
@@ -25,12 +26,12 @@ module.exports = function (router) {
                 return res.status(400).end();
             }
 
-            req.logIn(user, function (errLogin) {
+            req.logIn(user, async function (errLogin) {
                 if (errLogin) {
                     logger.error('Login of user failed', req, {error: errLogin});
                     return res.status(500).end();
                 }
-
+                await admin.invalidatePasswordOfUser(user.id);
                 res.status(200).end();
 
             });
