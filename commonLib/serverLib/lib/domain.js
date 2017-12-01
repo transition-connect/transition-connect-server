@@ -1,7 +1,7 @@
 'use strict';
 
 let getDomain = function () {
-    let domain = 'http://localhost:8080/';
+    let domain = 'http://localhost:8086/';
 
     if (process.env.NODE_ENV === 'production') {
         domain = 'https://www.transition-connect.org/';

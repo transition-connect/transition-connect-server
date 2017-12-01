@@ -3,15 +3,23 @@
 let connectionHandler = requireConnectionHandler('connectionHandler');
 let dbDsl = require('server-test-util').dbDSL;
 let db = require('server-test-util').db;
+let sinon = require('sinon');
 let moment = require('moment');
+let emailQueue = require('server-lib').eMailQueue;
 let nock = require('nock');
+let should = require('chai').should();
+let expect = require('chai').expect;
 
 describe('Testing the import of organizations from external networking platform', function () {
 
-    let startTime;
+    let startTime, sandbox;
 
     //Error testing
     //Imported category existing in tc
+
+    before(function () {
+        sandbox = sinon.sandbox.create();
+    });
 
     beforeEach(async function () {
         startTime = Math.floor(moment.utc().valueOf() / 1000);
@@ -43,10 +51,12 @@ describe('Testing the import of organizations from external networking platform'
 
     afterEach(function () {
         nock.cleanAll();
+        sandbox.restore();
     });
 
     it('Import new organizations with only mandatory fields', async function () {
 
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
         nock(`https://localhost.org`, {
             reqheaders: {'authorization': '1234'}
         }).get('/api/v1/organisation').query({skip: 0})
@@ -78,7 +88,7 @@ describe('Testing the import of organizations from external networking platform'
             .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
             .return(`np, org, admins, collect(category.categoryId) AS categories`)
             .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
 
@@ -94,15 +104,24 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].admins[1].should.equals('user3@irgendwo.ch');
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
+        resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
+        resp[0].admins[1].sendInvitation.should.equals(true);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
+
+        expect(createJob.callCount).to.equals(1);
+        expect(createJob.withArgs('adminCreatedJob', {
+            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
+            email: 'user3@irgendwo.ch'
+        }).calledOnce).to.be.true;
     });
 
     it('Import new organizations', async function () {
 
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
         nock(`https://localhost.org`, {
             reqheaders: {'authorization': '1234'}
         }).get('/api/v1/organisation').query({skip: 0})
@@ -166,7 +185,7 @@ describe('Testing the import of organizations from external networking platform'
             .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
             .optionalMatch(`(org)-[:HAS]->(location:Location)`)
             .with(`np, org, admins, category, location`).orderBy(`location.address`)
             .return(`np, org, admins, collect(DISTINCT category.categoryId) AS categories, collect(DISTINCT location) AS locations`)
@@ -184,8 +203,10 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].admins[1].should.equals('user3@irgendwo.ch');
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
+        resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
+        resp[0].admins[1].sendInvitation.should.equals(true);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
@@ -210,7 +231,8 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].org.created.should.at.least(startTime);
         resp[1].org.modified.should.at.least(startTime);
         resp[1].admins.length.should.equals(1);
-        resp[1].admins[0].should.equals('user@irgendwo.ch');
+        resp[1].admins[0].email.should.equals('user@irgendwo.ch');
+        should.not.exist(resp[1].admins[0].sendInvitation);
         resp[1].categories.length.should.equals(1);
         resp[1].categories[0].should.equals('3');
         resp[1].locations.length.should.equals(0);
@@ -226,14 +248,22 @@ describe('Testing the import of organizations from external networking platform'
         resp[2].org.created.should.at.least(startTime);
         resp[2].org.modified.should.at.least(startTime);
         resp[2].admins.length.should.equals(1);
-        resp[2].admins[0].should.equals('user2@irgendwo.ch');
+        resp[2].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[2].admins[0].sendInvitation);
         resp[2].categories.length.should.equals(1);
         resp[2].categories[0].should.equals('4');
         resp[2].locations.length.should.equals(0);
+
+        expect(createJob.callCount).to.equals(1);
+        expect(createJob.withArgs('adminCreatedJob', {
+            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
+            email: 'user3@irgendwo.ch'
+        }).calledOnce).to.be.true;
     });
 
     it('Handling load of next organizations', async function () {
 
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
         nock(`https://localhost.org`, {
             reqheaders: {'authorization': '1234'}
         }).get('/api/v1/organisation').query({skip: 0})
@@ -280,7 +310,7 @@ describe('Testing the import of organizations from external networking platform'
             .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
             .return(`np, org, admins, collect(category.categoryId) AS categories`)
             .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
 
@@ -296,8 +326,10 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.created.should.at.least(startTime);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(2);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
-        resp[0].admins[1].should.equals('user3@irgendwo.ch');
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
+        resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
+        resp[0].admins[1].sendInvitation.should.equals(true);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
@@ -313,13 +345,21 @@ describe('Testing the import of organizations from external networking platform'
         resp[1].org.created.should.at.least(startTime);
         resp[1].org.modified.should.at.least(startTime);
         resp[1].admins.length.should.equals(1);
-        resp[1].admins[0].should.equals('user@irgendwo.ch');
+        resp[1].admins[0].email.should.equals('user@irgendwo.ch');
+        should.not.exist(resp[1].admins[0].sendInvitation);
         resp[1].categories.length.should.equals(1);
         resp[1].categories[0].should.equals('3');
+
+        expect(createJob.callCount).to.equals(1);
+        expect(createJob.withArgs('adminCreatedJob', {
+            org: 'organization1', link: `http://localhost:8086/firstLogin/${resp[0].admins[1].linkPassword}`,
+            email: 'user3@irgendwo.ch'
+        }).calledOnce).to.be.true;
     });
 
     it('Import modified organization', async function () {
 
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
         dbDsl.createOrganization('10', {
             networkingPlatformId: '1', adminIds: ['2'], created: 500, modifiedOnNp: 700,
             organizationIdOnExternalNP: '1', name: 'organization1', description: 'description1', slogan: 'slogan1',
@@ -356,7 +396,7 @@ describe('Testing the import of organizations from external networking platform'
             .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
             .return(`np, org, admins, collect(category.categoryId) AS categories`)
             .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
 
@@ -372,14 +412,18 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.created.should.equals(500);
         resp[0].org.modified.should.at.least(startTime);
         resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('3');
         resp[0].categories[1].should.equals('4');
+
+        expect(createJob.callCount).to.equals(0);
     });
 
     it('Do not import not modified organization', async function () {
 
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
         dbDsl.createOrganization('10', {
             networkingPlatformId: '1', adminIds: ['2'], created: 500, modifiedOnNp: 701,
             organizationIdOnExternalNP: '1', name: 'organization1', description: 'description1', slogan: 'slogan1',
@@ -408,7 +452,7 @@ describe('Testing the import of organizations from external networking platform'
             .with(`np, org, admin`).orderBy(`admin.email`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
             .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
-            .with(`np, org, collect(admin.email) AS admins, category`).orderBy(`category.categoryId`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
             .return(`np, org, admins, collect(category.categoryId) AS categories`)
             .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
 
@@ -424,9 +468,12 @@ describe('Testing the import of organizations from external networking platform'
         resp[0].org.created.should.equals(500);
         resp[0].org.modified.should.at.least(500);
         resp[0].admins.length.should.equals(1);
-        resp[0].admins[0].should.equals('user2@irgendwo.ch');
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
         resp[0].categories.length.should.equals(2);
         resp[0].categories[0].should.equals('1');
         resp[0].categories[1].should.equals('2');
+
+        expect(createJob.callCount).to.equals(0);
     });
 });

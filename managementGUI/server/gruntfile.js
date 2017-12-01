@@ -77,7 +77,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('start', ['sass']);
     grunt.registerTask('test', ['env:dev', 'clean', 'mochaTest:test']);
     grunt.registerTask('coverage', ['env:dev', 'clean', 'mocha_istanbul:coverage']);
     grunt.registerTask('analysis', ['sonarRunner:analysis']);

@@ -1,5 +1,6 @@
 'use strict';
 
+let email = require('./../../eMailService/adminCreated');
 let db = require('server-lib').neo4j;
 let uuid = require('server-lib').uuid;
 let time = require('server-lib').time;
@@ -26,9 +27,9 @@ let createNotExistingOrganization = function (id, timestamp, organization, platf
         .with(`orgDatabase`)
         .unwind(`{adminsWithUuid} AS adminWithUuid`)
         .merge(`(admin:Admin {email: toLower(adminWithUuid.email)})`)
-        .onCreate(`SET admin.adminId = adminWithUuid.uuid`)
+        .onCreate(`SET admin.adminId = adminWithUuid.uuid, admin.sendInvitation = true`)
         .merge(`(admin)-[:IS_ADMIN]->(orgDatabase)`)
-        .return(`orgDatabase.organizationIdOnExternalNP AS id`)
+        .return(`DISTINCT orgDatabase.organizationId AS organizationId`)
         .end({
             id: id, organizationId: uuid.generateUUID(), name: organization.name,
             description: organization.description, slogan: organization.slogan,
@@ -82,6 +83,7 @@ let importOrganizationPostActions = function (resultCreated, resultModified, org
         logger.error(`Organisation has been created an modified during import ${orgName}`);
     } else if (resultCreated.length > 0) {
         logger.info(`${orgName} successfully imported (created)`);
+        email.sendAdminCreated(resultCreated[0].organizationId);
     } else if (resultModified.length > 0) {
         logger.info(`${orgName} successfully imported (modified)`);
     } else {

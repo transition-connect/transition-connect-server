@@ -24,6 +24,7 @@ let promise = require('bluebird');
 promise.Promise.config({warnings: false, longStackTraces: true, cancellation: true});
 
 let kraken = require('kraken-js');
+let emailService = require('./src/syncLogic/eMailService/eMail');
 let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
 let options = require('./src/lib/spec')(app);
@@ -38,6 +39,7 @@ app.use(kraken(options));
 
 app.on('start', function () {
     dbConfig.connected.then(function () {
+        emailService.start();
         logger.info('Server started');
     });
 });

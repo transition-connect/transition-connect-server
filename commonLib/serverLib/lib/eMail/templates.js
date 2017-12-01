@@ -8,6 +8,11 @@ let emailTemplates = {
         template: new EmailTemplate(path.join(templatesDir, 'sendLoginPassword')),
         subject: 'Transition Connect Passwort',
         attachments: []
+    },
+    adminCreated: {
+        template: new EmailTemplate(path.join(templatesDir, 'adminCreated')),
+        subject: 'Willkommen auf Transition Connect',
+        attachments: []
     }
 };
 
