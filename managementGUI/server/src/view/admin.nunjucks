@@ -15,8 +15,6 @@
     <script src="lib/bootstrap/bootstrap.min.js"></script>
     <script src="lib/bootstrap/bootstrap-toggle.min.js"></script>
     {% if isProduction %}
-        <script src="lib/vue/vue.2.3.4.min.js"></script>
-        <script src="lib/vue/vee-validate.min.js"></script>
         <script src="lib/dist/admin.min.js"></script>
     {% else %}
         <script src="lib/dist/adminDev.js"></script>
