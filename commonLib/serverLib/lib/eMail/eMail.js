@@ -11,15 +11,18 @@ let BluebirdPromise = bluebird.Promise;
 let emailTemplates = require('./templates').emailTemplates;
 
 let config = function (conf) {
-    transporter = nodemailer.createTransport({
+    let nodemailerConfig = {
         host: conf.host,
         port: conf.port,
-        secure: conf.secure,
-        auth: {
+        secure: conf.secure
+    };
+    if (conf.auth && conf.auth.user) {
+        nodemailerConfig.auth = {
             user: conf.auth.user,
             pass: conf.auth.pass
-        }
-    });
+        };
+    }
+    transporter = nodemailer.createTransport(nodemailerConfig);
 };
 
 let closeTempFiles = function (files) {
