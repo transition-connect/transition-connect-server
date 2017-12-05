@@ -41,7 +41,7 @@ let renderEMailAndSend = function (template, templateData, sendTo, attachments, 
             reject();
         } else {
             transporter.sendMail({
-                from: `Transition Connect <${domain.getEMailSenderAddress()}>`, to: sendTo, subject: subject,
+                from: `${domain.getEMailSenderAddress()}`, to: sendTo, subject: subject,
                 text: results.text, html: results.html, attachments: attachments
             }, function (errorSendMail) {
                 closeTempFiles(tempFiles);
