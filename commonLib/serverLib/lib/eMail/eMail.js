@@ -40,6 +40,7 @@ let renderEMailAndSend = function (template, templateData, sendTo, attachments, 
             logger.error(error);
             reject();
         } else {
+            logger.info('Email sent from: ' + domain.getEMailSenderAddress());
             transporter.sendMail({
                 from: `${domain.getEMailSenderAddress()}`, to: sendTo, subject: subject,
                 text: results.text, html: results.html, attachments: attachments
