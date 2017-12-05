@@ -21,8 +21,6 @@ COPY server/src /usr/src/app/server/src
 COPY server/static /usr/src/app/server/static
 COPY server/config/production.json /usr/src/app/server/config/production.json
 
-RUN chown -R node:node /usr/src/app
-
 USER node
 
 EXPOSE 8080
