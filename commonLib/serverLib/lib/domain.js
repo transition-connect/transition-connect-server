@@ -13,7 +13,7 @@ let getEMailSenderAddress = function () {
     let address = 'info@localhost.localdomain';
 
     if (process.env.NODE_ENV === 'production') {
-        address = 'info@transition-connect.org/';
+        address = 'info@transition-connect.org';
     }
     return address;
 };
