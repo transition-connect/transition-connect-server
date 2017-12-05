@@ -4,6 +4,7 @@ ARG node_env='production'
 
 ENV NODE_ENV $node_env
 ENV PORT 8080
+ENV NODE_TLS_REJECT_UNAUTHORIZED '0'
 
 RUN mkdir -p /usr/src/app/server
 COPY node_modules /usr/src/app/server/node_modules
