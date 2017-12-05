@@ -14,7 +14,10 @@ let config = function (conf) {
     let nodemailerConfig = {
         host: conf.host,
         port: conf.port,
-        secure: conf.secure
+        secure: conf.secure,
+        tls: {
+            rejectUnauthorized: false
+        }
     };
     if (conf.auth && conf.auth.user) {
         nodemailerConfig.auth = {
