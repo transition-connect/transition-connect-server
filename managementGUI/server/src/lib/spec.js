@@ -3,6 +3,7 @@
 let db = require('server-lib').databaseConfig;
 let eMailQueue = require('server-lib').eMailQueue;
 let eMail = require('server-lib').eMail;
+let logger = require('server-lib').logging;
 let passport = require('passport');
 let auth = require('./auth');
 let admin = require('./admin');
@@ -46,11 +47,13 @@ module.exports = function (app) {
         onconfig: function (config, next) {
 
             let dbConfig = config.get('databaseConfig'),
-                emailConfig = config.get('emailConfig');
+                emailConfig = config.get('emailConfig'),
+                loggingConfig = config.get('logging');
 
             db.config(dbConfig);
             eMailQueue.config(emailConfig);
             eMail.config(emailConfig.smtp);
+            logger.config(loggingConfig);
             next(null, config);
         }
     };

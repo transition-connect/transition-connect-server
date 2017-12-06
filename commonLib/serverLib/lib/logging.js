@@ -1,6 +1,7 @@
 'use strict';
 
 let winston = require('winston');
+require('winston-tcp-graylog');
 
 let customLevels = {
     levels: {
@@ -69,5 +70,18 @@ module.exports = {
                 log(module, 'debug', message, metadata, request);
             }
         };
+    },
+    config: function (logging) {
+        if (logging) {
+            logger.add(new winston.transports.TcpGraylog({
+                gelfPro: {
+                    adapterName: 'tcp',
+                    adapterOptions: {
+                        host: logging.host,
+                        port: logging.port
+                    }
+                }
+            }));
+        }
     }
 };
