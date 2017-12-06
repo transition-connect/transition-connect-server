@@ -82,9 +82,6 @@ module.exports = {
     config: function (logging) {
         if (logging) {
             let tcpGraylogTransport = new winston.transports.TcpGraylog({
-                baseMsg: {
-                    host: 'devel-tc'
-                },
                 gelfPro: {
                     adapterName: 'udp',
                     adapterOptions: {
