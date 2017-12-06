@@ -20,15 +20,23 @@ let customLevels = {
     }
 };
 
-let logger = new winston.Logger({
-    transports: [
-        new (winston.transports.Console)({
-            colorize: true
-        })
-    ],
-    levels: customLevels.levels,
-    colors: customLevels.colors
-});
+let getInternalLogger = function (transport) {
+    let options = {
+        transports: [
+            new (winston.transports.Console)({
+                colorize: true
+            })
+        ],
+        levels: customLevels.levels,
+        colors: customLevels.colors
+    };
+    if(transport) {
+        options.transports.push(transport);
+    }
+    return new winston.Logger(options);
+};
+
+let logger = getInternalLogger();
 
 let log = function (module, level, message, metadata, request) {
 
@@ -73,15 +81,20 @@ module.exports = {
     },
     config: function (logging) {
         if (logging) {
-            logger.add(new winston.transports.TcpGraylog({
+            let tcpGraylogTransport = new winston.transports.TcpGraylog({
+                baseMsg: {
+                    host: 'devel-tc'
+                },
                 gelfPro: {
-                    adapterName: 'tcp',
+                    adapterName: 'udp',
                     adapterOptions: {
+                        protocol: 'udp4',
                         host: logging.host,
                         port: logging.port
                     }
                 }
-            }));
+            });
+            logger = getInternalLogger(tcpGraylogTransport);
         }
     }
 };
