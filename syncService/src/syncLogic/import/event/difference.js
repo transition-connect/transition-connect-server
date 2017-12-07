@@ -6,7 +6,7 @@ let _ = require('lodash');
 let getUnchangedOrganizations = function (events, platformId) {
     return db.cypher().unwind(`{events} AS event`)
         .match(`(np:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->
-                (:Organization)-[:ORGANIZE]->(eventDb:Event {uid: event.uid})`)
+                (:Organization)-[:EVENT]->(eventDb:Event {uid: event.uid})`)
         .where(`event.timestamp = eventDb.modifiedOnNp`)
         .return(`event.uid AS uid, event.modifiedOnNp AS timestamp`)
         .end({events: events, platformId: platformId});

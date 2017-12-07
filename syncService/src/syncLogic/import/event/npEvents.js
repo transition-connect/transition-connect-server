@@ -13,7 +13,7 @@ let saveEventToDb = async function (event, idOrg, timestamp) {
             startDate: event.startDate, endDate: event.endDate,
             modifiedOnNp: timestamp
         })
-        .merge(`(org)-[:ORGANIZE]->(eventDb)`)
+        .merge(`(org)-[:EVENT]->(eventDb)`)
         .end({uid: event.uid, idOrg: idOrg}).send();
 };
 

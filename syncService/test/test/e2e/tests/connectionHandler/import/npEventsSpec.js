@@ -101,7 +101,7 @@ describe('Importing events from an external networking platform', function () {
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:ORGANIZE]->(event:Event)")
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:EVENT]->(event:Event)")
             .return(`np, org, event`)
             .orderBy(`event.uid`).end().send();
 
@@ -190,7 +190,7 @@ describe('Importing events from an external networking platform', function () {
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:ORGANIZE]->(event:Event)")
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:EVENT]->(event:Event)")
             .return(`np, org, event`)
             .orderBy(`event.uid`).end().send();
 
@@ -240,7 +240,7 @@ describe('Importing events from an external networking platform', function () {
 
         await dbDsl.sendToDb();
         await connectionHandler.startSync();
-        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:ORGANIZE]->(event:Event)")
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:EVENT]->(event:Event)")
             .return(`np, org, event`)
             .orderBy(`event.uid`).end().send();
 
