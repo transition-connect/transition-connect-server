@@ -26,7 +26,7 @@ describe('Delete an organisation because missing in import', function () {
         dbDsl.createNetworkingPlatform('2', {adminIds: ['1']});
         dbDsl.createNetworkingPlatformAdapterConfig('1', {adapterType: 'standardNp', npApiUrl: 'https://localhost.org', token: `1234`});
 
-        dbDsl.createCategory(4);
+        dbDsl.createCategory(6);
 
         dbDsl.mapNetworkingPlatformToCategory('1', {categoryIds: ['0', '1']});
         dbDsl.mapNetworkingPlatformToCategory('2', {categoryIds: ['2', '3']});
@@ -47,6 +47,62 @@ describe('Delete an organisation because missing in import', function () {
     afterEach(function () {
         nock.cleanAll();
         sandbox.restore();
+    });
+
+    let counterOverflow = async function (createJob) {
+        for (let cycle = 1; cycle < 4; cycle++) {
+            await connectionHandler.startSync();
+            let resp = await db.cypher().match("(:NetworkingPlatform)-[counter:DELETE_COUNTER]->(org:Organization {organizationId: '2'})")
+                .return(`org, counter`).end().send();
+
+            resp.length.should.equals(1);
+            resp[0].counter.count.should.equals(cycle);
+            expect(createJob.callCount).to.equals(0);
+        }
+    };
+
+    it('Delete an organisation without events', async function () {
+
+        dbDsl.createNetworkingPlatform('3', {adminIds: ['1']});
+        dbDsl.mapNetworkingPlatformToCategory('3', {categoryIds: ['4', '5']});
+
+        dbDsl.createOrganization('2', {
+            networkingPlatformId: '1', adminIds: ['2'], created: 500,
+            organizationIdOnExternalNP: '222', name: 'organization2', description: 'description2', slogan: 'slogan2',
+            website: 'www.link2.org'
+        });
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1'], lastConfigUpdate: 502});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['3'], lastConfigUpdate: 502});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', categories: ['5'], lastConfigUpdate: 502});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 900});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
+
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0}).times(5)
+            .reply(200, {
+                organisations: [{id: '111', timestamp: 500}]
+            });
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 1}).times(5)
+            .reply(200, {organisations: []});
+
+        await dbDsl.sendToDb();
+        await counterOverflow(createJob);
+
+        await connectionHandler.startSync();
+        let resp = await db.cypher().match("(:NetworkingPlatform)-[:DELETED]->(org:Organization {organizationId: '2'})")
+            .optionalMatch(`(org)-[:EXPORT]->(exportedNp:NetworkingPlatform)`)
+            .optionalMatch(`(org)-[:DELETE_REQUEST]->(exportedDeleteNp:NetworkingPlatform)`)
+            .return(`org, count(DISTINCT exportedNp) AS numberOfExport,
+                     count(DISTINCT exportedDeleteNp) AS numberOfDeleteRequest`).end().send();
+
+        resp.length.should.equals(1);
+        resp[0].numberOfExport.should.equals(0);
+        resp[0].numberOfDeleteRequest.should.equals(1);
     });
 
     it('Delete an organisation with events', async function () {
@@ -83,15 +139,7 @@ describe('Delete an organisation because missing in import', function () {
             .reply(200, {organisations: []});
 
         await dbDsl.sendToDb();
-        for (let cycle = 1; cycle < 4; cycle++) {
-            await connectionHandler.startSync();
-            let resp = await db.cypher().match("(:NetworkingPlatform)-[counter:DELETE_COUNTER]->(org:Organization {organizationId: '2'})")
-                .return(`org, counter`).end().send();
-
-            resp.length.should.equals(1);
-            resp[0].counter.count.should.equals(cycle);
-            expect(createJob.callCount).to.equals(0);
-        }
+        await counterOverflow(createJob);
 
         await connectionHandler.startSync();
         let resp = await db.cypher().match("(:NetworkingPlatform)-[:DELETED]->(org:Organization {organizationId: '2'})")
