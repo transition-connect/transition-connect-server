@@ -32,7 +32,7 @@ let createNpEvent = function (uid, data) {
                               END:VCALENDAR`;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(organization:Organization {organizationId: {organizationId}})`)
-        .create(`(organization)-[:ORGANIZE]->(:Event {uid: {uid}, summary: {summary}, description: {description}, 
+        .create(`(organization)-[:EVENT]->(:Event {uid: {uid}, summary: {summary}, description: {description}, 
                   location: {location}, startDate: {startDate}, endDate: {endDate}, iCal: {iCal},
                   modifiedOnNp: {modifiedOnNp}})`)
         .end({
@@ -42,7 +42,20 @@ let createNpEvent = function (uid, data) {
         }).getCommand());
 };
 
+let exportEventToNp = function (data) {
+    data.created = data.created || 500;
+    data.lastExportTimestamp = data.lastExportTimestamp || null;
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(event:Event {uid: {uid}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(event)-[:EXPORT {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .end({
+            uid: data.uid, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp,
+            created: data.created
+        }).getCommand());
+};
+
 module.exports = {
     createWebsiteEvent,
-    createNpEvent
+    createNpEvent,
+    exportEventToNp
 };

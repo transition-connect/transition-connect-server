@@ -14,6 +14,7 @@ describe('Testing the import of organizations from external networking platform'
 
     let startTime, sandbox;
 
+    //@todo
     //Error testing
     //Imported category existing in tc
 
