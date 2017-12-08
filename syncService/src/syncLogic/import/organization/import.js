@@ -57,8 +57,9 @@ let addLocations = function (id, organization, platformId) {
         .delete(`rel, location`)
         .with(`DISTINCT org`)
         .unwind(`{locations} AS location`)
-        .merge(`(org)-[:HAS]->(:Location {address: location.address, description: location.description,
+        .create(`(orgLocation:Location {address: location.address, description: location.description,
                                           latitude: location.geo.latitude, longitude: location.geo.longitude})`)
+        .merge(`(org)-[:HAS]->(orgLocation)`)
         .end({
             id: id, platformId: platformId, locations: organization.locations
         });
