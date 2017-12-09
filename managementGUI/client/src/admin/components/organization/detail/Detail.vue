@@ -6,7 +6,7 @@
                 <h1 id="org-name">{{detail.organization.name}}</h1>
                 <div id="org-delete-info" v-show="detail.organization.isDeleted">Diese Organisation wird gelöscht</div>
                 <div v-if="detail.organization.isAdmin">
-                    <button type="button" class="btn btn-default" :disabled="!organizationLoaded"
+                    <button type="button" class="btn btn-default" :disabled="!organizationLoaded || detail.organization.isDeleted"
                             v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
                         Konfigurieren
                     </button>
