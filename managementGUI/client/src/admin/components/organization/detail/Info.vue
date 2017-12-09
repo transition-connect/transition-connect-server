@@ -50,7 +50,7 @@
         #org-detail-info-container {
             display: table;
             margin-top: 12px;
-            padding-bottom: 12px;
+            margin-bottom: 52px;
             .org-detail-row {
                 display: table-row;
                 .org-detail-title {

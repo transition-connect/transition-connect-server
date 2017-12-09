@@ -71,7 +71,7 @@
 
     #tc-detail-export-container {
         margin-top: 28px;
-        margin-bottom: 28px;
+        margin-bottom: 52px;
         #org-sync-container {
             margin-top: 18px;
             .sync-container {
@@ -82,6 +82,7 @@
                 .sync-name {
                     font-weight: 500;
                     font-size: 14px;
+                    color: $tc-default-color;
                     .original-name {
                         font-weight: 400;
                         font-size: 12px;

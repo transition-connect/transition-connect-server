@@ -49,6 +49,7 @@
                 .event-info-container {
                     padding: 6px;
                     .summary {
+                        color: $tc-default-color;
                         font-size: 14px;
                         font-weight: 500;
                     }

@@ -21,7 +21,7 @@
     @import "../../../../style/variable";
 
     #tc-detail-locations {
-        margin-bottom: 32px;
+        margin-bottom: 52px;
         #location-container {
             margin-top: 18px;
             .location {
@@ -32,6 +32,7 @@
                 .address {
                     font-size: 14px;
                     font-weight: 500;
+                    color: $tc-default-color;
                 }
                 .description {
                     margin-top: 4px;
