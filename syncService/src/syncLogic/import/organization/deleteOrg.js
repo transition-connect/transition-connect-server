@@ -29,7 +29,7 @@ let markEventOfOrgToDelete = function (platformId) {
 let markOrgToDelete = function (existingOrganizations, platformId) {
     return db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})-[:CREATED]->
                 (org:Organization)`)
-        .where(`NOT org.organizationIdOnExternalNP IN {existingOrganizations}`)
+        .where(`NOT org.organizationIdOnExternalNP IN {existingOrganizations} AND NOT (np)-[:DELETED]->(org)`)
         .merge(`(np)-[counter:DELETE_COUNTER]->(org)`)
         .onCreate(`SET counter.count = 1`)
         .onMatch(`SET counter.count = counter.count + 1`)
@@ -41,7 +41,8 @@ let markOrgToDelete = function (existingOrganizations, platformId) {
         .with(`org`)
         .match(`(org)-[exportRel:EXPORT]->(exportNp:NetworkingPlatform)`)
         .merge(`(org)-[deleteRel:DELETE_REQUEST]->(exportNp)`)
-        .addCommand(` SET deleteRel.lastExportTimestamp = exportRel.lastExportTimestamp`)
+        .addCommand(` SET deleteRel.lastExportTimestamp = exportRel.lastExportTimestamp, 
+                      deleteRel.created = exportRel.created`)
         .delete(`exportRel`)
         .return(`DISTINCT org.organizationId AS organizationId, org.name AS name`)
         .end({existingOrganizations: existingOrganizations, platformId: platformId}).getCommand();

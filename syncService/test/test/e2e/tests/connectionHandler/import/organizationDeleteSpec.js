@@ -40,7 +40,7 @@ describe('Delete an organisation because missing in import', function () {
 
         nock(`https://localhost.org`, {
             reqheaders: {'authorization': '1234'}
-        }).get('/api/v1/event').query({skip: 0})
+        }).get('/api/v1/event').query({skip: 0}).times(5)
             .reply(200, {events: []});
     });
 
@@ -74,7 +74,7 @@ describe('Delete an organisation because missing in import', function () {
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '1', categories: ['1'], lastConfigUpdate: 502});
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['3'], lastConfigUpdate: 502});
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', categories: ['5'], lastConfigUpdate: 502});
-        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 900});
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', lastExportTimestamp: 900, created: 502});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
 
         let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
@@ -96,13 +96,20 @@ describe('Delete an organisation because missing in import', function () {
         await connectionHandler.startSync();
         let resp = await db.cypher().match("(:NetworkingPlatform)-[:DELETED]->(org:Organization {organizationId: '2'})")
             .optionalMatch(`(org)-[:EXPORT]->(exportedNp:NetworkingPlatform)`)
-            .optionalMatch(`(org)-[:DELETE_REQUEST]->(exportedDeleteNp:NetworkingPlatform)`)
-            .return(`org, count(DISTINCT exportedNp) AS numberOfExport,
+            .optionalMatch(`(org)-[delRequest:DELETE_REQUEST]->(exportedDeleteNp:NetworkingPlatform)`)
+            .return(`org, delRequest, count(DISTINCT exportedNp) AS numberOfExport,
                      count(DISTINCT exportedDeleteNp) AS numberOfDeleteRequest`).end().send();
 
         resp.length.should.equals(1);
+        resp[0].delRequest.lastExportTimestamp.should.equals(900);
+        resp[0].delRequest.created.should.equals(502);
         resp[0].numberOfExport.should.equals(0);
         resp[0].numberOfDeleteRequest.should.equals(1);
+
+        await connectionHandler.startSync();
+        resp = await db.cypher().match("(:NetworkingPlatform)-[:DELETE_COUNTER]->(org:Organization {organizationId: '2'})")
+            .return(`org`).end().send();
+        resp.length.should.equals(0);
     });
 
     it('Delete an organisation with events', async function () {
