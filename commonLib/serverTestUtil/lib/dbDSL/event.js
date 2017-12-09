@@ -10,7 +10,8 @@ let createWebsiteEvent = function (uid, data) {
     data.startDate = data.startDate || 500;
     data.endDate = data.endDate || 600;
     data.iCal = data.iCal || `BEGIN:VCALENDAR
-                              END:VCALENDAR`;
+${uid}
+END:VCALENDAR`;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(organization:Organization {organizationId: {organizationId}})`)
         .create(`(organization)-[:WEBSITE_EVENT]->(:Event {uid: {uid}, summary: {summary}, description: {description}, 
@@ -29,7 +30,8 @@ let createNpEvent = function (uid, data) {
     data.startDate = data.startDate || 500;
     data.endDate = data.endDate || 600;
     data.iCal = data.iCal || `BEGIN:VCALENDAR
-                              END:VCALENDAR`;
+${uid}
+END:VCALENDAR`;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(organization:Organization {organizationId: {organizationId}})`)
         .create(`(organization)-[:EVENT]->(:Event {uid: {uid}, summary: {summary}, description: {description}, 
