@@ -49,7 +49,7 @@
                 .event-info-container {
                     padding: 6px;
                     .summary {
-                        font-size: 16px;
+                        font-size: 14px;
                         font-weight: 500;
                     }
                     .secondary-title {
@@ -65,7 +65,7 @@
                     border-top: 1px solid $divider;
                     margin-top: 6px;
                     padding: 6px;
-                    font-size: 14px;
+                    font-size: 12px;
                     .sync-title {
                         font-weight: 500;
                     }

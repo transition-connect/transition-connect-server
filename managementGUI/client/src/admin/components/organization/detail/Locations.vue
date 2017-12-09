@@ -30,7 +30,7 @@
                 margin-bottom: 12px;
                 padding: 6px;
                 .address {
-                    font-size: 16px;
+                    font-size: 14px;
                     font-weight: 500;
                 }
                 .description {

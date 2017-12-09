@@ -81,7 +81,7 @@
                 margin-bottom: 12px;
                 .sync-name {
                     font-weight: 500;
-                    font-size: 16px;
+                    font-size: 14px;
                     .original-name {
                         font-weight: 400;
                         font-size: 12px;
