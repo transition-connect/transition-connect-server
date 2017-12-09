@@ -264,6 +264,85 @@ describe('Testing the import of organizations from external networking platform'
         }).calledOnce).to.be.true;
     });
 
+    it('Import new organization only once when multiple times in list', async function () {
+
+        let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {
+                organisations: [{id: '1', timestamp: 500}, {id: '1', timestamp: 500}]
+            });
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 2})
+            .reply(200, {
+                organisations: []
+            });
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation/1')
+            .reply(200, {
+                name: 'organization1', description: 'description', slogan: 'slogan', website: 'www.link.org',
+                categories: ['idOnPlatform1', 'idOnPlatform2'], admins: ['usER2@irgendwo.ch', 'user3@irgendwo.ch'],
+                locations: [{
+                    address: 'address', description: 'descriptionLocation',
+                    geo: {latitude: 32.422422, longitude: -122.08585}
+                }]
+            });
+
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/organisation').query({skip: 0})
+            .reply(200, {organisations: []});
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)<-[:IS_ADMIN]-(admin:Admin)")
+            .with(`np, org, admin`).orderBy(`admin.email`)
+            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(np)`)
+            .optionalMatch(`(assigner)-[:ASSIGNED]->(category:Category)`)
+            .with(`np, org, collect(admin) AS admins, category`).orderBy(`category.categoryId`)
+            .optionalMatch(`(org)-[:HAS]->(location:Location)`)
+            .with(`np, org, admins, category, location`).orderBy(`location.address`)
+            .return(`np, org, admins, collect(DISTINCT category.categoryId) AS categories, collect(DISTINCT location) AS locations`)
+            .orderBy(`np.platformId, org.organizationIdOnExternalNP`).end().send();
+
+        resp.length.should.equals(1);
+        resp[0].np.platformId.should.equals('1');
+        resp[0].org.organizationIdOnExternalNP.should.equals('1');
+        resp[0].org.organizationId.should.exist;
+        resp[0].org.name.should.equals('organization1');
+        resp[0].org.description.should.equals('description');
+        resp[0].org.slogan.should.equals('slogan');
+        resp[0].org.website.should.equals('www.link.org');
+        resp[0].org.modifiedOnNp.should.equals(500);
+        resp[0].org.created.should.at.least(startTime);
+        resp[0].org.modified.should.at.least(startTime);
+        resp[0].admins.length.should.equals(2);
+        resp[0].admins[0].email.should.equals('user2@irgendwo.ch');
+        should.not.exist(resp[0].admins[0].sendInvitation);
+        resp[0].admins[1].email.should.equals('user3@irgendwo.ch');
+        should.not.exist(resp[0].admins[1].sendInvitation);
+        resp[0].categories.length.should.equals(2);
+        resp[0].categories[0].should.equals('1');
+        resp[0].categories[1].should.equals('2');
+        resp[0].locations.length.should.equals(1);
+        resp[0].locations[0].address.should.equals('address');
+        resp[0].locations[0].description.should.equals('descriptionLocation');
+        resp[0].locations[0].latitude.should.equals(32.422422);
+        resp[0].locations[0].longitude.should.equals(-122.08585);
+
+        expect(createJob.callCount).to.equals(1);
+        expect(createJob.withArgs('adminCreatedJob', {
+            org: 'organization1', password: resp[0].admins[1].password,
+            link: `http://localhost:8086/?email=user3%40irgendwo.ch&password=${resp[0].admins[1].password}`,
+            linkText: `http://localhost:8086/`, email: 'user3@irgendwo.ch'
+        }).calledOnce).to.be.true;
+    });
+
     it('Handling load of next organizations', async function () {
 
         let createJob = sandbox.stub(emailQueue, 'createImmediatelyJob');

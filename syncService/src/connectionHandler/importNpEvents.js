@@ -22,17 +22,17 @@ let importEvents = async function (npConfig) {
         do {
             numberOfLoop++;
             events = await adapter.getListEvents(npConfig.config.npApiUrl, skip, npConfig.config.token);
-            if (events && events.events && events.events.length > 0) {
-                let eventsToImport = await difference.getEventsToImport(events.events, npConfig.np.platformId);
+            if (events && events.length > 0) {
+                let eventsToImport = await difference.getEventsToImport(events, npConfig.np.platformId);
                 for (let event of eventsToImport) {
                     await importEvent(npConfig, event.uid, event.timestamp);
                 }
-                skip = skip + events.events.length;
+                skip = skip + events.length;
             }
             if (MAX_NUMBER_OF_LOOP <= numberOfLoop) {
                 logger.error(`Max loop ${MAX_NUMBER_OF_LOOP} exceeded for np ${npConfig.np.platformId}`);
             }
-        } while (events && events.events && events.events.length > 0 &&
+        } while (events && events.length > 0 &&
         MAX_NUMBER_OF_LOOP > numberOfLoop);
     } catch (error) {
         logger.error(`Error when connecting to ${npConfig.config.npApiUrl}`);

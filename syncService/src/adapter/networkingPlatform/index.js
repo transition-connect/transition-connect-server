@@ -1,10 +1,12 @@
 'use strict';
 
 let request = require('./../request');
+let _ = require('lodash');
 
-let getListOrganisations = function (host, skip, token) {
+let getListOrganisations = async function (host, skip, token) {
     let options = {uri: `${host}/api/v1/organisation`, qs: {skip: skip}, json: true};
-    return request.sendRequest(options, token);
+    let org = await request.sendRequest(options, token);
+    return _.uniqBy(org.organisations, 'id');
 };
 
 let importOrganisation = function (host, id, token) {
@@ -12,9 +14,10 @@ let importOrganisation = function (host, id, token) {
     return request.sendRequest(options, token);
 };
 
-let getListEvents = function (host, skip, token) {
+let getListEvents = async function (host, skip, token) {
     let options = {uri: `${host}/api/v1/event`, qs: {skip: skip}, json: true};
-    return request.sendRequest(options, token);
+    let events =  await request.sendRequest(options, token);
+    return _.uniqBy(events.events, 'uid');
 };
 
 let importEvent = function (host, uid, token) {
