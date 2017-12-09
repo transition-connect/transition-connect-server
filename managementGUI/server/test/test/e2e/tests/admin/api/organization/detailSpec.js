@@ -34,7 +34,7 @@ describe('Integration Tests for getting details of an organization', function ()
         return requestHandler.logout();
     });
 
-    it('Getting details of organization with Website Events (Export status NOT_EXPORTED and EXPORTED)', function () {
+    it('Getting details of organization with events and locations (Export status NOT_EXPORTED and EXPORTED)', function () {
 
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
         dbDsl.exportOrgToNp({organizationId: '2', npId: '2', created: 500, lastExportTimestamp: 504});
@@ -44,6 +44,9 @@ describe('Integration Tests for getting details of an organization', function ()
         dbDsl.createWebsiteEvent('2', {organizationId: '2', startDate: 502, endDate: 602});
         dbDsl.createWebsiteEvent('3', {organizationId: '1', startDate: 501, endDate: 601});
         dbDsl.createNpEvent('4', {organizationId: '2', startDate: 400, endDate: 405});
+
+        dbDsl.createLocation({organizationId: '2', address: 'address1', description: 'description1', latitude: 1, longitude: 2});
+        dbDsl.createLocation({organizationId: '2', address: 'address2', description: 'description2', latitude: 3, longitude: 4});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -97,6 +100,17 @@ END:VCALENDAR`);
             res.body.events[2].iCal.should.equals(`BEGIN:VCALENDAR
 4
 END:VCALENDAR`);
+
+            res.body.locations.length.should.equals(2);
+            res.body.locations[0].address.should.equals('address1');
+            res.body.locations[0].description.should.equals('description1');
+            res.body.locations[0].latitude.should.equals(1);
+            res.body.locations[0].longitude.should.equals(2);
+
+            res.body.locations[1].address.should.equals('address2');
+            res.body.locations[1].description.should.equals('description2');
+            res.body.locations[1].latitude.should.equals(3);
+            res.body.locations[1].longitude.should.equals(4);
 
             res.body.exportedNetworkingPlatforms.length.should.equals(2);
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');

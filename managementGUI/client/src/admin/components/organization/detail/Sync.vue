@@ -1,21 +1,18 @@
 <template>
     <div id="tc-detail-export-container">
-        <h2 class="sub-title">Sychronisation</h2>
-        <div class="export-header">
-            <div class="export-subtitle">{{numberOfExported + 1}} {{platformDescription}} synchronisiert</div>
-            <div class="export-subtitle" v-if="numberOfPendingExport > 0">{{numberOfPendingExport}} {{pendingExportDescription}} gestartet</div>
-            <div class="export-subtitle" v-if="numberOfRequestExport > 0">{{numberOfRequestExport}} {{requestExportDescription}} auf Freigabe</div>
-        </div>
-        <div class="sync-container">
-            <div class="sync-name">{{organization.createdNetworkingPlatformName}}
-                <span class="original-name">(Originale Plattform)</span></div>
-            <div class="org-created">{{organization.name}} wurde von dieser Plattform auf TC am {{organization.created}} erstellt.</div>
-            <sync-categories :categories="organization.categories"></sync-categories>
-        </div>
-        <div v-for="np in nps" class="sync-container">
-            <div class="sync-name">{{np.name}}</div>
-            <sync-status :status="np.status" :last-update="np.exportTimestamp"></sync-status>
-            <sync-categories :categories="np.categories"></sync-categories>
+        <h2 class="sub-title">Synchronisation Organisationsdaten</h2>
+        <div id="org-sync-container">
+            <div class="sync-container">
+                <div class="sync-name">{{organization.createdNetworkingPlatformName}}
+                    <span class="original-name">(Originale Plattform)</span></div>
+                <div class="org-created">{{organization.name}} wurde von dieser Plattform auf TC am {{organization.created}} erstellt.</div>
+                <sync-categories :categories="organization.categories"></sync-categories>
+            </div>
+            <div v-for="np in nps" class="sync-container">
+                <div class="sync-name">{{np.name}}</div>
+                <sync-status :status="np.status" :last-update="np.exportTimestamp"></sync-status>
+                <sync-categories :categories="np.categories"></sync-categories>
+            </div>
         </div>
     </div>
 </template>
@@ -74,30 +71,25 @@
 
     #tc-detail-export-container {
         margin-top: 28px;
-        .export-header {
-            margin-bottom: 24px;
-            .export-subtitle {
-                font-size: 14px;
-                margin-bottom: 6px;
-                color: $secondary-text;
-                font-weight: 500;
-            }
-        }
-        .sync-container {
-            border: 2px solid $divider;
-            border-radius: 6px;
-            padding: 6px;
-            margin-bottom: 12px;
-            .sync-name {
-                font-weight: 500;
-                font-size: 16px;
-                .original-name {
-                    font-weight: 400;
-                    font-size: 12px;
+        margin-bottom: 28px;
+        #org-sync-container {
+            margin-top: 18px;
+            .sync-container {
+                border: 2px solid $divider;
+                border-radius: 6px;
+                padding: 6px;
+                margin-bottom: 12px;
+                .sync-name {
+                    font-weight: 500;
+                    font-size: 16px;
+                    .original-name {
+                        font-weight: 400;
+                        font-size: 12px;
+                    }
                 }
-            }
-            .org-created {
-                margin-top: 6px;
+                .org-created {
+                    margin-top: 6px;
+                }
             }
         }
     }

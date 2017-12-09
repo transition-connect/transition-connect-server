@@ -1,6 +1,6 @@
 <template>
     <div id="tc-detail-events" v-show="events.length > 0">
-        <h2 class="sub-title">Veranstaltungen</h2>
+        <h2 class="sub-title">Synchronisation Veranstaltungen</h2>
         <div id="event-container">
             <div class="event" v-for="event in events">
                 <div class="event-info-container">

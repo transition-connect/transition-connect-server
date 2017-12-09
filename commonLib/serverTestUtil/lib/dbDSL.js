@@ -5,6 +5,7 @@ let category = require('./dbDSL/category');
 let networkingPlatform = require('./dbDSL/networkingPlatform');
 let organization = require('./dbDSL/organization');
 let organizationEvent = require('./dbDSL/event');
+let organizationLocation = require('./dbDSL/location');
 let db = require('./db');
 let dbConnectionHandling = require('./dbDSL/dbConnectionHandling');
 
@@ -30,5 +31,6 @@ module.exports = {
     exportDenyOrgToNp: organization.exportDenyOrgToNp,
     createNpEvent: organizationEvent.createNpEvent,
     createWebsiteEvent: organizationEvent.createWebsiteEvent,
-    exportEventToNp: organizationEvent.exportEventToNp
+    exportEventToNp: organizationEvent.exportEventToNp,
+    createLocation: organizationLocation.createLocation
 };

@@ -25,9 +25,10 @@
                 </div>
             </div>
             <info :organization="detail.organization"></info>
-            <events :events="detail.events"></events>
+            <locations :locations="detail.locations"></locations>
             <sync :nps="detail.exportedNetworkingPlatforms"
                   :organization="detail.organization"></sync>
+            <events :events="detail.events"></events>
         </div>
     </div>
 </template>
@@ -37,13 +38,14 @@
     import Breadcrumb from './../../../../utils/components/Breadcrumb.vue';
     import Info from './Info.vue';
     import Events from './Events.vue';
+    import Locations from './Locations.vue';
     import Sync from './Sync.vue';
     import moment from 'moment';
 
     export default {
-        components: {Breadcrumb, Info, Events, Sync},
+        components: {Breadcrumb, Info, Locations, Events, Sync},
         data: function () {
-            return {detail: {organization: {}, events: []}, organizationLoaded: false};
+            return {detail: {organization: {}, events: [], locations: []}, organizationLoaded: false};
         },
         created: function () {
             HTTP.get(`/admin/api/organization/detail`,
