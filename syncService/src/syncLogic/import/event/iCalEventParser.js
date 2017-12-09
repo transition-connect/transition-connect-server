@@ -21,6 +21,8 @@ let parseString = function (vEvent, property, isMandatory) {
     if (index !== -1) {
         let indexSeparator = vEvent.indexOf(':', index) + 1;
         result = vEvent.substring(indexSeparator, vEvent.indexOf('\n', index));
+        result = result.replace('\r', '');
+        result = result.replace('\n', '');
     } else if (isMandatory) {
         logger.error(`${property} in ${vEvent} not found`);
     }

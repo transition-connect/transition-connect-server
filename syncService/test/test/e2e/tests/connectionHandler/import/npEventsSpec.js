@@ -217,6 +217,53 @@ describe('Importing events from an external networking platform', function () {
                        END:VEVENT`);
     });
 
+    it('Import failed because parsed uid form ical and parameter uid are not the same', async function () {
+
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
+            .reply(200, {
+                events: [{uid: '1@example.org', timestamp: 500}]
+            });
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 1})
+            .reply(200, {events: []});
+
+        nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event/1@example.org')
+            .reply(200, {
+                idOrg: '1', timestamp: 500,
+                iCal: `BEGIN:VEVENT
+                       UID:12@example.org
+                       ORGANIZER;CN="Alice Balder, Example Inc.":MAILTO:alice@example.com
+                       LOCATION:Somewhere
+                       SUMMARY:Eine Kurzinfo
+                       CATEGORIES:social
+                       DESCRIPTION:Beschreibung des Termins
+                       DTSTART:20060910T220000Z
+                       DTEND:20060919T215900Z
+                       DTSTAMP:20060812T125900Z
+                       END:VEVENT`
+            });
+
+        nock(`https://localhost2.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).get('/api/v1/event').query({skip: 0})
+            .reply(200, {events: []});
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+        let resp = await db.cypher().match(" (np:NetworkingPlatform)-[:CREATED]->(org:Organization)-[:EVENT]->(event:Event)")
+            .return(`np, org, event`)
+            .orderBy(`event.uid`).end().send();
+
+        resp.length.should.equals(0);
+    });
+
     it('Do not import not modified event', async function () {
 
         dbDsl.createNpEvent('1@example.org', {organizationId: '10', modifiedOnNp: 500});

@@ -20,8 +20,12 @@ let saveEventToDb = async function (event, idOrg, timestamp) {
 let importEvent = async function (uid, timestamp, iCal, idOrg, platformId) {
     let events = parser.parseEvents(iCal);
     if (events.length === 1) {
-        await saveEventToDb(events[0], idOrg, timestamp);
-        logger.info(`For org ${idOrg} event ${uid} imported from networking platform`);
+        if (events[0].uid === uid) {
+            await saveEventToDb(events[0], idOrg, timestamp);
+            logger.info(`For org ${idOrg} event ${uid} imported from networking platform`);
+        } else {
+            logger.error(`Failed to import event ${uid}. Parsed uid ${events[0].uid} of event is not the same`);
+        }
     } else {
         logger.error(`Failed to parse iCal from project ${idOrg} / platform ${platformId}`);
     }
