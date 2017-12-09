@@ -16,6 +16,7 @@ let getDashboard = function (adminId) {
     let commands = [
         notification.getInitOrganisationNotification(adminId),
         notification.getAcceptOrgNotification(adminId),
+        notification.getDeletedOrganisationNotification(adminId),
         getOrganizations(adminId)];
     return db.cypher().match(`(np:NetworkingPlatform)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})`)
         .return(`np.name AS name, np.platformId AS platformId`)
@@ -24,7 +25,7 @@ let getDashboard = function (adminId) {
         .send(commands).then(function (resp) {
             return {
                 notification: notification.getNotificationResponse(resp[0],
-                    resp[1]), organization: resp[2], nps: resp[3]
+                    resp[1], resp[2]), organization: resp[3], nps: resp[4]
             };
         });
 };

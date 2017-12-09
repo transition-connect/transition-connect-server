@@ -3,14 +3,10 @@
 let dbDsl = require('server-test-util').dbDSL;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
-let moment = require('moment');
 
 describe('Getting notifications for an Administrator of an Organisation', function () {
 
-    let startTime;
-
     beforeEach(function () {
-        startTime = Math.floor(moment.utc().valueOf() / 1000);
         return dbDsl.init().then(function () {
             dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
             dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
@@ -42,6 +38,25 @@ describe('Getting notifications for an Administrator of an Organisation', functi
             res.body.notification[0].actionData.organizationName.should.equals('organization2Name');
             res.body.notification[0].actionData.organizationId.should.equals('2');
             res.body.notification[0].actionData.nameNetworkingPlatform.should.equals('Elyoos');
+        });
+    });
+
+    it('Notification showed when organization is deleted', function () {
+
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 500});
+        dbDsl.markDeleteOrganization('2');
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api');
+        }).then(function (res) {
+            res.status.should.equal(200);
+
+            res.body.notification.length.should.equals(1);
+            res.body.notification[0].action.should.equals('DELETED_ORGANISATION');
+            res.body.notification[0].actionData.organizationName.should.equals('organization2Name');
+            res.body.notification[0].actionData.organizationId.should.equals('2');
         });
     });
 });
