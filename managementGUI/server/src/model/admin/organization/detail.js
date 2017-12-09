@@ -65,7 +65,7 @@ let getOrganizationCommand = function (adminId, organizationId, language) {
 };
 
 let getEventsCommand = function (organizationId) {
-    return db.cypher().match(`(:Organization {organizationId: {organizationId}})-[:WEBSITE_EVENT]->(event:Event)`)
+    return db.cypher().match(`(:Organization {organizationId: {organizationId}})-[:WEBSITE_EVENT|EVENT]->(event:Event)`)
         .return(`event.uid AS uid, event.summary AS summary, event.description AS description, 
                  event.location AS location, event.startDate AS startDate, event.endDate AS endDate`)
         .orderBy(`event.endDate DESC`)

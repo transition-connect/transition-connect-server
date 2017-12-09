@@ -43,6 +43,7 @@ describe('Integration Tests for getting details of an organization', function ()
         dbDsl.createWebsiteEvent('1', {organizationId: '2', startDate: 500, endDate: 600});
         dbDsl.createWebsiteEvent('2', {organizationId: '2', startDate: 502, endDate: 602});
         dbDsl.createWebsiteEvent('3', {organizationId: '1', startDate: 501, endDate: 601});
+        dbDsl.createNpEvent('4', {organizationId: '2', startDate: 400, endDate: 405});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -66,7 +67,7 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
             res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
 
-            res.body.events.length.should.equals(2);
+            res.body.events.length.should.equals(3);
             res.body.events[0].uid.should.equals('2');
             res.body.events[0].summary.should.equals('event2Summary');
             res.body.events[0].description.should.equals('event2Description');
@@ -80,6 +81,13 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.events[1].location.should.equals('event1Location');
             res.body.events[1].startDate.should.equals(500);
             res.body.events[1].endDate.should.equals(600);
+
+            res.body.events[2].uid.should.equals('4');
+            res.body.events[2].summary.should.equals('event4Summary');
+            res.body.events[2].description.should.equals('event4Description');
+            res.body.events[2].location.should.equals('event4Location');
+            res.body.events[2].startDate.should.equals(400);
+            res.body.events[2].endDate.should.equals(405);
 
             res.body.exportedNetworkingPlatforms.length.should.equals(2);
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');
