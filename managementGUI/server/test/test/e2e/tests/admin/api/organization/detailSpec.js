@@ -74,6 +74,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.events[0].location.should.equals('event2Location');
             res.body.events[0].startDate.should.equals(502);
             res.body.events[0].endDate.should.equals(602);
+            res.body.events[0].iCal.should.equals(`BEGIN:VCALENDAR
+2
+END:VCALENDAR`);
 
             res.body.events[1].uid.should.equals('1');
             res.body.events[1].summary.should.equals('event1Summary');
@@ -81,6 +84,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.events[1].location.should.equals('event1Location');
             res.body.events[1].startDate.should.equals(500);
             res.body.events[1].endDate.should.equals(600);
+            res.body.events[1].iCal.should.equals(`BEGIN:VCALENDAR
+1
+END:VCALENDAR`);
 
             res.body.events[2].uid.should.equals('4');
             res.body.events[2].summary.should.equals('event4Summary');
@@ -88,6 +94,9 @@ describe('Integration Tests for getting details of an organization', function ()
             res.body.events[2].location.should.equals('event4Location');
             res.body.events[2].startDate.should.equals(400);
             res.body.events[2].endDate.should.equals(405);
+            res.body.events[2].iCal.should.equals(`BEGIN:VCALENDAR
+4
+END:VCALENDAR`);
 
             res.body.exportedNetworkingPlatforms.length.should.equals(2);
             res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');

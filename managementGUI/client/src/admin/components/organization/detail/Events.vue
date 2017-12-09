@@ -3,10 +3,14 @@
         <h2 class="sub-title">Veranstaltungen</h2>
         <div id="event-container">
             <div class="event" v-for="event in events">
-                <div class="summary">{{event.summary}}</div>
-                <div class="secondary-title">{{getDateTime(event.startDate, event.endDate)}}</div>
-                <div class="secondary-title">{{event.location}}</div>
-                <div class="description">{{event.description}}</div>
+                <div class="event-info-container">
+                    <div class="summary">{{event.summary}}</div>
+                    <div class="secondary-title">{{getDateTime(event.startDate, event.endDate)}}</div>
+                    <div class="secondary-title">{{event.location}}</div>
+                    <div class="description">{{event.description}}</div>
+                </div>
+                <div class="sync-info"><span class="sync-title">Wird synchronisiert nach:</span></div>
+                <event-ical :event="event"></event-ical>
             </div>
         </div>
     </div>
@@ -14,8 +18,10 @@
 
 <script>
     import moment from 'moment';
+    import EventIcal from './EventICal.vue';
 
     export default {
+        components: {EventIcal},
         props: ['events'],
         methods: {
             getDateTime: function (startDate, endDate) {
@@ -37,18 +43,32 @@
         #event-container {
             margin-top: 18px;
             .event {
+                border: 2px solid $divider;
+                border-radius: 6px;
                 margin-bottom: 12px;
-                .summary {
-                    font-weight: 400;
+                .event-info-container {
+                    padding: 6px;
+                    .summary {
+                        font-size: 16px;
+                        font-weight: 500;
+                    }
+                    .secondary-title {
+                        font-size: 12px;
+                        color: $secondary-text;
+                    }
+                    .description {
+                        margin-top: 4px;
+                        font-size: 14px;
+                    }
                 }
-                .secondary-title {
-                    font-size: 12px;
-                    color: $secondary-text;
-                }
-                .description {
-                    margin-top: 4px;
-                    font-size: 12px;
-                    //color: $secondary-text;
+                .sync-info {
+                    border-top: 1px solid $divider;
+                    margin-top: 6px;
+                    padding: 6px;
+                    font-size: 14px;
+                    .sync-title {
+                        font-weight: 500;
+                    }
                 }
             }
         }
