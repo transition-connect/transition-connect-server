@@ -5,9 +5,13 @@
             <div id="tc-detail-header">
                 <h1 id="org-name">{{detail.organization.name}}</h1>
                 <div v-if="detail.organization.isAdmin">
-                    <button type="button" class="btn btn-default"
+                    <button type="button" class="btn btn-default" :disabled="!organizationLoaded"
                             v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
                         Konfigurieren
+                    </button>
+                    <button type="button" class="btn btn-default" :disabled="!organizationLoaded"
+                            v-on:click="getDetailOfOrg()">
+                        Ansicht aktualisieren
                     </button>
                 </div>
                 <div v-else>
@@ -48,14 +52,7 @@
             return {detail: {organization: {}, events: [], locations: []}, organizationLoaded: false};
         },
         created: function () {
-            HTTP.get(`/admin/api/organization/detail`,
-                {params: {organizationId: this.$route.params.id, language: 'DE'}}).then((resp) => {
-                this.organizationLoaded = true;
-                this.detail = resp.data;
-                this.detail.organization.created = moment.unix(resp.data.organization.created).format('LLL')
-            }).catch(e => {
-                console.log(e);
-            })
+            this.getDetailOfOrg();
         },
         methods: {
             sendExportRequestStatus: function (accept, np) {
@@ -72,6 +69,17 @@
                     } else {
                         np.status = 'EXPORT_DENY';
                     }
+                }).catch(e => {
+                    console.log(e);
+                })
+            },
+            getDetailOfOrg: function () {
+                this.organizationLoaded = false;
+                HTTP.get(`/admin/api/organization/detail`,
+                    {params: {organizationId: this.$route.params.id, language: 'DE'}}).then((resp) => {
+                    this.organizationLoaded = true;
+                    this.detail = resp.data;
+                    this.detail.organization.created = moment.unix(resp.data.organization.created).format('LLL')
                 }).catch(e => {
                     console.log(e);
                 })
