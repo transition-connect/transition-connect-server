@@ -30,8 +30,9 @@ let setStatus = function (nps, orgModifiedTimestamp) {
     for (let np of nps) {
         if (np.exportType === 'EXPORT_REQUEST') {
             np.status = 'EXPORT_REQUESTED';
-        } else if (np.exportType === 'EXPORT_DENIED') {
-            np.status = 'EXPORT_DENIED';
+        } else if (np.exportType === 'EXPORT_DENIED' || np.exportType === 'DELETE_REQUEST' ||
+            np.exportType === 'DELETE_REQUEST_SUCCESS') {
+            np.status = np.exportType;
         } else if (!np.hasOwnProperty('lastExportTimestamp')) {
             np.status = 'NOT_EXPORTED';
         } else if (np.lastExportTimestamp < orgModifiedTimestamp ||
@@ -60,6 +61,7 @@ let getOrganizationCommand = function (adminId, organizationId, language) {
         .return(`org.name AS name, org.slogan AS slogan, org.description AS description, org.website AS website,
                  org.created AS created, org.modified AS modified, np.name AS createdNetworkingPlatformName,
                  categories, COLLECT(admin.email) AS administrators,
+                 EXISTS((np)-[:DELETED]->(org)) AS isDeleted,
                  EXISTS((org)<-[:IS_ADMIN]-(:Admin {adminId: {adminId}})) AS isAdmin`)
         .end({adminId: adminId, organizationId: organizationId, language: language}).getCommand();
 };
@@ -88,7 +90,7 @@ let getDetails = function (adminId, organizationId, language, req) {
         commands.push(getEventsCommand(organizationId));
         commands.push(getLocationsCommand(organizationId));
 
-        return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST|EXPORT_DENIED]
+        return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST|EXPORT_DENIED|DELETE_REQUEST|DELETE_REQUEST_SUCCESS]
                                    -(org:Organization {organizationId: {organizationId}})`)
             .with(`np, export, org`)
             .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(:Category)

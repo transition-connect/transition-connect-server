@@ -4,6 +4,7 @@
             <breadcrumb :breadcrumbs="[{name: 'Organisation'}, {name: 'Übersicht'}]"></breadcrumb>
             <div id="tc-detail-header">
                 <h1 id="org-name">{{detail.organization.name}}</h1>
+                <div id="org-delete-info" v-show="detail.organization.isDeleted">Diese Organisation wird gelöscht</div>
                 <div v-if="detail.organization.isAdmin">
                     <button type="button" class="btn btn-default" :disabled="!organizationLoaded"
                             v-on:click="$router.push({name: 'orgConfig', params: {id: $route.params.id}})">
@@ -111,6 +112,12 @@
                     font-weight: 500;
                     padding-bottom: 6px;
                     color: #337ab7;
+                }
+                #org-delete-info {
+                    font-weight: 500;
+                    font-size: 18px;
+                    color: $error;
+                    margin-bottom: 18px;
                 }
             }
             .sub-title {

@@ -4,6 +4,17 @@
 let db = require('server-lib').neo4j;
 let logger = require('server-lib').logging.getLogger(__filename);
 
+let exportOfOrgToDeleteRequest = function (platformId) {
+    return db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})-[:DELETED]->
+                (org:Organization)-[exportRel:EXPORT]->(exportNp:NetworkingPlatform)`)
+        .merge(`(org)-[deleteRel:DELETE_REQUEST]->(exportNp)`)
+        .addCommand(` SET deleteRel.lastExportTimestamp = exportRel.lastExportTimestamp, 
+                      deleteRel.created = exportRel.created`)
+        .delete(`exportRel`)
+        .end({platformId: platformId}).getCommand();
+
+};
+
 let deleteNotExportedRelationships = function (platformId) {
     return db.cypher().match(`(:NetworkingPlatform {platformId: {platformId}})-[:DELETED]->
                 (org:Organization)`)
@@ -37,13 +48,6 @@ let markOrgToDelete = function (existingOrganizations, platformId) {
         .where(`counter.count > 3`)
         .delete(`counter`)
         .merge(`(np)-[:DELETED]->(org)`)
-        //Delete all export relationships to networking platform
-        .with(`org`)
-        .match(`(org)-[exportRel:EXPORT]->(exportNp:NetworkingPlatform)`)
-        .merge(`(org)-[deleteRel:DELETE_REQUEST]->(exportNp)`)
-        .addCommand(` SET deleteRel.lastExportTimestamp = exportRel.lastExportTimestamp, 
-                      deleteRel.created = exportRel.created`)
-        .delete(`exportRel`)
         .return(`DISTINCT org.organizationId AS organizationId, org.name AS name`)
         .end({existingOrganizations: existingOrganizations, platformId: platformId}).getCommand();
 
@@ -51,7 +55,9 @@ let markOrgToDelete = function (existingOrganizations, platformId) {
 
 let handlingDeleteOrg = async function (existingOrganizations, platformId) {
     return await deleteNotExportedRelationships(platformId)
-        .send([markOrgToDelete(existingOrganizations, platformId), markEventOfOrgToDelete(platformId)]);
+        .send([markOrgToDelete(existingOrganizations, platformId),
+            markEventOfOrgToDelete(platformId),
+            exportOfOrgToDeleteRequest(platformId)]);
 };
 
 let informAdministratorOrgDeleted = async function (orgsDeleted) {

@@ -34,6 +34,13 @@ let createOrganization = function (organizationId, data) {
         }).getCommand());
 };
 
+let deleteOrganization = function (organizationId) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization {organizationId: {organizationId}})`)
+        .merge(`(np)-[:DELETED]->(org)`)
+        .end({organizationId: organizationId}).getCommand());
+};
+
 let assignOrganizationToCategory = function (data) {
     data.lastConfigUpdate = data.lastConfigUpdate || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
@@ -81,10 +88,35 @@ let exportDenyOrgToNp = function (data) {
         }).getCommand());
 };
 
+let exportDeleteRequestToNp = function (data) {
+    data.lastExportTimestamp = data.lastExportTimestamp || null;
+    data.created = data.created || 500;
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:DELETE_REQUEST {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .end({
+            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp, created: data.created
+        }).getCommand());
+};
+
+let exportDeleteSuccessToNp = function (data) {
+    data.lastExportTimestamp = data.lastExportTimestamp || null;
+    data.created = data.created || 500;
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:DELETE_REQUEST_SUCCESS {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .end({
+            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp, created: data.created
+        }).getCommand());
+};
+
 module.exports = {
     createOrganization,
+    deleteOrganization,
     assignOrganizationToCategory,
     exportOrgToNp,
     exportRequestOrgToNp,
-    exportDenyOrgToNp
+    exportDenyOrgToNp,
+    exportDeleteRequestToNp,
+    exportDeleteSuccessToNp
 };

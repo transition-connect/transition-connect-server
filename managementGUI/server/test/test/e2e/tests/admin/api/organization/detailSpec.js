@@ -132,6 +132,106 @@ END:VCALENDAR`);
         });
     });
 
+    it('Getting details of an deleted organization with events and locations ', function () {
+
+        dbDsl.markDeleteOrganization('2');
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
+        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '2', lastExportTimestamp: 504, created: 500});
+        dbDsl.exportDeleteSuccessToNp({organizationId: '2', npId: '3', created: 501});
+
+        dbDsl.createWebsiteEvent('1', {organizationId: '2', startDate: 500, endDate: 600});
+        dbDsl.createWebsiteEvent('2', {organizationId: '2', startDate: 502, endDate: 602});
+        dbDsl.createWebsiteEvent('3', {organizationId: '1', startDate: 501, endDate: 601});
+        dbDsl.createNpEvent('4', {organizationId: '2', startDate: 400, endDate: 405});
+
+        dbDsl.createLocation({organizationId: '2', address: 'address1', description: 'description1', latitude: 1, longitude: 2});
+        dbDsl.createLocation({organizationId: '2', address: 'address2', description: 'description2', latitude: 3, longitude: 4});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.get('/admin/api/organization/detail',
+                {organizationId: '2', language: 'DE'});
+        }).then(function (res) {
+            res.status.should.equal(200);
+
+            res.body.organization.name.should.equals('organization2Name');
+            res.body.organization.isAdmin.should.equals(true);
+            res.body.organization.isDeleted.should.equals(true);
+            res.body.organization.created.should.equals(502);
+            res.body.organization.slogan.should.equals('best2Org');
+            res.body.organization.description.should.equals('org2description');
+            res.body.organization.website.should.equals('www.link2.org');
+            res.body.organization.createdNetworkingPlatformName.should.equals('Elyoos');
+            res.body.organization.categories.length.should.equals(2);
+            res.body.organization.categories[0].should.equals('Deutsch1');
+            res.body.organization.categories[1].should.equals('Deutsch6');
+            res.body.organization.administrators.length.should.equals(2);
+            res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
+            res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
+
+            res.body.events.length.should.equals(3);
+            res.body.events[0].uid.should.equals('2');
+            res.body.events[0].summary.should.equals('event2Summary');
+            res.body.events[0].description.should.equals('event2Description');
+            res.body.events[0].location.should.equals('event2Location');
+            res.body.events[0].startDate.should.equals(502);
+            res.body.events[0].endDate.should.equals(602);
+            res.body.events[0].iCal.should.equals(`BEGIN:VCALENDAR
+2
+END:VCALENDAR`);
+
+            res.body.events[1].uid.should.equals('1');
+            res.body.events[1].summary.should.equals('event1Summary');
+            res.body.events[1].description.should.equals('event1Description');
+            res.body.events[1].location.should.equals('event1Location');
+            res.body.events[1].startDate.should.equals(500);
+            res.body.events[1].endDate.should.equals(600);
+            res.body.events[1].iCal.should.equals(`BEGIN:VCALENDAR
+1
+END:VCALENDAR`);
+
+            res.body.events[2].uid.should.equals('4');
+            res.body.events[2].summary.should.equals('event4Summary');
+            res.body.events[2].description.should.equals('event4Description');
+            res.body.events[2].location.should.equals('event4Location');
+            res.body.events[2].startDate.should.equals(400);
+            res.body.events[2].endDate.should.equals(405);
+            res.body.events[2].iCal.should.equals(`BEGIN:VCALENDAR
+4
+END:VCALENDAR`);
+
+            res.body.locations.length.should.equals(2);
+            res.body.locations[0].address.should.equals('address1');
+            res.body.locations[0].description.should.equals('description1');
+            res.body.locations[0].latitude.should.equals(1);
+            res.body.locations[0].longitude.should.equals(2);
+
+            res.body.locations[1].address.should.equals('address2');
+            res.body.locations[1].description.should.equals('description2');
+            res.body.locations[1].latitude.should.equals(3);
+            res.body.locations[1].longitude.should.equals(4);
+
+            res.body.exportedNetworkingPlatforms.length.should.equals(2);
+            res.body.exportedNetworkingPlatforms[0].name.should.equals('Elyoos3');
+            res.body.exportedNetworkingPlatforms[0].platformId.should.equals('3');
+            res.body.exportedNetworkingPlatforms[0].description.should.equals('description3');
+            res.body.exportedNetworkingPlatforms[0].link.should.equals('www.npLink3.org');
+            res.body.exportedNetworkingPlatforms[0].status.should.equals('DELETE_REQUEST_SUCCESS');
+            res.body.exportedNetworkingPlatforms[0].categories.length.should.equals(2);
+            res.body.exportedNetworkingPlatforms[0].categories[0].should.equals('Deutsch13');
+            res.body.exportedNetworkingPlatforms[0].categories[1].should.equals('Deutsch14');
+
+            res.body.exportedNetworkingPlatforms[1].name.should.equals('Elyoos2');
+            res.body.exportedNetworkingPlatforms[1].platformId.should.equals('2');
+            res.body.exportedNetworkingPlatforms[1].description.should.equals('description2');
+            res.body.exportedNetworkingPlatforms[1].link.should.equals('www.npLink2.org');
+            res.body.exportedNetworkingPlatforms[1].status.should.equals('DELETE_REQUEST');
+            res.body.exportedNetworkingPlatforms[1].categories.length.should.equals(1);
+            res.body.exportedNetworkingPlatforms[1].categories[0].should.equals('Deutsch10');
+        });
+    });
+
     it('Getting details of organization (Status EXPORT_UPDATE_NEEDED because config of org has been changed)', function () {
 
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10'], lastConfigUpdate: 506});
