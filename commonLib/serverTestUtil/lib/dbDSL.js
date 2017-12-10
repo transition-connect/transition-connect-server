@@ -26,6 +26,7 @@ module.exports = {
     mapNetworkingPlatformToCategory: networkingPlatform.mapNetworkingPlatformToCategory,
     createOrganization: organization.createOrganization,
     markDeleteOrganization: organization.deleteOrganization,
+    deleteCounterOrganization: organization.deleteCounterOrganization,
     assignOrganizationToCategory: organization.assignOrganizationToCategory,
     exportOrgToNp: organization.exportOrgToNp,
     exportRequestOrgToNp: organization.exportRequestOrgToNp,

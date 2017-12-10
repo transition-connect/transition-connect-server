@@ -3,6 +3,7 @@
 let difference = requireSyncLogic('import/organization/difference');
 let importOrg = requireSyncLogic('import/organization/import');
 let deleteOrg = requireSyncLogic('import/organization/deleteOrg');
+let reopenOrg = requireSyncLogic('import/organization/reopenOrg');
 let adapter = requireAdapter('networkingPlatform/index');
 let _ = require('lodash');
 let logger = require('server-lib').logging.getLogger(__filename);
@@ -25,12 +26,14 @@ let importOrganizations = async function (npConfig) {
             numberOfLoop++;
             organizations = await adapter.getListOrganisations(npConfig.config.npApiUrl, skip, npConfig.config.token);
             if (organizations && organizations.length > 0) {
+                let orgIds = _.map(organizations, 'id');
+                await reopenOrg.reopen(orgIds, npConfig.np.platformId);
                 let organizationsToImport = await difference.getOrgToImport(organizations, npConfig.np.platformId);
                 for (let org of organizationsToImport) {
                     await importOrganization(npConfig, org.id, org.timestamp);
                 }
                 skip = skip + organizations.length;
-                existingOrg = [...existingOrg, ..._.map(organizations, 'id')];
+                existingOrg = [...existingOrg, ...orgIds];
             }
             if (MAX_NUMBER_OF_LOOP <= numberOfLoop) {
                 logger.error(`Max loop ${MAX_NUMBER_OF_LOOP} exceeded for np ${npConfig.np.platformId}`);

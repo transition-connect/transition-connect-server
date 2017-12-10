@@ -41,6 +41,13 @@ let deleteOrganization = function (organizationId) {
         .end({organizationId: organizationId}).getCommand());
 };
 
+let deleteCounterOrganization = function (organizationId, data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(np:NetworkingPlatform)-[:CREATED]->(org:Organization {organizationId: {organizationId}})`)
+        .merge(`(np)-[:DELETE_COUNTER {count: {count}}]->(org)`)
+        .end({organizationId: organizationId, count: data.count}).getCommand());
+};
+
 let assignOrganizationToCategory = function (data) {
     data.lastConfigUpdate = data.lastConfigUpdate || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
@@ -100,19 +107,19 @@ let exportDeleteRequestToNp = function (data) {
 };
 
 let exportDeleteSuccessToNp = function (data) {
-    data.lastExportTimestamp = data.lastExportTimestamp || null;
     data.created = data.created || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:DELETE_REQUEST_SUCCESS {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .createUnique(`(org)-[:DELETE_REQUEST_SUCCESS { created: {created}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp, created: data.created
+            organizationId: data.organizationId, npId: data.npId, created: data.created
         }).getCommand());
 };
 
 module.exports = {
     createOrganization,
     deleteOrganization,
+    deleteCounterOrganization,
     assignOrganizationToCategory,
     exportOrgToNp,
     exportRequestOrgToNp,
