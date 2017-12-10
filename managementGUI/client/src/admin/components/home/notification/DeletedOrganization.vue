@@ -1,9 +1,9 @@
 <template>
     <div class="init-organisation">
         <div class="action-title">
-            Die Organisation <router-link :to="{name: 'orgConfig', params: {id: actionData.organizationId}}">
+            Die Organisation <router-link :to="{name: 'orgDetail', params: {id: actionData.organizationId}}">
                 {{actionData.organizationName}}
-            </router-link> wurde gelöscht
+            </router-link> wird gelöscht
         </div>
         <div class="notification-commands">
             <button type="button" class="btn btn-default"
