@@ -44,11 +44,22 @@ let deleteOrganization = function (id, host, token) {
     return request.sendRequest(options, token);
 };
 
+let exportEvent = async function (orgId, uid, firstExport, iCal, host, token) {
+    let options;
+    if (firstExport) {
+        options = {method: 'POST', url: `${host}/api/v1/event`, json: {orgId: orgId, iCal: iCal}};
+    } else {
+        options = {method: 'PUT', url: `${host}/api/v1/event/${uid}`, json: {iCal: iCal}};
+    }
+    return await request.sendRequest(options, token);
+};
+
 module.exports = {
     getListOrganisations,
     importOrganisation,
     getListEvents,
     importEvent,
     exportOrganization,
-    deleteOrganization
+    deleteOrganization,
+    exportEvent
 };
