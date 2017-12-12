@@ -65,13 +65,14 @@ let assignOrganizationToCategory = function (data) {
 
 let exportOrgToNp = function (data) {
     data.created = data.created || 500;
+    data.idOnExportedNp = data.idOnExportedNp || null;
     data.lastExportTimestamp = data.lastExportTimestamp || null;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:EXPORT {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .createUnique(`(org)-[:EXPORT {lastExportTimestamp: {lastExportTimestamp}, id: {idOnExportedNp}, created: {created}}]->(np)`)
         .end({
             organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp,
-            created: data.created
+            created: data.created, idOnExportedNp: data.idOnExportedNp
         }).getCommand());
 };
 
