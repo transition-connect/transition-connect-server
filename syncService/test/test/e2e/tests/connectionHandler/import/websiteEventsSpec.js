@@ -46,7 +46,7 @@ describe('Integration Tests for importing events from a website in iCal format',
                 DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
                 UID:0c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T150112Z
-                DESCRIPTION:Hat was mit TC zu tun
+                DESCRIPTION:Hat was mit TC zu tun\nGanz viel
                 LAST-MODIFIED:20171025T150112Z
                 LOCATION:Irgendwo in Zürich
                 SEQUENCE:0
@@ -77,7 +77,7 @@ describe('Integration Tests for importing events from a website in iCal format',
 
         resp.length.should.equals(2);
         resp[0].event.uid.should.equals('0c6ckli6gauhsp76ju1vl065dd@google.com');
-        resp[0].event.description.should.equals('Hat was mit TC zu tun');
+        resp[0].event.description.should.equals('Hat was mit TC zu tun\nGanz viel');
         resp[0].event.summary.should.equals('Event1 Test');
         resp[0].event.location.should.equals('Irgendwo in Zürich');
         resp[0].event.startDate.should.equals(normalStartUtcTimestamp);
@@ -87,7 +87,7 @@ describe('Integration Tests for importing events from a website in iCal format',
                 DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
                 UID:0c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T150112Z
-                DESCRIPTION:Hat was mit TC zu tun
+                DESCRIPTION:Hat was mit TC zu tun\nGanz viel
                 LAST-MODIFIED:20171025T150112Z
                 LOCATION:Irgendwo in Zürich
                 SEQUENCE:0

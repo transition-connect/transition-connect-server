@@ -1,6 +1,7 @@
 'use strict';
 
 let moment = require('moment');
+let iCalProperties = require('./iCalProperties');
 let iCalDateParser = require('ical-date-parser');
 let logger = require('server-lib').logging.getLogger(__filename);
 
@@ -11,6 +12,7 @@ const UID = 'UID:';
 const SUMMARY = 'SUMMARY:';
 const DESCRIPTION = 'DESCRIPTION:';
 const LOCATION = 'LOCATION:';
+const GEO = 'GEO:';
 const START_DATE_EVENT = 'DTSTART';
 const END_DATE_EVENT = 'DTEND';
 const START_DATE_VALUE_EVENT = 'DTSTART;VALUE=DATE';
@@ -29,6 +31,48 @@ let parseString = function (vEvent, property, isMandatory) {
     return result;
 };
 
+let multiIncludes = function (text, values) {
+    let regExp = new RegExp(values.join('|'));
+    return regExp.test(text);
+};
+
+let parseDescription = function (vEvent) {
+    let index = vEvent.indexOf(DESCRIPTION), description = null;
+    if (index !== -1) {
+        let indexSeparator = vEvent.indexOf(':', index) + 1;
+        let lines = vEvent.substring(indexSeparator).split('\n');
+        description = [lines[0]];
+        lines.shift();
+        for (let line of lines) {
+            if (multiIncludes(line, iCalProperties) || multiIncludes(line, ['VEVENT'])) {
+                break;
+            } else {
+                description.push(line);
+            }
+        }
+        description = description.join('\n');
+    }
+    return description;
+};
+
+let parseGeo = function (vEvent, uid) {
+    let index = vEvent.indexOf(GEO), geo = null;
+    if (index !== -1) {
+        let indexSeparator = vEvent.indexOf(':', index) + 1;
+        let lastIndexLine = vEvent.indexOf('\n', index);
+        let geoCoordinates = vEvent.substring(indexSeparator, lastIndexLine).split(';');
+        if (geoCoordinates.length === 2) {
+            geo = {
+                latitude: parseFloat(geoCoordinates[0]),
+                longitude: parseFloat(geoCoordinates[1])
+            };
+        } else {
+            logger.error(`Wrong geo coordinates ${geoCoordinates.join(';')} for event ${uid}`);
+        }
+    }
+    return geo;
+};
+
 let parseDate = function (vEvent, property, valueProperty, isMandatory) {
     let result = parseString(vEvent, valueProperty, false);
     if (result === null) {
@@ -40,13 +84,17 @@ let parseDate = function (vEvent, property, valueProperty, isMandatory) {
     return moment.utc(iCalDateParser(result)).valueOf() / 1000;
 };
 
-let setEventProperties = function (event, vEvent) {
+let parseEvent = function (vEvent) {
+    let event = {};
     event.uid = parseString(vEvent, UID, true);
     event.summary = parseString(vEvent, SUMMARY, true);
-    event.description = parseString(vEvent, DESCRIPTION, false);
-    event.location = parseString(vEvent, LOCATION, true);
+    event.description = parseDescription(vEvent);
+    event.location = parseString(vEvent, LOCATION, false);
+    event.geo = parseGeo(vEvent, event.uid);
     event.startDate = parseDate(vEvent, START_DATE_EVENT, START_DATE_VALUE_EVENT, true);
     event.endDate = parseDate(vEvent, END_DATE_EVENT, END_DATE_VALUE_EVENT, true);
+    event.iCal = vEvent;
+    return event;
 };
 
 let parseEvents = function (iCal) {
@@ -56,9 +104,7 @@ let parseEvents = function (iCal) {
         endIndex = iCal.indexOf(END_EVENT, endIndex);
         if (startIndex !== -1 && endIndex !== -1) {
             endIndex = endIndex + END_EVENT.length;
-            let event = {iCal: iCal.substring(startIndex, endIndex)};
-            setEventProperties(event, event.iCal);
-            events.push(event);
+            events.push(parseEvent(iCal.substring(startIndex, endIndex)));
             startIndex = endIndex;
         }
     }
