@@ -97,13 +97,14 @@ let exportDenyOrgToNp = function (data) {
 };
 
 let exportDeleteRequestToNp = function (data) {
-    data.lastExportTimestamp = data.lastExportTimestamp || null;
     data.created = data.created || 500;
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
-        .createUnique(`(org)-[:DELETE_REQUEST {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .createUnique(`(org)-[:DELETE_REQUEST {lastExportTimestamp: {lastExportTimestamp}, 
+                       id: {idOnExportedNp}, created: {created}}]->(np)`)
         .end({
-            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp, created: data.created
+            organizationId: data.organizationId, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp,
+            created: data.created, idOnExportedNp: data.idOnExportedNp
         }).getCommand());
 };
 

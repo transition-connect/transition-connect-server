@@ -38,8 +38,6 @@ describe('Export organizations to an external networking platform', function () 
     afterEach(function () {
         nock.cleanAll();
     });
-    // (Delete organization because sync has been disabled by organization administrator)
-    // (Delete organization because sync has been disabled by networking platform administrator)
 
     it('Export organization for first time without locations', async function () {
 

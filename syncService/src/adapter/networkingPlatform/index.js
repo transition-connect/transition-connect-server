@@ -39,10 +39,16 @@ let exportOrganization = async function (orgToExport, firstExport, idForExport, 
     return {id: resp.id};
 };
 
+let deleteOrganization = function (id, host, token) {
+    let options = {method: 'DELETE', uri: `${host}/api/v1/organisation/${id}`, json: true};
+    return request.sendRequest(options, token);
+};
+
 module.exports = {
     getListOrganisations,
     importOrganisation,
     getListEvents,
     importEvent,
-    exportOrganization
+    exportOrganization,
+    deleteOrganization
 };

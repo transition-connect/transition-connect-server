@@ -90,8 +90,7 @@ describe('Import of previously deleted organisations', function () {
     it('Change DELETE_REQUEST relationship to EXPORT when organization is listed', async function () {
 
         dbDsl.markDeleteOrganization(`1`);
-        dbDsl.exportDeleteRequestToNp({organizationId: '1', npId: '2', lastExportTimestamp: 501, created: 400});
-        dbDsl.exportDeleteRequestToNp({organizationId: '1', npId: '3', created: 401});
+        dbDsl.exportDeleteRequestToNp({organizationId: '1', npId: '2', lastExportTimestamp: 501, idOnExportedNp: '555', created: 400});
 
         nock(`https://localhost.org`, {
             reqheaders: {'authorization': '1234'}
@@ -108,14 +107,11 @@ describe('Import of previously deleted organisations', function () {
         let resp = await db.cypher().match("(:Organization {organizationId: '1'})-[export:EXPORT]->(np:NetworkingPlatform)")
             .return(`export, np`).orderBy(`export.created`).end().send();
 
-        resp.length.should.equals(2);
+        resp.length.should.equals(1);
         resp[0].np.platformId.should.equals('2');
         resp[0].export.lastExportTimestamp.should.equals(501);
+        resp[0].export.id.should.equals('555');
         resp[0].export.created.should.equals(400);
-
-        resp[1].np.platformId.should.equals('3');
-        should.not.exist(resp[1].export.lastExportTimestamp);
-        resp[1].export.created.should.equals(401);
 
         resp = await db.cypher().match("(:Organization {organizationId: '1'})-[:DELETE_REQUEST]->(np:NetworkingPlatform)")
             .return(`np`).end().send();
@@ -146,10 +142,12 @@ describe('Import of previously deleted organisations', function () {
         resp.length.should.equals(2);
         resp[0].np.platformId.should.equals('2');
         should.not.exist(resp[0].export.lastExportTimestamp);
+        should.not.exist(resp[0].export.id);
         resp[0].export.created.should.equals(400);
 
         resp[1].np.platformId.should.equals('3');
         should.not.exist(resp[1].export.lastExportTimestamp);
+        should.not.exist(resp[1].export.id);
         resp[1].export.created.should.equals(401);
 
         resp = await db.cypher().match("(:Organization {organizationId: '1'})-[:DELETE_REQUEST_SUCCESS]->(np:NetworkingPlatform)")

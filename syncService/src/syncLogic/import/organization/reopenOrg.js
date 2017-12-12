@@ -24,7 +24,8 @@ let reopenOrganization = function (orgIds, platformId) {
         .with(`org`)
         .match(`(org)-[deleteRel:DELETE_REQUEST|DELETE_REQUEST_SUCCESS]->(np:NetworkingPlatform)`)
         .merge(`(org)-[export:EXPORT]->(np)`)
-        .addCommand(` SET export.created = deleteRel.created, export.lastExportTimestamp = deleteRel.lastExportTimestamp`)
+        .addCommand(` SET export.created = deleteRel.created, export.lastExportTimestamp = deleteRel.lastExportTimestamp,
+                      export.id = deleteRel.id`)
         .delete(`deleteRel`)
         .end({orgIds: orgIds, platformId: platformId});
 };
