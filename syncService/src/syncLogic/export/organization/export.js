@@ -3,7 +3,6 @@
 let db = require('server-lib').neo4j;
 let _ = require(`lodash`);
 let time = require('server-lib').time;
-let logger = require('server-lib').logging.getLogger(__filename);
 
 
 let getLocation = function (locations) {
@@ -50,7 +49,6 @@ let getExportData = function (orgsToExport) {
 };
 
 let getOrganizationsToExport = async function (platformId) {
-
     let orgsToExport = await db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})
                         <-[exportRel:EXPORT]-(org:Organization)-[:ASSIGNED]->(assigner:CategoryAssigner)
                         -[:ASSIGNED]->(:NetworkingPlatform {platformId: {platformId}})`)
@@ -69,7 +67,6 @@ let getOrganizationsToExport = async function (platformId) {
 };
 
 let setOrganizationAsExported = async function (orgIdOnExportedPlatform, organizationId, platformId) {
-
     await db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})
                         <-[exportRel:EXPORT|DELETE_REQUEST]-(org:Organization {organizationId: {organizationId}})`)
         .set(`exportRel`, {lastExportTimestamp: time.getNowUtcTimestamp(), id: orgIdOnExportedPlatform})

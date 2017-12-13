@@ -58,8 +58,20 @@ let exportEventToNp = function (data) {
         }).getCommand());
 };
 
+let exportEventDeleteRequestToNp = function (data) {
+    data.created = data.created || 500;
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(event:Event {uid: {uid}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(event)-[:DELETE_REQUEST {lastExportTimestamp: {lastExportTimestamp}, created: {created}}]->(np)`)
+        .end({
+            uid: data.uid, npId: data.npId, lastExportTimestamp: data.lastExportTimestamp,
+            created: data.created
+        }).getCommand());
+};
+
 module.exports = {
     createWebsiteEvent,
     createNpEvent,
-    exportEventToNp
+    exportEventToNp,
+    exportEventDeleteRequestToNp
 };

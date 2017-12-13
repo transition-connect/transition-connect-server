@@ -2,7 +2,7 @@
 
 let adapter = requireAdapter('networkingPlatform/index');
 let exportEvent = requireSyncLogic('export/event/export');
-//let deleteOrg = requireSyncLogic('export/organization/delete');
+let deleteEvent = requireSyncLogic('export/event/delete');
 let logger = require('server-lib').logging.getLogger(__filename);
 
 let exportModifiedAndNewEvents = async function (npConfig) {
@@ -20,23 +20,23 @@ let exportModifiedAndNewEvents = async function (npConfig) {
     }
 };
 
-/*let deleteOrganizations = async function (npConfig) {
-    let organizationsToDelete = await deleteOrg.getOrganizationsToDelete(npConfig.np.platformId);
-    for (let organizationToDelete of organizationsToDelete) {
+let deleteEvents = async function (npConfig) {
+    let eventsToDelete = await deleteEvent.getEventsToDelete(npConfig.np.platformId);
+    for (let eventToDelete of eventsToDelete) {
         try {
-            await adapter.deleteOrganization(organizationToDelete.id, npConfig.config.npApiUrl, npConfig.config.token);
-            await deleteOrg.setOrganizationAsDeleted(organizationToDelete.organizationId, npConfig.np.platformId);
-            logger.info(`Organization ${organizationToDelete.organizationId} successfully deleted on ${npConfig.config.npApiUrl}`);
+            await adapter.deleteEvent(eventToDelete.uid, npConfig.config.npApiUrl, npConfig.config.token);
+            await deleteEvent.setEventAsDeleted(eventToDelete.uid, npConfig.np.platformId);
+            logger.info(`Event ${eventToDelete.uid} successfully deleted on ${npConfig.config.npApiUrl}`);
         } catch (error) {
-            logger.error(`Organization ${organizationToDelete.organizationId} could not be deleted` +
+            logger.error(`Event ${eventToDelete.uid} could not be deleted` +
                 ` on ${npConfig.config.npApiUrl}`, null, error);
         }
     }
-};*/
+};
 
 let exportEvents = async function (npConfig) {
     await exportModifiedAndNewEvents(npConfig);
-    //await deleteOrganizations(npConfig);
+    await deleteEvents(npConfig);
 };
 
 module.exports = {

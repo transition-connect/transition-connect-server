@@ -2,8 +2,6 @@
 
 let db = require('server-lib').neo4j;
 let time = require('server-lib').time;
-let logger = require('server-lib').logging.getLogger(__filename);
-
 
 let getEventsToExport = async function (platformId) {
     return await db.cypher().match(`(:NetworkingPlatform {platformId: {platformId}})
