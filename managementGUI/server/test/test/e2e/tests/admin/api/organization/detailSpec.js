@@ -136,7 +136,7 @@ END:VCALENDAR`);
 
         dbDsl.markDeleteOrganization('2');
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '2', categories: ['10']});
-        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '2', lastExportTimestamp: 504, created: 500});
+        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '2', lastExportTimestamp: 504, idOnExportedNp: '55', created: 500});
         dbDsl.exportDeleteSuccessToNp({organizationId: '2', npId: '3', created: 501});
 
         dbDsl.createWebsiteEvent('1', {organizationId: '2', startDate: 500, endDate: 600});
