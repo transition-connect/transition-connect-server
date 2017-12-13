@@ -36,6 +36,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
             dbDsl.exportRequestOrgToNp({organizationId: '2', npId: '4'});
             dbDsl.exportDenyOrgToNp({organizationId: '2', npId: '5'});
+            dbDsl.createEventExportRule('2', {npId: '1'});
         });
     });
 
@@ -58,6 +59,9 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.organization.administrators.length.should.equals(2);
             res.body.organization.administrators[0].should.equals('user3@irgendwo.ch');
             res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
+
+            res.body.originalNetworkingPlatform.name.should.equals('Elyoos');
+            res.body.originalNetworkingPlatform.exportWebsiteEventActive.should.equals(true);
 
             res.body.networkingPlatforms.length.should.equals(4);
 

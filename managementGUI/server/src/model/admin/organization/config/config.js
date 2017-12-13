@@ -13,11 +13,19 @@ let getOrganizationCommand = function (organizationId) {
         .end({organizationId: organizationId}).getCommand();
 };
 
+let getOriginalNPCommand = function (organizationId) {
+    return db.cypher().match(`(org:Organization {organizationId: {organizationId}})<-[:CREATED]-(np:NetworkingPlatform)`)
+        .return(`np.name AS name, 
+                 EXISTS((org)-[:EVENT_RULE]->(:EventRule)-[:EVENT_RULE_FOR]->(np)) AS exportWebsiteEventActive`)
+        .end({organizationId: organizationId}).getCommand();
+};
+
 let getConfig = function (adminId, organizationId, language, req) {
 
     return security.checkAllowedToAccessConfig(adminId, organizationId, req).then(function () {
         let commands = [];
         commands.push(getOrganizationCommand(organizationId));
+        commands.push(getOriginalNPCommand(organizationId));
 
         return db.cypher().match(`(np:NetworkingPlatform)`)
             .where(`NOT (np)-[:CREATED]->(:Organization {organizationId: {organizationId}})`)
@@ -38,7 +46,7 @@ let getConfig = function (adminId, organizationId, language, req) {
             .orderBy(`isExported DESC, name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {
-                return {organization: resp[0][0], networkingPlatforms: resp[1]};
+                return {organization: resp[0][0], originalNetworkingPlatform: resp[1][0], networkingPlatforms: resp[2]};
             });
     });
 };
