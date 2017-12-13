@@ -37,5 +37,7 @@ module.exports = {
     createWebsiteEvent: organizationEvent.createWebsiteEvent,
     exportEventToNp: organizationEvent.exportEventToNp,
     exportEventDeleteRequestToNp: organizationEvent.exportEventDeleteRequestToNp,
+    exportEventDeleteRequestSuccessToNp: organizationEvent.exportEventDeleteRequestSuccessToNp,
+    createEventExportRule: organizationEvent.createEventExportRule,
     createLocation: organizationLocation.createLocation
 };

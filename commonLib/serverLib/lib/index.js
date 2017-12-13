@@ -5,6 +5,7 @@ let eMailQueue = require('./eMail/eMailQueue');
 let controllerErrors = require('./error/controllerErrors');
 let errors = require('./error/errors');
 let exceptions = require('./error/exceptions');
+let eventExport = require('./eventExport/export');
 let neo4j = require('./neo4j');
 let databaseConfig = require('./databaseConfig');
 let domain = require('./domain');
@@ -20,6 +21,7 @@ module.exports.eMailQueue = eMailQueue;
 module.exports.controllerErrors = controllerErrors;
 module.exports.errors = errors;
 module.exports.exceptions = exceptions;
+module.exports.eventExport = eventExport;
 
 module.exports.neo4j = neo4j;
 

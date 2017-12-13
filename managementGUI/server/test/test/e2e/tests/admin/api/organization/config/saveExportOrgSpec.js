@@ -7,7 +7,7 @@ let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
 let should = require('chai').should();
 
-describe('Integration Tests for saving export config of an organization', function () {
+describe('Saving export config for organization profile of an organization', function () {
 
     let startTime;
 
@@ -249,7 +249,7 @@ describe('Integration Tests for saving export config of an organization', functi
         dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
         dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', lastConfigUpdate: 601, categories: ['14', '15']});
-        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '3', lastExportTimestamp: 5000, idOnExportedNp: '555', created: 621})
+        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '3', lastExportTimestamp: 5000, idOnExportedNp: '555', created: 621});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);
@@ -280,7 +280,7 @@ describe('Integration Tests for saving export config of an organization', functi
         dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
         dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
         dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', lastConfigUpdate: 601, categories: ['14', '15']});
-        dbDsl.exportDeleteSuccessToNp({organizationId: '2', npId: '3', created: 621})
+        dbDsl.exportDeleteSuccessToNp({organizationId: '2', npId: '3', created: 621});
 
         return dbDsl.sendToDb().then(function () {
             return requestHandler.login(admin.validAdmin);

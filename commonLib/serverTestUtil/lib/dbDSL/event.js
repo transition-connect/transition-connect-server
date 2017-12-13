@@ -69,9 +69,30 @@ let exportEventDeleteRequestToNp = function (data) {
         }).getCommand());
 };
 
+let exportEventDeleteRequestSuccessToNp = function (data) {
+    data.created = data.created || 500;
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(event:Event {uid: {uid}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(event)-[:DELETE_REQUEST_SUCCESS {created: {created}}]->(np)`)
+        .end({
+            uid: data.uid, npId: data.npId, created: data.created
+        }).getCommand());
+};
+
+let createEventExportRule = function (organizationId, data) {
+    dbConnectionHandling.getCommands().push(db.cypher()
+        .match(`(org:Organization {organizationId: {organizationId}}), (np:NetworkingPlatform {platformId: {npId}})`)
+        .createUnique(`(org)-[:EVENT_RULE]->(rule:EventRule)-[:EVENT_RULE_FOR]->(np)`)
+        .end({
+            organizationId: organizationId, npId: data.npId
+        }).getCommand());
+};
+
 module.exports = {
     createWebsiteEvent,
     createNpEvent,
     exportEventToNp,
-    exportEventDeleteRequestToNp
+    exportEventDeleteRequestToNp,
+    exportEventDeleteRequestSuccessToNp,
+    createEventExportRule
 };
