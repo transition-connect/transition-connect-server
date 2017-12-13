@@ -18,15 +18,31 @@ let schemaChangeConfigOrg = {
             items: {
                 type: 'object',
                 additionalProperties: false,
-                required: ['platformId', 'categories'],
+                required: ['platformId', 'org', 'events'],
                 properties: {
                     platformId: {type: 'string', format: 'notEmptyString', maxLength: 50},
-                    categories: {
-                        type: 'array',
-                        items: {type: 'string', format: 'notEmptyString', maxLength: 50},
-                        minItems: 1,
-                        maxItems: 1000,
-                        uniqueItems: true
+                    org: {
+                        type: 'object',
+                        additionalProperties: false,
+                        required: ['categories'],
+                        properties: {
+                            categories: {
+                                type: 'array',
+                                items: {type: 'string', format: 'notEmptyString', maxLength: 50},
+                                minItems: 1,
+                                maxItems: 1000,
+                                uniqueItems: true
+                            }
+                        }
+                    },
+                    events: {
+                        type: 'object',
+                        additionalProperties: false,
+                        required: ['exportActive'],
+                        properties: {
+                            exportActive: {type: 'boolean'}
+                            //Filters are added here
+                        }
                     }
                 }
             },

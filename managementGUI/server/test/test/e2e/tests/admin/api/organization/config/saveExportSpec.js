@@ -5,6 +5,7 @@ let db = require('server-test-util').db;
 let admin = require('server-test-util').admin;
 let requestHandler = require('server-test-util').requestHandler;
 let moment = require('moment');
+let should = require('chai').should();
 
 describe('Integration Tests for saving export config of an organization', function () {
 
@@ -50,8 +51,8 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '2', categories: ['10']},
-                    {platformId: '3', categories: ['14', '15']}]
+                        {platformId: '2', org: {categories: ['10']}, events: {exportActive: false}},
+                        {platformId: '3', org: {categories: ['14', '15']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(200);
@@ -109,8 +110,8 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '2', categories: ['10']},
-                    {platformId: '3', categories: ['14', '15']}]
+                        {platformId: '2', org: { categories: ['10']}, events: {exportActive: false}},
+                        {platformId: '3', org: { categories: ['14', '15']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(200);
@@ -161,7 +162,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '2', categories: ['15']}]
+                        {platformId: '2', org: {categories: ['15']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(400);
@@ -204,7 +205,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '3', categories: ['15', '14']}]
+                        {platformId: '3', org: {categories: ['15', '14']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(200);
@@ -243,6 +244,68 @@ describe('Integration Tests for saving export config of an organization', functi
         });
     });
 
+    it('Activate export organization with DELETE_REQUEST relationship', function () {
+
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', lastConfigUpdate: 601, categories: ['14', '15']});
+        dbDsl.exportDeleteRequestToNp({organizationId: '2', npId: '3', lastExportTimestamp: 5000, idOnExportedNp: '555', created: 621})
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/config/export',
+                {
+                    organizationId: '2', nps: [
+                        {platformId: '3', org: {categories: ['15', '14']}, events: {exportActive: false}}]
+                });
+        }).then(function (res) {
+            res.status.should.equal(200);
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .optionalMatch(`(org)-[deleteExport:DELETE_REQUEST]->(exportedNP)`)
+                .return(`org, exportedNP.platformId AS platformId, export, deleteExport`)
+                .end().send();
+        }).then(function (nps) {
+            nps.length.should.equals(1);
+            nps[0].platformId.should.equals('3');
+            nps[0].export.created.should.at.least(startTime);
+            nps[0].export.lastExportTimestamp.should.equals(5000);
+            nps[0].export.id.should.equals('555');
+            should.not.exist(nps[0].deleteExport);
+        });
+    });
+
+    it('Activate export organization with DELETE_REQUEST_SUCCESS relationship', function () {
+
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+        dbDsl.assignOrganizationToCategory({organizationId: '2', npId: '3', lastConfigUpdate: 601, categories: ['14', '15']});
+        dbDsl.exportDeleteSuccessToNp({organizationId: '2', npId: '3', created: 621})
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/config/export',
+                {
+                    organizationId: '2', nps: [
+                        {platformId: '3', org: {categories: ['15', '14']}, events: {exportActive: false}}]
+                });
+        }).then(function (res) {
+            res.status.should.equal(200);
+            return db.cypher().match("(org:Organization {organizationId: '2'})-[export:EXPORT]->(exportedNP:NetworkingPlatform)")
+                .optionalMatch(`(org)-[deleteExport:DELETE_REQUEST_SUCCESS]->(exportedNP)`)
+                .return(`exportedNP.platformId AS platformId, export, deleteExport`)
+                .end().send();
+        }).then(function (nps) {
+            nps.length.should.equals(1);
+            nps[0].platformId.should.equals('3');
+            nps[0].export.created.should.at.least(startTime);
+            should.not.exist(nps[0].export.lastExportTimestamp);
+            should.not.exist(nps[0].export.id);
+            should.not.exist(nps[0].deleteExport);
+        });
+    });
+
     it('Activate/Deactivate export (Export exists for other NP, requested NP only manually accepts Org)', function () {
 
         dbDsl.exportOrgToNp({organizationId: '2', npId: '3'});
@@ -254,7 +317,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '2', categories: ['10']}]
+                        {platformId: '2', org: {categories: ['10']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(200);
@@ -315,6 +378,32 @@ describe('Integration Tests for saving export config of an organization', functi
         });
     });
 
+    it('Deactivate already exported organization (EXPORT relationship)', function () {
+
+        dbDsl.exportOrgToNp({organizationId: '2', npId: '2', idOnExportedNp: '555', lastExportTimestamp: 5000});
+        dbDsl.createNetworkingPlatformExportRules('2', {manuallyAcceptOrganization: false});
+        dbDsl.createNetworkingPlatformExportRules('3', {manuallyAcceptOrganization: false});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/config/export',
+                {
+                    organizationId: '2', nps: []
+                });
+        }).then(function (res) {
+            res.status.should.equal(200);
+            return db.cypher().match("(:Organization {organizationId: '2'})-[request:DELETE_REQUEST]->(exportedNP:NetworkingPlatform)")
+                .return(`request`)
+                .end().send();
+        }).then(function (nps) {
+            nps.length.should.equals(1);
+            nps[0].request.lastExportTimestamp.should.equals(5000);
+            nps[0].request.id.should.equals('555');
+            nps[0].request.created.should.equals(500);
+        });
+    });
+
     it('Deactivate export (EXPORT_REQUEST relationship)', function () {
 
         dbDsl.exportRequestOrgToNp({organizationId: '2', npId: '2'});
@@ -349,7 +438,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '1', categories: ['7']}]
+                        {platformId: '1', org: {categories: ['7']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(400);
@@ -367,7 +456,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '2', nps: [
-                    {platformId: '2', categories: []}]
+                        {platformId: '2', org: {categories: []}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(400);
@@ -381,7 +470,7 @@ describe('Integration Tests for saving export config of an organization', functi
             return requestHandler.put('/admin/api/organization/config/export',
                 {
                     organizationId: '1', nps: [
-                    {platformId: '1', categories: ['1']}]
+                        {platformId: '1', org: {categories: ['1']}, events: {exportActive: false}}]
                 });
         }).then(function (res) {
             res.status.should.equal(400);
