@@ -61,7 +61,10 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.organization.administrators[1].should.equals('user@irgendwo.ch');
 
             res.body.originalNetworkingPlatform.name.should.equals('Elyoos');
-            res.body.originalNetworkingPlatform.exportWebsiteEventActive.should.equals(true);
+            res.body.originalNetworkingPlatform.description.should.equals('description');
+            res.body.originalNetworkingPlatform.link.should.equals('www.link.org');
+            res.body.originalNetworkingPlatform.isEventExported.should.equals(true);
+            res.body.originalNetworkingPlatform.platformId.should.equals('1');
 
             res.body.networkingPlatforms.length.should.equals(4);
 

@@ -15,11 +15,8 @@
                            remove-command="REMOVE_ADMIN_FROM_ORG_CONFIG"></administrator>
             <h2 class="sub-title">Website für Veranstaltungsimport</h2>
             <event-website></event-website>
-            <!--<h2 class="sub-title">Synchronisationsregeln für Veranstaltungen</h2>-->
-            <!--<event-export-rules></event-export-rules>-->
-           <!-- <event-export-rule v-for="eventExportRule in getExportEventRules"
-                                        :export-rule="eventExportRule">
-            </event-export-rule>-->
+            <h2 class="sub-title">Originale Plattform</h2>
+            <original-networking-platform-config></original-networking-platform-config>
             <h2 class="sub-title">Synchronisationsregeln</h2>
             <networking-platform-config v-for="networkingPlatform in getNetworkingPlatforms"
                                         :np="networkingPlatform">
@@ -55,6 +52,7 @@
     import NetworkingPlatformConfig from './NetworkingPlattformConfig.vue';
     import ChangeConfigCommand from './ChangeConfigCommand.vue';
     import EventWebsite from './EventWebsite.vue';
+    import OriginalNetworkingPlatformConfig from './OriginalNetworkingPlatformConfig.vue';
     import Snackbar from './../../../../utils/components/Snackbar.vue';
     import equal from 'deep-equal';
     import {mapGetters} from 'vuex';
@@ -62,7 +60,7 @@
     export default {
         components: {
             ModalDialog, Breadcrumb, Administrator, NetworkingPlatformConfig,
-            ChangeConfigCommand, EventWebsite, Snackbar
+            ChangeConfigCommand, EventWebsite, OriginalNetworkingPlatformConfig, Snackbar
         },
         data: function () {
             return {showWarningDialog: false, nextRoute: null};

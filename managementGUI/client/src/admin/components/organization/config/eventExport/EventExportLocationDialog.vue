@@ -36,7 +36,7 @@
 </template>
 
 <script>
-    import ModalDialog from './../../../../utils/components/ModalDialog.vue';
+    import ModalDialog from './../../../../../utils/components/ModalDialog.vue';
     import equal from 'deep-equal';
 
     export default {
@@ -76,7 +76,7 @@
 </script>
 
 <style lang="scss">
-    @import "../../../../style/variable";
+    @import "../../../../../style/variable";
 
     .event-no-location-filter {
         margin-bottom: 18px;

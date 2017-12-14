@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    import ModalDialog from './../../../../utils/components/ModalDialog.vue';
+    import ModalDialog from './../../../../../utils/components/ModalDialog.vue';
     import equal from 'deep-equal';
 
     export default {
@@ -94,7 +94,7 @@
 </script>
 
 <style lang="scss">
-    @import "../../../../style/variable";
+    @import "../../../../../style/variable";
 
     .select-category-combination {
         margin-bottom: 8px;

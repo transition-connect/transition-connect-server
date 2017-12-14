@@ -15,8 +15,8 @@ let getOrganizationCommand = function (organizationId) {
 
 let getOriginalNPCommand = function (organizationId) {
     return db.cypher().match(`(org:Organization {organizationId: {organizationId}})<-[:CREATED]-(np:NetworkingPlatform)`)
-        .return(`np.name AS name, 
-                 EXISTS((org)-[:EVENT_RULE]->(:EventRule)-[:EVENT_RULE_FOR]->(np)) AS exportWebsiteEventActive`)
+        .return(`np.platformId AS platformId, np.name AS name, np.description AS description, np.link AS link,
+                 EXISTS((org)-[:EVENT_RULE]->(:EventRule)-[:EVENT_RULE_FOR]->(np)) AS isEventExported`)
         .end({organizationId: organizationId}).getCommand();
 };
 

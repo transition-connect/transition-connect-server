@@ -5,8 +5,8 @@ import equal from 'deep-equal';
 import Vue from 'vue';
 
 const state = {
-    config: {networkingPlatforms: [], organization: {}},
-    configActual: {networkingPlatforms: [], organization: {}},
+    config: {networkingPlatforms: [], originalNetworkingPlatform: [], organization: {}},
+    configActual: {networkingPlatforms: [], originalNetworkingPlatform: [], organization: {}},
     eventsImportConfigurationIsValid: true,
     eventsImportConfiguration: '',
     eventsImportConfigurationActual: '',
@@ -46,10 +46,12 @@ const getters = {
     administratorsChanged: state => state.config.organization.name,
     getOrgName: state => state.config.organization.name,
     getNetworkingPlatforms: state => state.config.networkingPlatforms,
+    getOriginalNetworkingPlatform: state => state.config.originalNetworkingPlatform,
     getOrgAdministrators: state => state.config.organization.administrators,
     getEventsImportConfiguration: state => state.eventsImportConfiguration,
     isLoaded: state => state.isLoaded,
     isValidConfig: state => configCheck(state.config.networkingPlatforms) && state.eventsImportConfigurationIsValid,
+    isValidEventImport: state => state.eventsImportConfigurationIsValid && state.eventsImportConfiguration.trim() !== '',
     successfullyUpdated: state => state.successfullyUpdated,
     eventsImportConfigurationFailed: state => state.eventsImportConfigurationFailed
 };
@@ -66,10 +68,15 @@ const actions = {
     }
 };
 
+let getNpForEventConfiguration = function (state, np) {
+    let nps = [...state.config.networkingPlatforms, state.config.originalNetworkingPlatform];
+    return nps.find(npToFind => npToFind.platformId === np.platformId);
+};
+
 const mutations = {
     [types.RESET_ORG_CONFIG](state) {
-        state.config = {networkingPlatforms: [], organization: {}};
-        state.configActual = {networkingPlatforms: [], organization: {}};
+        state.config = {networkingPlatforms: [], originalNetworkingPlatform: [], organization: {}};
+        state.configActual = {networkingPlatforms: [], originalNetworkingPlatform: [], organization: {}};
         state.isLoaded = false;
     },
     [types.SET_ORG_CONFIG](state, {config}) {
@@ -89,7 +96,7 @@ const mutations = {
         state.successfullyUpdated = false;
     },
     [types.UPDATE_EVENT_EXPORT_CATEGORY_FILTER](state, {categoryFilter, np}) {
-        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId === np.platformId);
+        let npToChange = getNpForEventConfiguration(state, np);
         if (categoryFilter) {
             Vue.set(npToChange, 'eventCategoryFilter', categoryFilter);
         } else {
@@ -97,7 +104,7 @@ const mutations = {
         }
     },
     [types.UPDATE_EVENT_EXPORT_LOCATION_FILTER](state, {locationFilter, np}) {
-        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId === np.platformId);
+        let npToChange = getNpForEventConfiguration(state, np);
         if (locationFilter) {
             Vue.set(npToChange, 'eventLocationFilter', locationFilter);
         } else {
@@ -105,7 +112,7 @@ const mutations = {
         }
     },
     [types.DELETE_EVENT_EXPORT_FILTER](state, np) {
-        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId === np.platformId);
+        let npToChange = getNpForEventConfiguration(state, np);
         Vue.delete(npToChange, 'eventCategoryFilter');
         Vue.delete(npToChange, 'eventLocationFilter');
     },
@@ -125,7 +132,7 @@ const mutations = {
         state.successfullyUpdated = false;
     },
     [types.UPDATE_SYNC_EVENT_STATE_TO_NP](state, {isExported, np}) {
-        let npToChange = state.config.networkingPlatforms.find(npToFind => npToFind.platformId === np.platformId);
+        let npToChange = getNpForEventConfiguration(state, np);
         npToChange.isEventExported = isExported;
         state.successfullyUpdated = false;
     },
