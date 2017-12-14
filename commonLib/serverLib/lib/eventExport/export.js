@@ -1,7 +1,6 @@
 'use strict';
 
 let db = require('./../neo4j');
-let time = require('./../time');
 
 let deleteDeactivatedNeverExportedEvents = function (organizationId) {
     return db.cypher().match(`(org:Organization {organizationId: {organizationId}})
@@ -32,10 +31,10 @@ let setNewEventExports = function (organizationId) {
         .match(`(org)-[:EVENT|WEBSITE_EVENT]->(event:Event)`)
         .optionalMatch(`(event)-[deleteRequest:DELETE_REQUEST]->(np)`)
         .optionalMatch(`(event)-[deleteRequestSuccess:DELETE_REQUEST_SUCCESS]->(np)`)
-        .merge(`(event)-[export:EXPORT {created: {created}}]->(np)`)
+        .merge(`(event)-[export:EXPORT]->(np)`)
         .addCommand(` SET export.lastExportTimestamp = deleteRequest.lastExportTimestamp`)
         .delete(`deleteRequest, deleteRequestSuccess`)
-        .end({organizationId: organizationId, created: time.getNowUtcTimestamp()});
+        .end({organizationId: organizationId});
 };
 
 let setEventExportToOriginalPlatform = function (organizationId) {
@@ -46,10 +45,13 @@ let setEventExportToOriginalPlatform = function (organizationId) {
         .match(`(org)-[:WEBSITE_EVENT]->(event:Event)`)
         .optionalMatch(`(event)-[deleteRequest:DELETE_REQUEST]->(np)`)
         .optionalMatch(`(event)-[deleteRequestSuccess:DELETE_REQUEST_SUCCESS]->(np)`)
-        .merge(`(event)-[export:EXPORT {created: {created}}]->(np)`)
+        .merge(`(event)-[export:EXPORT]->(np)`)
+        .delete(`deleteRequestSuccess`)
+        .with(`org, export, deleteRequest`)
+        .where(`EXISTS(deleteRequest.lastExportTimestamp)`)
         .addCommand(` SET export.lastExportTimestamp = deleteRequest.lastExportTimestamp`)
-        .delete(`deleteRequest, deleteRequestSuccess`)
-        .end({organizationId: organizationId, created: time.getNowUtcTimestamp()}).getCommand();
+        .delete(`deleteRequest`)
+        .end({organizationId: organizationId}).getCommand();
 };
 
 let setEventExportRelationships = async function (organizationId) {

@@ -3,6 +3,8 @@
 let db = require('server-lib').neo4j;
 let _ = require(`lodash`);
 let parser = require('./iCalEventParser');
+let time = require('server-lib').time;
+let eventExport = require('server-lib').eventExport;
 let logger = require('server-lib').logging.getLogger(__filename);
 
 let saveEventsToDb = async function (events, organizationId) {
@@ -11,9 +13,10 @@ let saveEventsToDb = async function (events, organizationId) {
         .merge(`(eventDb:Event {uid: event.uid})`)
         .addCommand(` SET eventDb.iCal = event.iCal, eventDb.description = event.description,
                       eventDb.summary = event.summary, eventDb.location = event.location,
-                      eventDb.startDate = event.startDate, eventDb.endDate = event.endDate`)
+                      eventDb.startDate = event.startDate, eventDb.endDate = event.endDate,
+                      eventDb.modified = {now}`)
         .merge(`(org)-[:WEBSITE_EVENT]->(eventDb)`)
-        .end({events: events, organizationId: organizationId}).send();
+        .end({events: events, organizationId: organizationId, now: time.getNowUtcTimestamp()}).send();
     for (let event of events) {
         logger.info(`For org ${organizationId} -> ${event.summary} (${event.uid} ) event imported from website`);
     }
@@ -53,6 +56,7 @@ let importEvents = async function (iCal, organizationId) {
     await saveEventsToDb(changedEvents, organizationId);
     let eventToDelete = await getEventsToDelete(events, organizationId);
     await deleteEventFromDb(eventToDelete, organizationId);
+    await eventExport.setEventExportRelationships(organizationId);
 };
 
 module.exports = {

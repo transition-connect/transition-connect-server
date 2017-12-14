@@ -9,7 +9,10 @@ let nock = require('nock');
 
 describe('Integration Tests for importing events from a website in iCal format', function () {
 
+    let startTime;
+
     beforeEach(async function () {
+        startTime = Math.floor(moment.utc().valueOf() / 1000);
         await dbDsl.init();
         dbDsl.createAdmin('1', {email: 'user@irgendwo.ch'});
         dbDsl.createAdmin('2', {email: 'user2@irgendwo.ch'});
@@ -82,6 +85,7 @@ describe('Integration Tests for importing events from a website in iCal format',
         resp[0].event.location.should.equals('Irgendwo in Zürich');
         resp[0].event.startDate.should.equals(normalStartUtcTimestamp);
         resp[0].event.endDate.should.equals(normalEndUtcTimestamp);
+        resp[0].event.modified.should.at.least(startTime);
         resp[0].event.iCal.should.equals(`BEGIN:VEVENT
                 DTSTART:${moment.utc(normalStartUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
                 DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
@@ -99,6 +103,7 @@ describe('Integration Tests for importing events from a website in iCal format',
         resp[1].event.description.should.equals('Hat auch was mit TC zu tun');
         resp[1].event.summary.should.equals('Event2 Test');
         resp[1].event.location.should.equals('Irgendwo in Urdorf');
+        resp[1].event.modified.should.at.least(startTime);
         resp[1].event.startDate.should.equals(
             moment.utc(moment.utc(googleStartUtcTimestamp * 1000).format('YYYYMMDD')).valueOf() / 1000);
         resp[1].event.endDate.should.equals(
@@ -175,6 +180,7 @@ describe('Integration Tests for importing events from a website in iCal format',
         resp[0].event.description.should.equals('Hat was mit TC zu tun2');
         resp[0].event.summary.should.equals('Event1 Test2');
         resp[0].event.location.should.equals('Irgendwo in Zürich2');
+        resp[0].event.modified.should.at.least(startTime);
         resp[0].event.startDate.should.equals(normalStartUtcTimestamp + 1);
         resp[0].event.endDate.should.equals(normalEndUtcTimestamp + 1);
         resp[0].event.iCal.should.equals(`BEGIN:VEVENT

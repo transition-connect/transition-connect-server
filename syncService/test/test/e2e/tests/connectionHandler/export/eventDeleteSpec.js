@@ -56,10 +56,9 @@ describe('Sending delete command for an event on an external networking platform
 
         scope.isDone().should.equals(true);
         let resp = await db.cypher().match(`(:Event {uid: '1@elyoos.org'})-[export:DELETE_REQUEST_SUCCESS]->(:NetworkingPlatform {platformId: '1'})`)
-            .return(`export.created AS created`)
+            .return(`export`)
             .end().send();
 
         resp.length.should.equals(1);
-        resp[0].created.should.equals(502);
     });
 });

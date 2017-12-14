@@ -66,11 +66,10 @@ describe('Saving export config for events of an organization created by a networ
 
         let nps = await db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT]->(event:Event)
                                       -[export:EXPORT]->(exportedNP:NetworkingPlatform)`)
-            .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
+            .return(`org, exportedNP.platformId AS platformId`)
             .end().send();
         nps.length.should.equals(1);
         nps[0].platformId.should.equals('3');
-        nps[0].created.should.at.least(startTime);
         nps[0].org.lastConfigUpdate.should.at.least(startTime);
     });
 
@@ -102,11 +101,10 @@ describe('Saving export config for events of an organization created by a networ
 
         let nps = await db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT]->(event:Event)
                                       -[export:EXPORT]->(exportedNP:NetworkingPlatform)`)
-            .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
+            .return(`org, exportedNP.platformId AS platformId`)
             .end().send();
         nps.length.should.equals(1);
         nps[0].platformId.should.equals('3');
-        nps[0].created.should.at.least(startTime);
         nps[0].org.lastConfigUpdate.should.at.least(startTime);
     });
 
@@ -135,7 +133,7 @@ describe('Saving export config for events of an organization created by a networ
 
         let nps = await db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT]->(event:Event)
                                       -[export:EXPORT]->(exportedNP:NetworkingPlatform)`)
-            .return(`org, exportedNP.platformId AS platformId, export.created AS created`)
+            .return(`org, exportedNP.platformId AS platformId`)
             .end().send();
         nps.length.should.equals(0);
     });
@@ -205,7 +203,6 @@ describe('Saving export config for events of an organization created by a networ
             .return(`export`)
             .end().send();
         nps.length.should.equals(1);
-        nps[0].export.created.should.at.least(startTime);
         nps[0].export.lastExportTimestamp.should.equals(755);
 
         nps = await db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT]->(event:Event)
@@ -244,7 +241,6 @@ describe('Saving export config for events of an organization created by a networ
             .return(`export`)
             .end().send();
         nps.length.should.equals(1);
-        nps[0].export.created.should.at.least(startTime);
         should.not.exist(nps[0].export.lastExportTimestamp);
 
         nps = await db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT]->(event:Event)

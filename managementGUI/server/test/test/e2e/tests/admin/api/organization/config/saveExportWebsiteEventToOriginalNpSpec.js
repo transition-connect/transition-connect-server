@@ -60,7 +60,6 @@ describe('Saving export config for events imported from a project website and se
             .return(`export`)
             .end().send();
         resp.length.should.equals(1);
-        resp[0].export.created.should.at.least(startTime);
         should.not.exist(resp[0].export.lastExportTimestamp);
     });
 

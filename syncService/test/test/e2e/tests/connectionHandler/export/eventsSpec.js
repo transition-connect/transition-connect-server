@@ -230,4 +230,66 @@ END:VCALENDAR`
         resp.length.should.equals(1);
         resp[0].lastExportTimestamp.should.at.least(startTime);
     });
+
+    it('Export website event for the first time to original networking platform', async function () {
+
+        dbDsl.createOrganization('1', {
+            networkingPlatformId: '1', adminIds: ['2'], created: 500,
+            organizationIdOnExternalNP: '111', name: 'organization', description: 'description', slogan: 'slogan',
+            website: 'www.link.org'
+        });
+        dbDsl.assignOrganizationToCategory({organizationId: '1', npId: '1', categories: ['1', '2'], lastConfigUpdate: 501});
+        dbDsl.createWebsiteEvent('1@elyoos.org', {organizationId: '1', modified: 666});
+        dbDsl.exportEventToNp({uid: '1@elyoos.org', npId: '1'});
+
+        let scope = nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).post('/api/v1/event', {
+            orgId: '111', iCal: `BEGIN:VCALENDAR
+1@elyoos.org
+END:VCALENDAR`
+        }).reply(201);
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+
+        scope.isDone().should.equals(true);
+        let resp = await db.cypher().match(`(:Event {uid: '1@elyoos.org'})-[export:EXPORT]->(:NetworkingPlatform {platformId: '1'})`)
+            .return(`export.lastExportTimestamp AS lastExportTimestamp`)
+            .end().send();
+
+        resp.length.should.equals(1);
+        resp[0].lastExportTimestamp.should.at.least(startTime);
+    });
+
+    it('Export modified website event to original networking platform', async function () {
+
+        dbDsl.createOrganization('1', {
+            networkingPlatformId: '1', adminIds: ['2'], created: 500,
+            organizationIdOnExternalNP: '111', name: 'organization', description: 'description', slogan: 'slogan',
+            website: 'www.link.org'
+        });
+        dbDsl.assignOrganizationToCategory({organizationId: '1', npId: '1', categories: ['1', '2'], lastConfigUpdate: 501});
+        dbDsl.createWebsiteEvent('1@elyoos.org', {organizationId: '1', modified: 666});
+        dbDsl.exportEventToNp({uid: '1@elyoos.org', npId: '1', lastExportTimestamp: 665});
+
+        let scope = nock(`https://localhost.org`, {
+            reqheaders: {'authorization': '1234'}
+        }).put('/api/v1/event/1@elyoos.org', {
+            iCal: `BEGIN:VCALENDAR
+1@elyoos.org
+END:VCALENDAR`
+        }).reply(201);
+
+        await dbDsl.sendToDb();
+        await connectionHandler.startSync();
+
+        scope.isDone().should.equals(true);
+        let resp = await db.cypher().match(`(:Event {uid: '1@elyoos.org'})-[export:EXPORT]->(:NetworkingPlatform {platformId: '1'})`)
+            .return(`export.lastExportTimestamp AS lastExportTimestamp`)
+            .end().send();
+
+        resp.length.should.equals(1);
+        resp[0].lastExportTimestamp.should.at.least(startTime);
+    });
 });

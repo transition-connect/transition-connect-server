@@ -12,7 +12,7 @@ let getEventsToDelete = async function (platformId) {
 let setEventAsDeleted = async function (uid, platformId) {
     return await db.cypher().match(`(np:NetworkingPlatform {platformId: {platformId}})
                         <-[deleteRequest:DELETE_REQUEST]-(event:Event {uid: {uid}})`)
-        .merge(`(np)<-[deleteRequestSuccess:DELETE_REQUEST_SUCCESS {created: deleteRequest.created}]-(event)`)
+        .merge(`(np)<-[deleteRequestSuccess:DELETE_REQUEST_SUCCESS]-(event)`)
         .delete(`deleteRequest`)
         .end({uid: uid, platformId: platformId}).send();
 };
