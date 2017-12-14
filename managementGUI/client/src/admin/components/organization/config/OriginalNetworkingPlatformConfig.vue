@@ -4,7 +4,7 @@
         <a class="np-link" target="_blank" rel="noopener" :href="np.link">{{np.link}}</a>
         <div class="np-description">{{np.description}}</div>
         <div class="sync-events" v-show="isValidEventImport">
-            <event-export :np="np" export-title="Veranstaltungen von Website importiert"></event-export>
+            <event-export :np="np" export-title="Veranstaltungen von Website"></event-export>
         </div>
     </div>
 </template>

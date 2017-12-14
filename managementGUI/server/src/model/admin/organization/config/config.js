@@ -42,7 +42,8 @@ let getConfig = function (adminId, organizationId, language, req) {
                      EXISTS((org)-[:EXPORT|:EXPORT_REQUEST|:EXPORT_DENIED]->(np)) AS isExported,
                      EXISTS((org)-[:EXPORT_DENIED]->(np)) AS isDenied,
                      COLLECT({name: categoryTranslated.name, categoryId: category.categoryId, 
-                     isSelected: EXISTS((assigner)-[:ASSIGNED]->(category))}) AS categories`)
+                     isSelected: EXISTS((assigner)-[:ASSIGNED]->(category))}) AS categories,
+                     EXISTS((org)-[:EVENT_RULE]->(:EventRule)-[:EVENT_RULE_FOR]->(np)) AS isEventExported`)
             .orderBy(`isExported DESC, name`)
             .end({adminId: adminId, organizationId: organizationId, language: language})
             .send(commands).then(function (resp) {

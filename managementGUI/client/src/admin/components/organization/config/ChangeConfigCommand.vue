@@ -54,6 +54,10 @@
                     commands.push(HTTP.put(`/admin/api/organization/config/websiteEventImport`,
                         {params: {organizationId: this.organizationId, url: this.eventUrl}}));
                 }
+                if (this.eventsExportOriginalNPChanged) {
+                    commands.push(HTTP.put(`/admin/api/organization/config/exportWebsiteEvents`,
+                        {params: {organizationId: this.organizationId, exportActive: this.getEventsExportOriginalNP}}));
+                }
                 if (commands.length > 0) {
                     Promise.all(commands).then(() => {
                         this.showLoading = false;
@@ -76,11 +80,14 @@
             ...mapGetters({
                 hasChanged: 'hasChanged',
                 isValidConfig: 'isValidConfig',
+                isValidEventImport: 'isValidEventImport',
                 networkingPlatformsChanged: 'networkingPlatformsChanged',
                 administratorsChanged: 'administratorsChanged',
                 eventsImportConfigurationChanged: 'eventsImportConfigurationChanged',
+                eventsExportOriginalNPChanged: 'eventsExportOriginalNPChanged',
                 getNetworkingPlatforms: 'getNetworkingPlatforms',
                 getOrgAdministrators: 'getOrgAdministrators',
+                getEventsExportOriginalNP: 'getEventsExportOriginalNP',
                 eventUrl: 'getEventsImportConfiguration',
                 successfullyUpdated: 'successfullyUpdated'
             })

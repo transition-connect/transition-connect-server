@@ -37,18 +37,23 @@ const getters = {
             state.configActual.organization.administrators) ||
             networkingPlatformHasChanged(state.config.networkingPlatforms, state.configActual.networkingPlatforms) ||
             state.eventsImportConfiguration !==
-            state.eventsImportConfigurationActual;
+            state.eventsImportConfigurationActual ||
+            state.config.originalNetworkingPlatform.isEventExported !==
+            state.configActual.originalNetworkingPlatform.isEventExported;
     },
     networkingPlatformsChanged: state => {
         return networkingPlatformHasChanged(state.config.networkingPlatforms, state.configActual.networkingPlatforms);
     },
     eventsImportConfigurationChanged: state => state.eventsImportConfiguration !== state.eventsImportConfigurationActual,
+    eventsExportOriginalNPChanged: state => state.config.originalNetworkingPlatform.isEventExported !==
+        state.configActual.originalNetworkingPlatform.isEventExported,
     administratorsChanged: state => state.config.organization.name,
     getOrgName: state => state.config.organization.name,
     getNetworkingPlatforms: state => state.config.networkingPlatforms,
     getOriginalNetworkingPlatform: state => state.config.originalNetworkingPlatform,
     getOrgAdministrators: state => state.config.organization.administrators,
     getEventsImportConfiguration: state => state.eventsImportConfiguration,
+    getEventsExportOriginalNP: state => state.config.originalNetworkingPlatform.isEventExported,
     isLoaded: state => state.isLoaded,
     isValidConfig: state => configCheck(state.config.networkingPlatforms) && state.eventsImportConfigurationIsValid,
     isValidEventImport: state => state.eventsImportConfigurationIsValid && state.eventsImportConfiguration.trim() !== '',
@@ -80,11 +85,6 @@ const mutations = {
         state.isLoaded = false;
     },
     [types.SET_ORG_CONFIG](state, {config}) {
-        //--- temp ---
-        for (let np of config.networkingPlatforms) {
-            np.isEventExported = false;
-        }
-        //------
         state.config = JSON.parse(JSON.stringify(config));
         state.eventsImportConfiguration = state.config.organization.eventsImportConfiguration || '';
         state.eventsImportConfigurationActual = state.eventsImportConfiguration;

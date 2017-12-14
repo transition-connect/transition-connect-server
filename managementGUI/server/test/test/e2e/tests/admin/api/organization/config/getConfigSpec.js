@@ -37,6 +37,8 @@ describe('Integration Tests for getting the configuration of an organization', f
             dbDsl.exportRequestOrgToNp({organizationId: '2', npId: '4'});
             dbDsl.exportDenyOrgToNp({organizationId: '2', npId: '5'});
             dbDsl.createEventExportRule('2', {npId: '1'});
+            dbDsl.createEventExportRule('2', {npId: '4'});
+            dbDsl.createEventExportRule('2', {npId: '5'});
         });
     });
 
@@ -73,6 +75,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.networkingPlatforms[0].link.should.equals('www.link3.org');
             res.body.networkingPlatforms[0].platformId.should.equals('3');
             res.body.networkingPlatforms[0].isExported.should.equals(true);
+            res.body.networkingPlatforms[0].isEventExported.should.equals(false);
             res.body.networkingPlatforms[0].isDenied.should.equals(false);
             res.body.networkingPlatforms[0].categories.length.should.equals(1);
             res.body.networkingPlatforms[0].categories[0].name.should.equals('Deutsch13');
@@ -84,6 +87,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.networkingPlatforms[1].link.should.equals('www.link4.org');
             res.body.networkingPlatforms[1].platformId.should.equals('4');
             res.body.networkingPlatforms[1].isExported.should.equals(true);
+            res.body.networkingPlatforms[1].isEventExported.should.equals(true);
             res.body.networkingPlatforms[1].isDenied.should.equals(false);
             res.body.networkingPlatforms[1].categories.length.should.equals(1);
             res.body.networkingPlatforms[1].categories[0].name.should.equals('Deutsch14');
@@ -95,6 +99,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.networkingPlatforms[2].link.should.equals('www.link5.org');
             res.body.networkingPlatforms[2].platformId.should.equals('5');
             res.body.networkingPlatforms[2].isExported.should.equals(true);
+            res.body.networkingPlatforms[2].isEventExported.should.equals(true);
             res.body.networkingPlatforms[2].isDenied.should.equals(true);
             res.body.networkingPlatforms[2].categories.length.should.equals(1);
             res.body.networkingPlatforms[2].categories[0].name.should.equals('Deutsch15');
@@ -106,6 +111,7 @@ describe('Integration Tests for getting the configuration of an organization', f
             res.body.networkingPlatforms[3].link.should.equals('www.link2.org');
             res.body.networkingPlatforms[3].platformId.should.equals('2');
             res.body.networkingPlatforms[3].isExported.should.equals(false);
+            res.body.networkingPlatforms[3].isEventExported.should.equals(false);
             res.body.networkingPlatforms[3].isDenied.should.equals(false);
             res.body.networkingPlatforms[3].categories.length.should.equals(2);
             res.body.networkingPlatforms[3].categories[0].name.should.equals('Deutsch10');
