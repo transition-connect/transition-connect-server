@@ -3,6 +3,16 @@
 let db = require('../db');
 let dbConnectionHandling = require('./dbConnectionHandling');
 
+let setICalCompare = function (data) {
+    let startIndex = data.iCal.indexOf('DTSTAMP');
+    let endIndex = data.iCal.indexOf('\n', startIndex);
+    if (startIndex !== -1 && endIndex !== -1) {
+        data.iCalCompare = data.iCal.substring(0, startIndex) + data.iCal.substring(endIndex + 1);
+    } else {
+        data.iCalCompare = data.iCal;
+    }
+};
+
 let createWebsiteEvent = function (uid, data) {
     data.summary = data.summary || `event${uid}Summary`;
     data.description = data.description || `event${uid}Description`;
@@ -13,13 +23,16 @@ let createWebsiteEvent = function (uid, data) {
     data.iCal = data.iCal || `BEGIN:VCALENDAR
 ${uid}
 END:VCALENDAR`;
+    setICalCompare(data);
     dbConnectionHandling.getCommands().push(db.cypher()
         .match(`(organization:Organization {organizationId: {organizationId}})`)
         .create(`(organization)-[:WEBSITE_EVENT]->(:Event {uid: {uid}, summary: {summary}, description: {description}, 
-                  location: {location}, startDate: {startDate}, endDate: {endDate}, iCal: {iCal}, modified: {modified}})`)
+                  location: {location}, startDate: {startDate}, endDate: {endDate}, iCal: {iCal},
+                  iCalCompare: {iCalCompare}, modified: {modified}})`)
         .end({
             uid: uid, organizationId: data.organizationId, summary: data.summary, description: data.description,
-            location: data.location, startDate: data.startDate, endDate: data.endDate, iCal: data.iCal, modified: data.modified
+            location: data.location, startDate: data.startDate, endDate: data.endDate, iCal: data.iCal,
+            iCalCompare: data.iCalCompare, modified: data.modified
         }).getCommand());
 };
 

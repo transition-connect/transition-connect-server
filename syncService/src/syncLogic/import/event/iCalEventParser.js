@@ -84,6 +84,20 @@ let parseDate = function (vEvent, property, valueProperty, isMandatory) {
     return moment.utc(iCalDateParser(result)).valueOf() / 1000;
 };
 
+/**
+ * Remove DTSTAMP for check if event has been changed because this field changes on every import.
+ * @param iCal
+ * @returns {*}
+ */
+let getICalCompare = function (iCal) {
+    let startIndex = iCal.indexOf('DTSTAMP');
+    let endIndex = iCal.indexOf('\n', startIndex);
+    if (startIndex !== -1 && endIndex !== -1) {
+        return iCal.substring(0, startIndex) + iCal.substring(endIndex + 1);
+    }
+    return iCal;
+};
+
 let parseEvent = function (vEvent) {
     let event = {};
     event.uid = parseString(vEvent, UID, true);
@@ -94,6 +108,7 @@ let parseEvent = function (vEvent) {
     event.startDate = parseDate(vEvent, START_DATE_EVENT, START_DATE_VALUE_EVENT, true);
     event.endDate = parseDate(vEvent, END_DATE_EVENT, END_DATE_VALUE_EVENT, true);
     event.iCal = vEvent;
+    event.iCalCompare = getICalCompare(vEvent);
     return event;
 };
 

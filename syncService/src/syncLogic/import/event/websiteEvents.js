@@ -11,10 +11,10 @@ let saveEventsToDb = async function (events, organizationId) {
     await db.cypher().unwind(`{events} AS event`)
         .match(`(org:Organization {organizationId: {organizationId}})`)
         .merge(`(eventDb:Event {uid: event.uid})`)
-        .addCommand(` SET eventDb.iCal = event.iCal, eventDb.description = event.description,
-                      eventDb.summary = event.summary, eventDb.location = event.location,
-                      eventDb.startDate = event.startDate, eventDb.endDate = event.endDate,
-                      eventDb.modified = {now}`)
+        .addCommand(` SET eventDb.iCal = event.iCal, eventDb.iCalCompare = event.iCalCompare, 
+                      eventDb.description = event.description, eventDb.summary = event.summary, 
+                      eventDb.location = event.location, eventDb.startDate = event.startDate, 
+                      eventDb.endDate = event.endDate, eventDb.modified = {now}`)
         .merge(`(org)-[:WEBSITE_EVENT]->(eventDb)`)
         .end({events: events, organizationId: organizationId, now: time.getNowUtcTimestamp()}).send();
     for (let event of events) {
@@ -36,7 +36,7 @@ let getChangedOrNewEvents = async function (events, organizationId) {
     let resp = await db.cypher().unwind(`{events} AS event`)
         .match(`(org:Organization {organizationId: {organizationId}})
                 -[:WEBSITE_EVENT]->(orgEvent:Event {uid: event.uid})`)
-        .where(`orgEvent.iCal = event.iCal`)
+        .where(`orgEvent.iCalCompare = event.iCalCompare`)
         .return(`orgEvent.uid AS uid`)
         .end({events: events, organizationId: organizationId}).send();
     return _.differenceBy(events, resp, 'uid');
