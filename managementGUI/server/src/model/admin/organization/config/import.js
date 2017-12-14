@@ -18,6 +18,15 @@ let checkIsIcal = function (ical) {
     return false;
 };
 
+let deleteUrl = function (organizationId) {
+    return db.cypher().match(`(org:Organization {organizationId: {organizationId}})`)
+        .optionalMatch(`(org)-[rel1:EVENT_RULE]->(rule:EventRule)-[rel2:EVENT_RULE_FOR]
+                 ->(np:NetworkingPlatform)-[:CREATED]->(org)`)
+        .remove(`org.eventsImportConfiguration`)
+        .delete(`rel1, rule, rel2`)
+        .end({organizationId: organizationId}).send();
+};
+
 let saveUrl = function (organizationId, url) {
     return db.cypher().match(`(org:Organization {organizationId: {organizationId}})`)
         .set(`org`, {eventsImportConfiguration: url})
@@ -26,14 +35,18 @@ let saveUrl = function (organizationId, url) {
 
 let saveImportEventUrl = async function (adminId, organizationId, url, req) {
     let options = {uri: url};
-    try {
-        let ical = await request(options);
-        if (!checkIsIcal(ical)) {
-            return exceptions.getInvalidOperation(`Url ${url} has no ical response`, logger, req, ERROR_NO_ICAL_RESPONSE);
+    if (url.trim() !== '') {
+        try {
+            let ical = await request(options);
+            if (!checkIsIcal(ical)) {
+                return exceptions.getInvalidOperation(`Url ${url} has no ical response`, logger, req, ERROR_NO_ICAL_RESPONSE);
+            }
+            await saveUrl(organizationId, url);
+        } catch (error) {
+            return exceptions.getInvalidOperation(`Url ${url} request error`, logger, req, ERROR_NO_RESPONSE);
         }
-        await saveUrl(organizationId, url);
-    } catch (error) {
-        return exceptions.getInvalidOperation(`Url ${url} request error`, logger, req, ERROR_NO_RESPONSE);
+    } else {
+        await deleteUrl(organizationId);
     }
 };
 

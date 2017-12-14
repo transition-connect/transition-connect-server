@@ -13,7 +13,7 @@ let schemaSetEventImportUrl = {
     required: ['organizationId', 'url'],
     properties: {
         organizationId: {type: 'string', format: 'notEmptyString', maxLength: 50},
-        url: {type: 'string', format: 'notEmptyString', maxLength: 1000}
+        url: {type: 'string', maxLength: 1000}
     },
 };
 

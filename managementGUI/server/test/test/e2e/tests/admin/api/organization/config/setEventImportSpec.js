@@ -72,6 +72,34 @@ describe('Integration Tests for setting the url to import events from a website'
         });
     });
 
+    it('Deactivate import by sending an empty url', function () {
+
+        dbDsl.createOrganization('2', {networkingPlatformId: '1', adminIds: ['1'], created: 502});
+        dbDsl.createEventExportRule('2', {npId: '1'});
+
+        return dbDsl.sendToDb().then(function () {
+            return requestHandler.login(admin.validAdmin);
+        }).then(function () {
+            return requestHandler.put('/admin/api/organization/config/websiteEventImport',
+                {
+                    organizationId: '2',
+                    url: '  '
+                });
+        }).then(function (res) {
+            res.status.should.equal(200);
+            return db.cypher().match("(org:Organization {organizationId: '2'})")
+                .return(`org.eventsImportConfiguration AS eventsImportConfiguration`).end().send();
+        }).then(function (org) {
+            org.length.should.equals(1);
+            should.not.exist(org[0].eventsImportConfiguration);
+            return db.cypher().match(`(org:Organization {organizationId: '2'})-[:EVENT_RULE]->(rule:EventRule)
+                                      -[:EVENT_RULE_FOR]->(exportedNP:NetworkingPlatform {platformId: '1'})`)
+                .return(`org`).end().send();
+        }).then(function (org) {
+            org.length.should.equals(0);
+        });
+    });
+
     it('Setting an url fails because response has no ical data', function () {
 
         nock(`http://www.test.ch`).get('/')
