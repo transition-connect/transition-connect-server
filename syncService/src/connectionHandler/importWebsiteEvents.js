@@ -6,6 +6,7 @@ let logger = require('server-lib').logging.getLogger(__filename);
 
 let importEvents = async function (importUrl, organizationId) {
     let ical;
+    logger.info(`Start import of event from website ${importUrl}`);
     try {
         ical = await adapter.importICalEvents(importUrl);
     } catch (error) {

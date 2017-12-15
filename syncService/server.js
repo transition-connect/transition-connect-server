@@ -19,6 +19,11 @@ global.requireSyncLogic = function (name) {
     return require(`${__dirname}/src/syncLogic/${name}`);
 };
 
+global.requireLib = function (name) {
+    name = name || '';
+    return require(`${__dirname}/src/lib/${name}`);
+};
+
 let promise = require('bluebird');
 
 promise.Promise.config({warnings: false, longStackTraces: true, cancellation: true});
@@ -29,6 +34,7 @@ let dbConfig = require('server-lib').databaseConfig;
 let app = require('express')();
 let options = require('./src/lib/spec')(app);
 let logger = require('server-lib').logging.getLogger(__filename);
+let connectionHandler = requireConnectionHandler('connectionHandler');
 
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
     app.enable('trust proxy');
@@ -40,6 +46,9 @@ app.use(kraken(options));
 app.on('start', function () {
     dbConfig.connected.then(function () {
         emailService.start();
+        if (process.env.NODE_ENV !== 'testing') {
+            connectionHandler.startSync();
+        }
         logger.info('Server started');
     });
 });

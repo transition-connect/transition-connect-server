@@ -2,7 +2,7 @@
 
 let db = require('server-lib').neo4j;
 let _ = require(`lodash`);
-let parser = require('./iCalEventParser');
+let parser = requireLib('iCalEventParser');
 let time = require('server-lib').time;
 let eventExport = require('server-lib').eventExport;
 let logger = require('server-lib').logging.getLogger(__filename);

@@ -31,11 +31,6 @@ describe('Integration Tests for importing events from a website in iCal format',
 
     it('Import new iCal events (all properties)', async function () {
 
-        let normalStartUtcTimestamp = Math.floor(moment.utc().valueOf() / 1000) - 500,
-            normalEndUtcTimestamp = normalStartUtcTimestamp + 1000,
-            googleStartUtcTimestamp = Math.floor(moment.utc().valueOf() / 1000) + 90000,
-            googleEndUtcTimestamp = googleStartUtcTimestamp + 90000;
-
         nock(`http://www.test.ch`).get('/import/organization')
             .reply(200,
                 `BEGIN:VCALENDAR
@@ -46,8 +41,8 @@ describe('Integration Tests for importing events from a website in iCal format',
                 X-WR-TIMEZONE:Europe/Zurich
                 BEGIN:VEVENT
 DTSTAMP:19970610T172345Z
-                DTSTART:${moment.utc(normalStartUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
-                DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
+                DTSTART:20171215T135501Z
+                DTEND:20171215T145002Z
                 UID:0c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T150112Z
                 DESCRIPTION:Hat was mit TC zu tun\nGanz viel
@@ -60,8 +55,8 @@ DTSTAMP:19970610T172345Z
                 END:VEVENT
                 BEGIN:VEVENT
 DTSTAMP:19970610T172346Z
-                DTSTART;VALUE=DATE:${moment.utc(googleStartUtcTimestamp * 1000).format('YYYYMMDD')}
-                DTEND;VALUE=DATE:${moment.utc(googleEndUtcTimestamp * 1000).format('YYYYMMDD')}
+                DTSTART;VALUE=DATE:20171214
+                DTEND;VALUE=DATE:20171215
                 UID:1c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T1501121Z
                 DESCRIPTION:Hat auch was mit TC zu tun
@@ -85,13 +80,13 @@ DTSTAMP:19970610T172346Z
         resp[0].event.description.should.equals('Hat was mit TC zu tun\nGanz viel');
         resp[0].event.summary.should.equals('Event1 Test');
         resp[0].event.location.should.equals('Irgendwo in Zürich');
-        resp[0].event.startDate.should.equals(normalStartUtcTimestamp);
-        resp[0].event.endDate.should.equals(normalEndUtcTimestamp);
+        resp[0].event.startDate.should.equals(1513346101);
+        resp[0].event.endDate.should.equals(1513349402);
         resp[0].event.modified.should.at.least(startTime);
         resp[0].event.iCal.should.equals(`BEGIN:VEVENT
 DTSTAMP:19970610T172345Z
-                DTSTART:${moment.utc(normalStartUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
-                DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
+                DTSTART:20171215T135501Z
+                DTEND:20171215T145002Z
                 UID:0c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T150112Z
                 DESCRIPTION:Hat was mit TC zu tun\nGanz viel
@@ -103,8 +98,8 @@ DTSTAMP:19970610T172345Z
                 TRANSP:OPAQUE
                 END:VEVENT`);
         resp[0].event.iCalCompare.should.equals(`BEGIN:VEVENT
-                DTSTART:${moment.utc(normalStartUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
-                DTEND:${moment.utc(normalEndUtcTimestamp * 1000).format('YYYYMMDDTHHmmss')}Z
+                DTSTART:20171215T135501Z
+                DTEND:20171215T145002Z
                 UID:0c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T150112Z
                 DESCRIPTION:Hat was mit TC zu tun\nGanz viel
@@ -120,14 +115,12 @@ DTSTAMP:19970610T172345Z
         resp[1].event.summary.should.equals('Event2 Test');
         resp[1].event.location.should.equals('Irgendwo in Urdorf');
         resp[1].event.modified.should.at.least(startTime);
-        resp[1].event.startDate.should.equals(
-            moment.utc(moment.utc(googleStartUtcTimestamp * 1000).format('YYYYMMDD')).valueOf() / 1000);
-        resp[1].event.endDate.should.equals(
-            moment.utc(moment.utc(googleEndUtcTimestamp * 1000).format('YYYYMMDD')).valueOf() / 1000);
+        resp[1].event.startDate.should.equals(1513209600);
+        resp[1].event.endDate.should.equals(1513296000);
         resp[1].event.iCal.should.equals(`BEGIN:VEVENT
 DTSTAMP:19970610T172346Z
-                DTSTART;VALUE=DATE:${moment.utc(googleStartUtcTimestamp * 1000).format('YYYYMMDD')}
-                DTEND;VALUE=DATE:${moment.utc(googleEndUtcTimestamp * 1000).format('YYYYMMDD')}
+                DTSTART;VALUE=DATE:20171214
+                DTEND;VALUE=DATE:20171215
                 UID:1c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T1501121Z
                 DESCRIPTION:Hat auch was mit TC zu tun
@@ -139,8 +132,8 @@ DTSTAMP:19970610T172346Z
                 TRANSP:OPAQUE
                 END:VEVENT`);
         resp[1].event.iCalCompare.should.equals(`BEGIN:VEVENT
-                DTSTART;VALUE=DATE:${moment.utc(googleStartUtcTimestamp * 1000).format('YYYYMMDD')}
-                DTEND;VALUE=DATE:${moment.utc(googleEndUtcTimestamp * 1000).format('YYYYMMDD')}
+                DTSTART;VALUE=DATE:20171214
+                DTEND;VALUE=DATE:20171215
                 UID:1c6ckli6gauhsp76ju1vl065dd@google.com
                 CREATED:20171025T1501121Z
                 DESCRIPTION:Hat auch was mit TC zu tun

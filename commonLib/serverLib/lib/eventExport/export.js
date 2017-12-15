@@ -32,8 +32,11 @@ let setNewEventExports = function (organizationId) {
         .optionalMatch(`(event)-[deleteRequest:DELETE_REQUEST]->(np)`)
         .optionalMatch(`(event)-[deleteRequestSuccess:DELETE_REQUEST_SUCCESS]->(np)`)
         .merge(`(event)-[export:EXPORT]->(np)`)
+        .delete(`deleteRequestSuccess`)
+        .with(`org, export, deleteRequest`)
+        .where(`EXISTS(deleteRequest.lastExportTimestamp)`)
         .addCommand(` SET export.lastExportTimestamp = deleteRequest.lastExportTimestamp`)
-        .delete(`deleteRequest, deleteRequestSuccess`)
+        .delete(`deleteRequest`)
         .end({organizationId: organizationId});
 };
 

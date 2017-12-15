@@ -1,7 +1,7 @@
 'use strict';
 
 let db = require('server-lib').neo4j;
-let parser = require('./iCalEventParser');
+let parser = requireLib('iCalEventParser');
 let logger = require('server-lib').logging.getLogger(__filename);
 
 let saveEventToDb = async function (event, idOrg, timestamp) {

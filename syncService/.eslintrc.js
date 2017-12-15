@@ -28,6 +28,7 @@ module.exports = {
     "globals": {
         "requireAdapter": false,
         "requireConnectionHandler": false,
-        "requireSyncLogic": false
+        "requireSyncLogic": false,
+        "requireLib": false
     }
 };

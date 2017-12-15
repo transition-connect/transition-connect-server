@@ -1,8 +1,8 @@
 'use strict';
 
-let moment = require('moment');
 let iCalProperties = require('./iCalProperties');
-let iCalDateParser = require('ical-date-parser');
+let stringParser = require('./stringParser');
+let dateParser = require('./dateParser');
 let logger = require('server-lib').logging.getLogger(__filename);
 
 const BEGIN_EVENT = 'BEGIN:VEVENT';
@@ -15,21 +15,6 @@ const LOCATION = 'LOCATION:';
 const GEO = 'GEO:';
 const START_DATE_EVENT = 'DTSTART';
 const END_DATE_EVENT = 'DTEND';
-const START_DATE_VALUE_EVENT = 'DTSTART;VALUE=DATE';
-const END_DATE_VALUE_EVENT = 'DTEND;VALUE=DATE';
-
-let parseString = function (vEvent, property, isMandatory) {
-    let index = vEvent.indexOf(property), result = null;
-    if (index !== -1) {
-        let indexSeparator = vEvent.indexOf(':', index) + 1;
-        result = vEvent.substring(indexSeparator, vEvent.indexOf('\n', index));
-        result = result.replace('\r', '');
-        result = result.replace('\n', '');
-    } else if (isMandatory) {
-        logger.error(`${property} in ${vEvent} not found`);
-    }
-    return result;
-};
 
 let multiIncludes = function (text, values) {
     let regExp = new RegExp(values.join('|'));
@@ -73,17 +58,6 @@ let parseGeo = function (vEvent, uid) {
     return geo;
 };
 
-let parseDate = function (vEvent, property, valueProperty, isMandatory) {
-    let result = parseString(vEvent, valueProperty, false);
-    if (result === null) {
-        result = parseString(vEvent, property, isMandatory);
-    } else {
-        result = result + 'T000000Z';
-    }
-    result = result.replace('\r', '');
-    return moment.utc(iCalDateParser(result)).valueOf() / 1000;
-};
-
 /**
  * Remove DTSTAMP for check if event has been changed because this field changes on every import.
  * @param iCal
@@ -100,13 +74,13 @@ let getICalCompare = function (iCal) {
 
 let parseEvent = function (vEvent) {
     let event = {};
-    event.uid = parseString(vEvent, UID, true);
-    event.summary = parseString(vEvent, SUMMARY, true);
+    event.uid = stringParser.parseString(vEvent, UID, true);
+    event.summary = stringParser.parseString(vEvent, SUMMARY, true);
     event.description = parseDescription(vEvent);
-    event.location = parseString(vEvent, LOCATION, false);
+    event.location = stringParser.parseString(vEvent, LOCATION, false);
     event.geo = parseGeo(vEvent, event.uid);
-    event.startDate = parseDate(vEvent, START_DATE_EVENT, START_DATE_VALUE_EVENT, true);
-    event.endDate = parseDate(vEvent, END_DATE_EVENT, END_DATE_VALUE_EVENT, true);
+    event.startDate = dateParser.parseDate(vEvent, START_DATE_EVENT, true);
+    event.endDate = dateParser.parseDate(vEvent, END_DATE_EVENT, true);
     event.iCal = vEvent;
     event.iCalCompare = getICalCompare(vEvent);
     return event;
@@ -117,10 +91,14 @@ let parseEvents = function (iCal) {
     do {
         startIndex = iCal.indexOf(BEGIN_EVENT, startIndex);
         endIndex = iCal.indexOf(END_EVENT, endIndex);
-        if (startIndex !== -1 && endIndex !== -1) {
-            endIndex = endIndex + END_EVENT.length;
-            events.push(parseEvent(iCal.substring(startIndex, endIndex)));
-            startIndex = endIndex;
+        try {
+            if (startIndex !== -1 && endIndex !== -1) {
+                endIndex = endIndex + END_EVENT.length;
+                events.push(parseEvent(iCal.substring(startIndex, endIndex)));
+                startIndex = endIndex;
+            }
+        } catch (error) {
+            logger.error(`Failed to parse event ${iCal.substring(startIndex, endIndex)}`);
         }
     }
     while (startIndex !== -1 && endIndex !== -1);

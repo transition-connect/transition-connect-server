@@ -4,8 +4,8 @@ if (!process.env.BASE_DIR) {
     process.env.BASE_DIR = __dirname + '/../../../';
 }
 
-global.requireModel = function (name) {
-    return require(`${process.env.BASE_DIR}/src/model/${name}`);
+global.requireLib = function (name) {
+    return require(`${process.env.BASE_DIR}/src/lib/${name}`);
 };
 
 let dbConfig = require('server-lib').databaseConfig;
