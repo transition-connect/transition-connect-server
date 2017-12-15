@@ -96,7 +96,7 @@ let getDetails = function (adminId, organizationId, language, req) {
         return db.cypher().match(`(np:NetworkingPlatform)<-[export:EXPORT|EXPORT_REQUEST|EXPORT_DENIED|DELETE_REQUEST|DELETE_REQUEST_SUCCESS]
                                    -(org:Organization {organizationId: {organizationId}})`)
             .with(`np, export, org`)
-            .match(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(:Category)
+            .optionalMatch(`(org)-[:ASSIGNED]->(assigner:CategoryAssigner)-[:ASSIGNED]->(:Category)
                     -[categoryLanguage]->(categoryTranslated:CategoryTranslated)`)
             .where(`TYPE(categoryLanguage) = {language} AND (assigner)-[:ASSIGNED]->(np)`)
             .with(`np, export, org, categoryTranslated, assigner`)

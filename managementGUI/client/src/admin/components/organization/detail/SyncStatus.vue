@@ -2,17 +2,30 @@
     <div>
         <div class="tc-sync-status">
             <div class="tc-sync-exported tc-sync-text"
-                 v-if="status === 'EXPORTED'">Synchronisiert</div>
-            <div class="tc-sync-running tc-sync-text"
-                 v-if="status === 'NOT_EXPORTED' || status === 'EXPORT_UPDATE_NEEDED'">Synchronisation gestartet
+                 v-if="status === 'EXPORTED' ||
+                       status === 'NOT_EXPORTED' ||
+                       status === 'EXPORT_UPDATE_NEEDED'">Synchronisation aktiv
+            </div>
+            <div class="tc-sync-denied tc-sync-text"
+                 v-if="status === 'DELETE_REQUEST' || status === 'DELETE_REQUEST_SUCCESS'">Synchronisation beendet
             </div>
             <div class="tc-sync-requested tc-sync-text"
-                 v-if="status === 'EXPORT_REQUESTED'">Warte auf Freigabe</div>
+                 v-if="status === 'EXPORT_REQUESTED'">Warte auf Freigabe
+            </div>
             <div class="tc-sync-denied tc-sync-text"
-                 v-if="status === 'EXPORT_DENIED'">Synchronisation abgelehnt</div>
+                 v-if="status === 'EXPORT_DENIED'">Synchronisation abgelehnt
+            </div>
         </div>
-        <div class="tc-sync-status-text" v-if="status === 'EXPORTED'">Synchronisiert am {{getDateTime}}</div>
-        <div class="tc-sync-status-text" v-if="status === 'NOT_EXPORTED'">Es kann einige Minuten dauern bis die Synchronisation abgeschlossen ist.</div>
+        <div class="tc-sync-status-text" v-if="status === 'EXPORTED'">Synchronisation ist auf dem aktuellen Stand.</div>
+        <div class="tc-sync-status-text" v-if="status === 'EXPORT_UPDATE_NEEDED' || status === 'NOT_EXPORTED'">
+            Synchronisation wird aktualisiert. Dies kann einige Minuten dauern.
+        </div>
+        <div class="tc-sync-status-text" v-if="status === 'DELETE_REQUEST'">
+            Synchronisation wird beendet. Dies kann einige Minuten dauern.
+        </div>
+        <div class="tc-sync-status-text" v-if="status === 'DELETE_REQUEST_SUCCESS'">
+            Synchronisation wurde beendet.
+        </div>
         <div class="tc-sync-status-text" v-if="status === 'EXPORT_REQUESTED'">
             Synchronisation muss von Plattform bestätigt werden.
         </div>
