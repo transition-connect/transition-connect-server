@@ -7,7 +7,7 @@
     "host": "bolt://localhost:7689"
   },
   "timerConfig": {
-    "interval": 5
+    "interval": 3000
   },
   "emailConfig": {
     "host": "localhost",

@@ -68,8 +68,11 @@ let getOrganizationCommand = function (adminId, organizationId, language) {
 
 let getEventsCommand = function (organizationId) {
     return db.cypher().match(`(:Organization {organizationId: {organizationId}})-[:WEBSITE_EVENT|EVENT]->(event:Event)`)
+        .optionalMatch(`(event)-[:EXPORT]->(exportedNp:NetworkingPlatform)`)
+        .with(`event, exportedNp`).orderBy(`exportedNp.name`)
         .return(`event.uid AS uid, event.summary AS summary, event.description AS description, event.iCal AS iCal,
-                 event.location AS location, event.startDate AS startDate, event.endDate AS endDate`)
+                 event.location AS location, event.startDate AS startDate, event.endDate AS endDate,
+                 collect(exportedNp.name) AS exportedToNp`)
         .orderBy(`event.endDate DESC`)
         .end({organizationId: organizationId}).getCommand();
 };

@@ -44,6 +44,9 @@ describe('Integration Tests for getting details of an organization', function ()
         dbDsl.createWebsiteEvent('2', {organizationId: '2', startDate: 502, endDate: 602});
         dbDsl.createWebsiteEvent('3', {organizationId: '1', startDate: 501, endDate: 601});
         dbDsl.createNpEvent('4', {organizationId: '2', startDate: 400, endDate: 405});
+        dbDsl.exportEventToNp({uid: '1', npId: '2'});
+        dbDsl.exportEventToNp({uid: '1', npId: '3'});
+        dbDsl.exportEventToNp({uid: '4', npId: '3', lastExportTimestamp: 666});
 
         dbDsl.createLocation({organizationId: '2', address: 'address1', description: 'description1', latitude: 1, longitude: 2});
         dbDsl.createLocation({organizationId: '2', address: 'address2', description: 'description2', latitude: 3, longitude: 4});
@@ -72,6 +75,7 @@ describe('Integration Tests for getting details of an organization', function ()
 
             res.body.events.length.should.equals(3);
             res.body.events[0].uid.should.equals('2');
+            res.body.events[0].exportedToNp.length.should.equals(0);
             res.body.events[0].summary.should.equals('event2Summary');
             res.body.events[0].description.should.equals('event2Description');
             res.body.events[0].location.should.equals('event2Location');
@@ -82,6 +86,9 @@ describe('Integration Tests for getting details of an organization', function ()
 END:VCALENDAR`);
 
             res.body.events[1].uid.should.equals('1');
+            res.body.events[1].exportedToNp.length.should.equals(2);
+            res.body.events[1].exportedToNp[0].should.equals('Elyoos2');
+            res.body.events[1].exportedToNp[1].should.equals('Elyoos3');
             res.body.events[1].summary.should.equals('event1Summary');
             res.body.events[1].description.should.equals('event1Description');
             res.body.events[1].location.should.equals('event1Location');
@@ -92,6 +99,8 @@ END:VCALENDAR`);
 END:VCALENDAR`);
 
             res.body.events[2].uid.should.equals('4');
+            res.body.events[2].exportedToNp.length.should.equals(1);
+            res.body.events[2].exportedToNp[0].should.equals('Elyoos3');
             res.body.events[2].summary.should.equals('event4Summary');
             res.body.events[2].description.should.equals('event4Description');
             res.body.events[2].location.should.equals('event4Location');

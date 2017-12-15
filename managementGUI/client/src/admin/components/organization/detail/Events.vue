@@ -9,7 +9,13 @@
                     <div class="secondary-title">{{event.location}}</div>
                     <div class="description">{{event.description}}</div>
                 </div>
-                <div class="sync-info"><span class="sync-title">Wird synchronisiert nach:</span></div>
+                <div class="sync-info" v-if="event.exportedToNp.length > 0">
+                    <span class="sync-title">Wird synchronisiert nach:</span>
+                    <span v-for="(np, index)  in event.exportedToNp">{{np}}<span v-if="index < event.exportedToNp.length - 1">, </span></span>
+                </div>
+                <div class="sync-info" v-else="">
+                    <span class="sync-title">Wird nicht synchronisiert</span>
+                </div>
                 <event-ical :event="event"></event-ical>
             </div>
         </div>
