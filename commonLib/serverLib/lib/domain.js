@@ -4,7 +4,7 @@ let getDomain = function () {
     let domain = 'http://localhost:8086/';
 
     if (process.env.NODE_ENV === 'production') {
-        domain = 'https://www.transition-connect.org/';
+        domain = 'https://config.transition-connect.org/';
     }
     return domain;
 };
