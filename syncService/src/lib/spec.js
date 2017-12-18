@@ -3,6 +3,7 @@
 let db = require('server-lib').databaseConfig;
 let eMailQueue = require('server-lib').eMailQueue;
 let eMail = require('server-lib').eMail;
+let logger = require('server-lib').logging;
 let connectionHandler = requireConnectionHandler('connectionHandler');
 
 module.exports = function () {
@@ -12,7 +13,8 @@ module.exports = function () {
 
             let dbConfig = config.get('databaseConfig'),
                 emailConfig = config.get('emailConfig'),
-                timerConfig = config.get('timerConfig');
+                timerConfig = config.get('timerConfig'),
+                loggingConfig = config.get('logging');
 
             if (process.env.NODE_ENV !== 'testing') {
                 setInterval(() => {
@@ -23,6 +25,7 @@ module.exports = function () {
             db.config(dbConfig);
             eMailQueue.config(emailConfig);
             eMail.config(emailConfig.smtp);
+            logger.config(loggingConfig);
             next(null, config);
         }
     };
