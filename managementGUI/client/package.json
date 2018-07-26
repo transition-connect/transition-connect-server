@@ -37,7 +37,7 @@
     "babel-polyfill": "6.26.0",
     "es6-promise": "4.1.1",
     "innersvg-polyfill": "0.0.2",
-    "moment": "2.18.1",
+    "moment": "2.22.2",
     "deep-equal": "1.0.1",
     "vee-validate": "2.0.0-rc.19",
     "vue": "2.5.3",
